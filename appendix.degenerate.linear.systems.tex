@@ -1,0 +1,99 @@
+%!TEX root = main.tex
+
+\chapter{Solution to degenerate symmetric linear systems}\label{app:degenetate:lin:sys}
+
+Consider the linear system
+%
+\begin{equation}\label{app:eq:sys}
+	\left(\begin{array}{cc}
+	K & L^T \\ L & 0
+	\end{array}\right)\left(\begin{array}{c}
+	u \\ v \end{array}\right) = \left(\begin{array}{c}
+	a \\ b
+	\end{array}\right).
+\end{equation}
+%
+We assume $K$ is a positive definite $n\times n$ matrix, $L$ is
+$m\times n$. We have three different cases:
+%
+\begin{enumerate}
+\item $\rk L = n$, which implies $n<m$
+\item $\rk L = m$, which implies $m<n$
+\item $\rk L < \min(n,m)$.
+\end{enumerate}
+%
+We handle case 1:
+We decompose $L$ into $L = QR$ with $Q = (Q_1, Q_2)$ and $R = (R^T,0)^T$,
+with the usual orthogonal $Q$ and upper triangular $R$. In case 1 $R$ is
+$r\times r$ with $r=\rk L$. We get
+%
+\begin{equation}\begin{split}
+	L u = Q_1 R u = b\\
+	\Rightarrow \underbrace{Q_1^T Q_1}_I R u = Q_1^T b\\
+	\Rightarrow u = R^{-1}Q_1^T b
+\end{split}\end{equation}
+%
+which leads to
+%
+\begin{equation}\begin{split}
+	K R^{-1} Q_1^T b + R^T Q_1^T v = a \\
+	\Rightarrow v = Q_1 R^{-T}\left(a- K R^{-1} Q_1^T b \right) + Q_2 \beta.
+\end{split}\end{equation}
+%
+So that the solution in case one is given by
+%
+\begin{equation}
+	\left(\begin{array}{c}
+	u \\ v \end{array}\right) = \left(\begin{array}{cc}
+	0 & R^{-1} Q_1^T \\ Q_1 R^{-T} & - Q_1 R^{-T} K R^{-1} Q_1^T
+	\end{array}\right)\left(\begin{array}{c}
+	a \\ b
+	\end{array}\right) + \left(\begin{array}{c}
+	0 \\ Q_2
+	\end{array}\right) \beta
+\end{equation}
+%
+In case 2 $L^T=QR$ and the equations follow in the same way.
+\\[1em]
+In case 3 we look at the case where $m>n$.
+%
+\begin{equation}\begin{split}
+	K u + L^T v = a\\
+	u = K^{-1} a - K^{-1}L^T v
+\end{split}\end{equation}
+%
+into the second equation:
+%
+\begin{equation}\begin{split}
+	L K^{-1} a - L K^{-1} L^T v = b\\
+	Q_1 R K^{-1} R^T Q_1^T v = L K^{-1} a - b \\
+	Q_1^T v = \left(RK^{-1}R^T\right)^{-1} Q_1^T\left(L K^{-1} a - b \right)\\
+	v = Q_1 \left(RK^{-1}R^T\right)^{-1} Q_1^T\left(Q_1 R K^{-1} a - b \right) + Q_2 \beta \\
+	v = Q_1 \left(RK^{-1}R^T\right)^{-1} R K^{-1} a - Q_1 \left(RK^{-1}R^T\right)^{-1} Q_1^T b + Q_2 \beta \\
+\end{split}\end{equation}
+%
+And hence $u$ becomes
+%
+\begin{equation}\begin{split}
+	u = K^{-1} a - K^{-1} R^T Q_1^T \left(Q_1 \left(RK^{-1}R^T\right)^{-1} Q_1^T\left(Q_1 
+	R K^{-1} a - b \right) + Q_2 \beta \right) \\
+	u = \left(K^{-1} - K^{-1} R^T \left(RK^{-1}R^T\right)^{-1} R K^{-1} \right) a + 
+	K^{-1} R^T \left(RK^{-1}R^T\right)^{-1} Q_1^T b
+\end{split}\end{equation}
+%
+And the closed solution to~\eqref{app:eq:sys} is given by
+%
+\begin{equation}\Resize{
+	\left(\begin{array}{c}
+	u \\ v
+	\end{array}\right) = \left(\begin{array}{cc}
+	K^{-\frac{1}{2}}\left(I - K^{-\frac{1}{2}} R^T \left(RK^{-1}R^T\right)^{-1} RK^{-\frac{1}{2}} \right) K^{-\frac{1}{2}} &
+	K^{-1} R^T \left(RK^{-1}R^T\right)^{-1} Q_1^T \\
+	Q_1 \left(RK^{-1}R^T\right)^{-1} R K^{-1} &
+	-Q_1 \left(RK^{-1}R^T\right)^{-1} Q_1
+	\end{array}\right)\left(\begin{array}{c}
+	a \\ b
+	\end{array}\right) + \left(\begin{array}{c}
+	0 \\ Q_2 
+	\end{array}\right) \beta}
+\end{equation}

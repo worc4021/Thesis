@@ -1,0 +1,39 @@
+%!TEX root = main.tex
+
+\chapter{Determination of scalar piecewise affine functions}\label{app:determining:pwa}
+
+In an interval $\alpha\in[0,1]$ we want to determine the active affine function in
+\begin{equation}\label{the:problem}
+	\phi(\alpha) = \max_k\{f_k\alpha+g_k\}.
+\end{equation}
+For $\alpha$ we introduce a slack variable $t$ and rewrite~\eqref{the:problem} as
+\begin{equation}
+	\phi(\alpha) = \begin{array}{rcl} \min & &t \\ \text{s.t.} & & -t\leq -g_k -f_k \alpha\; \forall k\\
+	& &0\leq\alpha\\
+	& &0\leq1-\alpha
+	\end{array}
+\end{equation}
+this defines a mpLP that we have to solve in every step of the line search iteration. We 
+can solve this by computing all vertices of $\{(t,\alpha): 0\leq\alpha\leq1\wedge -t+f_k\alpha\leq 
+g_k\;\forall k\}$. After sorting the vertices in lexigraphical order $t_1\leq t_2 \leq \dots$ we 
+use $\alpha_2$, i.e. the value that corresponds to the second smallest $t$. We are looking for the
+index $i$ which determines the next active facet, i.e. $\phi(\alpha) \equiv f_i\alpha+g_i$ for $\alpha_2
+\leq\alpha\leq\alpha_3$. Algorithmically this can be done by determining $\mathcal I=\{i:f_i\alpha_2-t_2 = -g_i\wedge 
+f_i\alpha_1-t_1=-g_i\}\setminus \{i:f_i\alpha_1-t_1=-g_i\}$. We assume that the problem is non degenerate,
+i.e. that there are only two affine facets supporting $(t_2,\alpha_2)$ hence $\mathcal I = \{i\}$ and therefore the
+mpLP has a unique solution.
+
+\begin{figure}
+\centering
+\begin{lpic}{TheLineSearch}
+{\footnotesize
+\lbl[bl]{5,2;$0=\alpha_1$}
+\lbl[bl]{16,2;$\alpha_2$}
+\lbl[bl]{28.5,2;$\alpha_3$}
+\lbl[br]{63,2;$1$}
+\lbl[bl]{67,2;$\alpha$}
+\lbl[br]{2,52;$t$}
+}
+\end{lpic}
+\caption{Solving \eqref{the:problem} by computing vertices.}
+\end{figure}

@@ -1,0 +1,280 @@
+%!TEX root = main.tex
+
+\chapter{Recursive multi parametric quadratic programming}\label{app:chp:mpqp}
+
+In this chapter we discuss how multi-parametric quadratic programs (mpQP), such as the ones arising in
+robust model predictive control, can be solved efficiently with an active-set solver (see 
+e.g.~\cite{Fletcher:1987}).
+%
+The active set of constraints will be determined by a line-search, we will also deal with degenerate
+constraints, which can arise during the line-search
+%
+\footnote{So called \emph{degenerate constraints} occur in active set solvers for non-parametric quadratic programs 
+as well and can be solved efficiently, see e.g.~\cite{fletcher:1993}.
+}.
+%
+Assume we want to solve the mpQP
+%
+\begin{equation}
+	J(\phi) = \left\{\begin{array}{rcl}
+	\min_\theta& &\frac{1}{2} \theta^T R \theta  + V(\theta) \\
+	\text{s.t.}& &C\theta\leq e+ T\phi
+	\end{array}\right.
+\end{equation}
+%
+with $R>0$ and the constraints such that the origin is contained in the interior for a vanishing parameter
+$\phi=0$, i.e. $0\in\{\theta:C\theta\leq e\}$.
+%
+Using
+%
+\begin{equation}
+	V(\theta) = \left\{\begin{split}
+		\max_x & \;\frac{1}{2} x^T Q x\\
+		\text{s.t.} &\; Ax  \leq b +S\theta
+	\end{split}\right.
+\end{equation}
+%
+with $Q<0$ and the same assumption on the constraint set as for the minimisation.
+%
+We want to use an active-set solver to obtain the solution for $\phi=\phi^\ast$.
+%
+For this assume that for some $\phi=\phi_0$ we know the active constraints~$\mathcal A$ and~$\hat{\mathcal A}$,
+i.e. the inequalities satisfied with equality $C_{\mathcal A}\theta_0=e_{\mathcal A} + T_{\mathcal A}\phi_0$
+and $A_{\hat{\mathcal A}}x_0=b_{\hat{\mathcal A}}+S_{\hat{\mathcal A}}\theta_0$.
+%
+The set of inactive constraints $\mathcal I$ and $\hat{\mathcal I}$ are such that $C_{\mathcal I}\theta_0<
+e_{\mathcal I} + T_{\mathcal I}\phi_0$ and $A_{\hat{\mathcal I}}x_0<b_{\hat{\mathcal I}}+S_{\hat{\mathcal I}}
+\theta_0$, the variables~$\theta_0$ and $x_0$ denote the optimal solution to the minimisation and the maximisation
+respectively.
+%
+In order to obtain the optimal solution to the multi-parametric quadratic programs for known
+active constraints we consider the primal equality constrained mpQP 
+%
+\begin{equation}\label{app:mpQP:primal}
+	V_{\hat{\mathcal A}}(\theta_0) = \left\{\begin{split}
+		\max_x & \;\frac{1}{2} x^T Q x\\
+		\text{s.t.} &\; A_{\hat{\mathcal A}}x  = b_{\hat{\mathcal A}} +S_{\hat{\mathcal A}}\theta_0
+	\end{split}\right.
+\end{equation}
+%
+we get the Lagrangian
+%
+\begin{equation}\begin{split}
+	L_{\hat{\mathcal A}}(x,\lambda,\theta_0)  &= \frac{1}{2} x^T Q x + \lambda^T\left(A_{\hat{\mathcal A}}x - 
+	b_{\hat{\mathcal A}} - S_{\hat{\mathcal A}}\theta_0\right)\\
+	&=\frac{1}{2} x^T Q x + \left(A_{\hat{\mathcal A}}^T\lambda\right)^Tx 
+	-\lambda^T \left(b_{\hat{\mathcal A}} + S_{\hat{\mathcal A}}\theta_0\right)
+\end{split}\end{equation}
+%
+minimising over $x$ we obtain the unconstrained dual mpQP
+%
+\begin{equation}\label{app:mpQP:dual}
+	\min_\lambda -\frac{1}{2}\lambda^T A_{\hat{\mathcal A}} Q^{-1}A_{\hat{\mathcal A}}^T \lambda 
+	-(b_{\hat{\mathcal A}} + S_{\hat{\mathcal A}}\theta_0)^T\lambda
+\end{equation}
+%
+To solve~\eqref{app:mpQP:primal} we solve the first order optimality conditions
+%
+\begin{equation}\label{app:kkt:conditions}
+	\begin{array}{ccccccc}
+		Q x &+& A^T_{\hat{\mathcal A}}\lambda & = & 0&& \\
+		A_{\hat{\mathcal A}} x & & & = & b_{\hat{\mathcal A}}& +& S_{\hat{\mathcal A}}\theta_0
+	\end{array}
+\end{equation}
+%
+According to the algebra in appendix~\ref{app:degenetate:lin:sys} equation~\eqref{app:kkt:conditions} yields
+the solution
+%
+\begin{equation}\label{app:mpQP:solution}
+	\begin{split}
+	x_0 &= M_\theta \theta_0 + m\\
+	\lambda_0 &= N_\theta \theta_0 + N_\beta \beta + n
+	\end{split}
+\end{equation}
+%
+where $A^T_{\hat{\mathcal A}} N_\beta=0$. Since the degeneracy variable $\beta$ does not appear in the
+primal optimiser it does not affect the value of~\eqref{app:mpQP:primal}.
+%
+However, by substituting~\eqref{app:mpQP:solution} into~\eqref{app:mpQP:dual}
+we find
+%
+\begin{equation}\Resize{
+	-\frac{1}{2}\underbrace{(N_\theta \theta_0 + N_\beta \beta + n)^T A_{\hat{\mathcal A}} Q^{-1}A^T_{\hat{\mathcal A}} 
+	(N_\theta \theta_0 + N_\beta \beta + n)}_{\neq f(\beta)} -\underbrace{( 
+	b_{\hat{\mathcal A}} + S_{\hat{\mathcal A}}\theta_0)^T(N_\theta \theta_0 + N_\beta \beta + 
+	n)}_{f(\theta_0)+f_c + (b^T_{\hat{\mathcal A}}+\theta^T_0S^T_{\hat{\mathcal A}})N_\beta 
+	\beta}
+	}
+\end{equation}
+%
+And therefore we have that if
+%
+\begin{equation}
+	(b^T_{\hat{\mathcal A}}+\theta^T_0 S^T_{\hat{\mathcal A}})N_\beta \neq 0
+\end{equation}
+%
+the dual problem is unbounded and can be made arbitrarily large by the choice of $\beta$. Assume
+$\theta_0$ is chosen to satisfy 
+%
+\begin{equation}\label{app:mpQP:compatability:assumption}
+	N_\beta^Tb = -N_\beta^TS\theta_0,
+\end{equation} 
+%
+then the dual mpQP has a unique solution
+and the choice of $\beta$ does not affect either the primal nor the dual cost and can be used for
+any purpose. For general mpQP condition~\eqref{app:mpQP:compatability:assumption} is a restriction on the set
+of parameters for which~\eqref{app:mpQP:primal} has a solution of the form~\eqref{app:mpQP:solution}.
+%
+In our setup we deal with multi stage min-max programs, so that the parameter is the optimiser 
+of a previous optimisation problem and~\eqref{app:mpQP:compatability:assumption} can be ensured. 
+%
+The constraint introduced for that purpose is called \emph{compatibility constraint}. 
+
+
+The optimal cost is given by
+%
+\begin{equation}\label{app:mpQP:cost:to:go}\begin{split}
+	V_{\hat{\mathcal A}}(\theta_0) = &\frac{1}{2}\theta^T_0 M_\theta^T Q M_\theta \theta_0 + m^TQM_\theta \theta_0 + 
+	\frac{1}{2} m^T Q m\\
+	&\frac{1}{2} \theta^T_0 Q_\theta \theta_0 + c^T_\theta \theta_0 + d_\theta,
+\end{split}\end{equation}
+%
+i.e. a quadratic function in the parameter.
+%
+Next we want to solve
+%
+\begin{equation}\label{mpQP:second:stage}
+	J_{\mathcal A,\hat{\mathcal A}}(\phi_0) = \left\{\begin{array}{rl}
+	\min_\theta & \frac{1}{2}\theta^TR\theta + V_{\hat{\mathcal A}}(\theta)\\
+	\text{s.t.} & C_{\mathcal A}\theta = e_{\mathcal A} + T_{\mathcal A} \phi
+	\end{array}\right.
+\end{equation}
+%
+where the constraints include the compatibility constraints~\eqref{app:mpQP:compatability:assumption}. 
+%
+Since we know, that the optimal cost-to-go $V(\theta)$ has the structure~\eqref{app:mpQP:cost:to:go},
+the first order constraints of~\eqref{mpQP:second:stage} reduce to
+%
+\begin{equation}\label{mpQP:second:stage:conditions}
+	\begin{array}{ccccccc}
+		(R + Q_\theta)\theta &+& C^T_{{\mathcal A}}\eta & = & -c_\theta&& \\
+		C_{{\mathcal A}} \theta & & & = & e_{{\mathcal A}}& +& T_{{\mathcal A}}\phi_0
+	\end{array}
+\end{equation}
+%
+which yields the solution
+%
+\begin{equation}
+	\begin{split}
+	\theta_0 &= K_\phi \phi_0 + k\\
+	\eta_0 &= O_\phi \phi_0 + O_{\hat\beta} \hat\beta + o
+	\end{split}
+\end{equation}
+%
+with the dual variable~$\eta_0$, as long as $R+Q_\theta>0$.
+
+Notice that~\eqref{app:mpQP:compatability:assumption} is only nontrivial if~$A_{\hat{\mathcal A}}$ is degenerate.
+%
+Furthermore, condition~\eqref{app:mpQP:compatability:assumption} will be less restrictive than assuming 
+$S_{\hat{\mathcal A}}\theta_0=-b_{\hat{\mathcal A}}$ since it only introduces as many constraints on~$\theta_0$ 
+as there are linearly dependent rows in~$A_{\hat{\mathcal A}}$.
+%
+Since~\eqref{app:mpQP:compatability:assumption} defines a constraint in~\eqref{mpQP:second:stage} it will have a dual
+variable~$\zeta$, in order to guarantee continuity of~$\lambda$ we define $\beta=\zeta$.
+%
+This implies that if $A_{\hat{\mathcal A}}$ is rank deficient the optimal dual variable $\lambda$
+depends continuously on~$\phi$.
+
+In order to compute the solution for the parameter~$\phi = \phi^\ast$ we perform a line-search in order
+to determine the set of active constraints at $\phi = \phi^\ast$.
+%
+For this we notice that we have an affine formulation of all optima with respect to~$\phi$, i.e.
+%
+\begin{equation}\label{mpQP:affine:parameterisation}
+	\begin{array}{rcl} 
+	\theta(\phi) &=&K_\phi \phi + k\\
+	\eta(\phi,\hat \beta) &=& O_\phi \phi + O_{\hat\beta}\hat\beta + o\\
+	x(\phi) &=& M_\theta K_\phi \phi + (M_\theta k+ m)\\
+	\lambda(\phi, \hat\beta) &=& (N_\theta K_\phi + N_\beta O^\zeta_\phi)\phi + 
+	N_\beta O^\zeta_{\hat\beta}\hat\beta + (N_\theta k + N_\beta o^\zeta + n) .
+	\end{array}
+\end{equation}
+%
+The dependency on $\hat\beta$ remains if the initial stage~\eqref{mpQP:second:stage} is degenerate.
+%
+We can use~\eqref{mpQP:affine:parameterisation} to determine the set of active constraints along the line
+%
+\begin{equation}
+	\phi(\alpha) = \phi_0 + \alpha(\phi^\ast-\phi_0)
+\end{equation}
+%
+that means that the first change in the set of active constraints is the one associated with smallest
+value~$\alpha^\ast$ to produce an equality in
+%
+\begin{equation}\label{mpQP:conditions:for:the:line:search}
+	\begin{split}
+	\eta(\phi(\alpha),0)&\geq0\\
+	\lambda(\phi(\alpha),0)&\leq0\\
+	C_{\mathcal I}\theta(\phi(\alpha))&\leq e_{\mathcal I} + T_{\mathcal I}\phi(\alpha)\\
+	A_{\hat{\mathcal I}}x(\phi(\alpha))&\leq b_{\hat{\mathcal I}}+S_{\hat{\mathcal I}}\theta(\phi(\alpha)).
+	\end{split}
+\end{equation}
+%
+After updating the active set $\mathcal A$ and $\hat{\mathcal A}$ accordingly the optimisation sequence~\eqref{app:mpQP:primal}
+and~\eqref{mpQP:second:stage} are re-solved and the line search can be performed with updated affine 
+parametrisations~\eqref{mpQP:affine:parameterisation} starting the line at~$\phi_0=\phi(\alpha^\ast)$.
+
+
+Notice that in~\eqref{mpQP:conditions:for:the:line:search} we set $\hat \beta=0$, this is justified in
+most cases because the existence of a non-trivial dependence on~$\hat\beta$ implies that $\theta$ is uniquely
+defined by the constraints (assuming the constraints are non-redundant), so that $\phi$ is fixed by constraints.
+%
+When the dependence on~$\hat\beta$ is non-trivial two or more constraints on the first minimisation~\eqref{mpQP:second:stage}
+are linearly dependent,
+% 
+i.e. there exists an $i^\ast\in\mathcal A$ such that the solution
+to the first optimisation is unchanged if $i^\ast$ is removed from the set of active constraints while all
+constraints are still satisfied, that is $J_{\mathcal A\setminus i^\ast,\hat{\mathcal A}}(\phi)=J_{\mathcal A,\hat{\mathcal A}}(\phi)$
+while $C_{i^\ast}\theta(\phi)=e_{i^\ast}+T_{i^\ast}\phi$ and $C_{\mathcal I}\theta<e_{\mathcal I}+T_{\mathcal I}\phi$.
+%
+In order to determine the constraint~$i^\ast$ that can be removed from the active set we look at the dual
+problem and its dependence on~$\hat\beta$.
+%
+\begin{equation}
+	J_{\mathcal A,\hat{\mathcal A}}^d(\phi) = \max_\eta -\frac{1}{2} (c_\theta+C^T_{\mathcal A}\eta)^T(R+Q_\theta)^{-1}
+	(c_\theta+C^T_{\mathcal A}\eta)-(e_{\mathcal A}+T_{\mathcal A}\phi)^T \eta+ d_\theta.
+\end{equation}
+%
+From first order conditions~\eqref{mpQP:second:stage:conditions} we know that 
+$\eta = O_\phi\phi+O_{\hat\beta}\hat\beta+o$ with~$C^T_{\mathcal A}O_{\hat\beta}=0$, hence we have
+%
+\begin{equation}\label{mpQP:linesearch:degenerate:constraints:beta}
+	J_{\mathcal A,\hat{\mathcal A}}^d(\phi) = \left\{\begin{array}{rcl}
+	\max_{\hat\beta}& &\mathcal C(\phi) -(e_{\mathcal A}+T_{\mathcal A} \phi)^TO_{\hat\beta}\hat\beta\\
+	\text{s.t.}& &O_\phi\phi+O_{\hat\beta}\hat\beta+o\geq0
+	\end{array}\right.
+\end{equation}
+where $\mathcal C(\phi)$ is a constant which depends only on $\phi$. 
+%
+Maximisation~\eqref{mpQP:linesearch:degenerate:constraints:beta} is a regular linear program in~$\hat\beta$.
+
+
+A standard assumption for active-set solvers is that only one constraint is affected at each line-search
+iteration, this means that when constraints become degenerate the null-space~$\ker C_{\mathcal A}$ is
+one-dimensional, furthermore no additional constraints may be activated since~$\phi$ is already fixed by
+the constraints.
+%
+This implies that~\eqref{mpQP:linesearch:degenerate:constraints:beta} is a scalar linear program, since
+$O_{\hat\beta}$ parametrises the null-space of $\ker C_{\mathcal A}$.
+%
+We conclude that no more than two constraints are candidates to be deactivated in order to remove the degeneracy
+of the constraints, namely the ones corresponding to the maximal and minimal $\hat\beta=
+-\frac{O_\phi\phi+o}{O_{\hat\beta}}$.
+%
+After deactivating the constraint corresponding to the maximiser of~\eqref{mpQP:linesearch:degenerate:constraints:beta},
+the line-search can be continued without redundancy.
+
+
+Notice that here we only deal with a single stage problem, that is we have a recursion of one
+maximisation and one minimisation, however all methods discussed here translate one to one to the
+case where more min-max programs are recursively defined, as in multi stage min-max control.

@@ -1,0 +1,114 @@
+%!TEX root = main.tex
+
+\chapter{Computation of a terminal controller}\label{app:terminal:controller}
+In the following we describe the computation of a state feedback controller,
+which achieves closed loop Lyapunov stability in presence of disturbance,
+see e.g.~\cite{Boyd:94}.
+%
+Consider the robust problem with 
+%
+\begin{equation}
+	x^+ = A x + B u + D w,
+\end{equation}
+%
+which for which we are trying to find a Lyapunov function with a decrease greater than
+%
+\begin{equation}
+	J(x,u,w) = x^TQx + u^TRu - \gamma^2 w^T w.
+\end{equation}
+%
+Using the candidate
+%
+\begin{equation}
+	V(x) = x^T P x
+\end{equation}
+%
+we want to find a state feedback $u = Kx$ for which
+%
+\begin{equation}
+	V(x) - V(x^+)\geq J(x,K x,w)
+\end{equation}
+%
+holds. Using the system dynamics this condition takes the form:
+%
+\begin{equation}\label{app:eq:on:the:way:to:SDP}\Resize{\begin{split}
+	x^T P x ((A+BK)x + Dw)^T P ((A+BK)x + Dw) \geq x^T Q x + x^T K^T R Kx - \gamma^2 w^T w\\
+	x^T(P - (A+BK)^T P (A+BK) - Q - K^T R K)x + w^T(\gamma^2-D^T P D)w - 2 x^T(A+BK)^T P D w \geq 0\\
+	(x^T\,w^T)\left(\begin{array}{cc}
+	P - (A+BK)^T P (A+BK) - Q - K^T R K & -(A+BK)^T P D \\
+	- ((A+BK)^T P D)^T & \gamma^2 - D^T P D
+	\end{array}\right)\left(\begin{array}{c}
+	x \\ w
+	\end{array}\right)\geq 0 .
+\end{split}}\end{equation}
+%
+Inequality~\eqref{app:eq:on:the:way:to:SDP} is a LMI and can be manipulated with the 
+S-procedure:
+%
+\begin{equation}\Resize{\begin{split}
+	\left(\begin{array}{cc}
+	P^{-1} &  \\  & I
+	\end{array}\right)
+	\left(\begin{array}{cc}
+	P - (A+BK)^T P (A+BK) - Q - K^T R K & -(A+BK)^T P D \\
+	- ((A+BK)^T P D)^T & \gamma^2 - D^T P D
+	\end{array}\right)
+	\left(\begin{array}{cc}
+	P^{-1} &  \\  & I
+	\end{array}\right) \geq 0\\
+	\left(\begin{array}{cc}
+	P^{-1} - P^{-1}(A+BK)^T P (A+BK)P^{-1} - P^{-1}QP^{-1} - P^{-1}K^T R K^{-1} & -P^{-1}(A+BK)^T P D \\
+	- (P^{-1}(A+BK)^T P D)^T & \gamma^2 - D^T P D
+	\end{array}\right)\geq 0.
+\end{split}}\end{equation}
+%
+By introducing $X=P^{-1}$ and $Y = K P^{-1}$ we obtain
+%
+\begin{equation}
+	\left(\begin{array}{cc}
+	X & \\ & \gamma^2
+	\end{array}\right)
+	-\left(\begin{array}{ccc}
+	XA^T + Y^T B^T & X & Y^T \\
+	D^T & 0 & 0
+	\end{array}\right)
+	\left(\begin{array}{ccc}
+	X^{-1} & & \\
+	& Q & \\
+	& & R
+	\end{array}\right)
+	\left(\begin{array}{cc}
+	AX + BY & D \\
+	X & 0 \\
+	Y & 0
+	\end{array}\right) \geq 0,
+\end{equation}
+%
+which can be reformulated using the Schur complement
+%
+\begin{equation}\label{app:eq:SDP:for:terminal:controller}
+	\left(\begin{array}{cc|ccc}
+	X & & XA^T + Y^T B^T & X & Y^T \\
+	 & \gamma^2 & D^T & & \\ \hline
+	 AX + BY & D & X & & \\
+	 X & & & Q^{-1} & \\
+	 Y & & & & R^{-1}
+	\end{array}\right) \geq 0.
+\end{equation}
+%
+Solving the LMI~\eqref{app:eq:SDP:for:terminal:controller} with any SDP solver 
+would yield the desired feedback matrix $K$ and terminal cost weight $P$. However,
+to avoid numerical matrix inversion we impose the additional equality:
+%
+\begin{equation}\label{app:eq:equality:constraint:for:SDP}\begin{split}
+	X = P^{-1}\\
+	X - P^{-1} = 0 \\
+	X - IP^{-1}I = 0 \\
+	\left(\begin{array}{cc}
+	P & I \\ I & X
+	\end{array}\right) = 0.
+\end{split}\end{equation}
+%
+The equality in~\eqref{app:eq:equality:constraint:for:SDP} can be enforced my using
+$\text{trace}(P)$ as an objective for the SDP.
+The feedback solution for the disturbance is given by $K_w = (\gamma^2-D^T P D)^{-1}D^T P (A+BK)$.

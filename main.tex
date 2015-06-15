@@ -1,0 +1,140 @@
+\documentclass[12pt]{ociamthesis}  % default square logo 
+%\documentclass[12pt,beltcrest]{ociamthesis} % use old belt crest logo
+%\documentclass[12pt,shieldcrest]{ociamthesis} % use older shield crest logo
+
+%load any additional packages
+\usepackage{color}
+\usepackage[usenames]{xcolor} 
+\usepackage{amssymb,mathrsfs,amsthm,amsmath,lpic,cite,natbib}
+
+% \includeonly{chapter.State.dependent.disturbance}
+
+%input macros (i.e. write your own macros file called mymacros.tex 
+%and uncomment the next line)
+%\include{mymacros}
+
+\title{Robust Model Predictive Control}   %note \\[1ex] is a line break in the title
+
+\author{Rainer Manuel Schaich}             %your name
+\college{Worcester College}  %your college
+
+%\renewcommand{\submittedtext}{change the default text here if needed}
+\degree{Doctor of Philosophy}     %the degree
+\degreedate{Hilary 2017}         %the degree date
+
+%end the preamble and start the document
+% \usepackage{showkeys}
+
+\colorlet{lcolor}{blue!40!black}
+\colorlet{ucolor}{magenta!40!black}
+\colorlet{ccolor}{green!40!black}
+
+\usepackage[colorlinks=true,%
+            linkcolor=lcolor,%
+            urlcolor=ucolor,%
+            citecolor=ccolor]{hyperref}
+\hypersetup{pdfauthor={Manuel Schaich},hidelinks=true}
+
+\graphicspath{{./Pix/}}
+
+\providecommand{\norm}[1]{\left\|#1\right\|}
+\providecommand{\abs}[1]{\left|#1\right|}
+\providecommand{\span}{\text{span}}
+\providecommand{\conv}{\text{conv}}
+\providecommand{\rk}[1]{\text{rank}\left(#1\right)}
+
+\newcommand*{\Resize}[1]{\resizebox{\columnwidth}{!}{$#1$}}
+
+\newcounter{thmcount}[chapter]
+\renewcommand{\thethmcount}{\thechapter.\arabic{thmcount}}
+\renewcommand{\theequation}{\thechapter.\arabic{equation}}
+
+
+% \newcounter{subeq}[equation]
+% \renewcommand{\thesubeq}{\theequation.\roman{subeq}}
+% \newcommand{\subeqcount}[1]{\refstepcounter{subeq}\thesubeq\label{#1}}
+
+\makeatletter 
+\def\mynobreakpar{\par\nobreak\@afterheading} 
+\def\mynobreakline{\par\nobreak\vspace{-\parskip}\@afterheading\noindent} 
+\makeatother
+
+\newenvironment{thm}[1][]%
+{\refstepcounter{thmcount}\par\noindent\textbf{Lemma \thethmcount} \textsc{#1}\mynobreakpar%
+\begin{tabular}{|p{0.98\textwidth}} \it}%
+{\end{tabular}\par\noindent}
+
+\newenvironment{korr}%
+{\refstepcounter{thmcount}\par\noindent\textbf{Corollary \thethmcount}\mynobreakpar%
+\begin{tabular}{|p{0.98\textwidth}} \it}%
+{\end{tabular}\par\noindent}
+
+\theoremstyle{remark}
+\newtheorem{rem}[thmcount]{Remark}
+
+\newenvironment{ass}%
+{\refstepcounter{thmcount}\par\noindent\textbf{Assumption \thethmcount\;}%
+\newline}%
+{\par\noindent}
+
+\newenvironment{blanko}[1][]%
+{\refstepcounter{thmcount}\vspace{1em}\noindent\textbf{#1 \thethmcount\;}\textsc{#1}\mynobreakpar}%
+{\par\noindent}
+
+
+\newenvironment{defn}[1][]%
+{\refstepcounter{thmcount}\par\noindent\textbf{Definition \thethmcount} \textsc{#1}%
+\mynobreakpar%
+\begin{tabular}{|p{0.98\textwidth}} \it}%
+{\end{tabular}\vspace{1em}\noindent}
+
+
+\DeclareFontFamily{U}{mathx}{\hyphenchar\font45}
+\DeclareFontShape{U}{mathx}{m}{n}{
+      <5> <6> <7> <8> <9> <10> gen * mathx
+      <10.95> mathx10 <12> <14.4> <17.28> <20.74> <24.88> mathx12
+      }{}
+\DeclareSymbolFont{mathx}{U}{mathx}{m}{n}
+\DeclareFontSubstitution{U}{mathx}{m}{n}
+\DeclareMathSymbol{\temp}{\mathbin}{mathx}{'341}
+\newcommand{\bigominus}{\raisebox{10pt}{$\temp$}}
+
+
+\begin{document}
+%this baselineskip gives sufficient line spacing for an examiner to easily
+%markup the thesis with comments
+\baselineskip=18pt plus1pt
+
+%set the number of sectioning levels that get number and appear in the contents
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+
+\maketitle    
+
+\begin{romanpages}          % start roman page numbering
+\tableofcontents            % generate and include a table of contents
+\listoffigures              % generate and include a list of figures
+\end{romanpages}            % end roman page numbering
+
+\include{chapter.Introduction}
+\include{chapter.Concepts}
+\include{appendix.mpQP}
+\include{chapter.State.dependent.disturbance}
+
+%now enable appendix numbering format and include any appendices
+\appendix
+\include{appendix.degenerate.linear.systems}
+\include{appendix.terminal.controller}
+\include{app.determining.PWA}
+
+
+%next line adds the Bibliography to the contents page
+\addcontentsline{toc}{chapter}{Bibliography}
+%uncomment next line to change bibliography name to references
+%\renewcommand{\bibname}{References}
+\bibliography{MyLib}        %use a bibtex bibliography file refs.bib
+\bibliographystyle{plain}  %use the plain bibliography style
+
+
+\end{document}
