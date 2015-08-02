@@ -17,19 +17,21 @@ Assume we want to solve the mpQP
 %
 \begin{equation}
 	J(\phi) = \left\{\begin{array}{rcl}
-	\min_\theta& &\frac{1}{2} \theta^T R \theta  + V(\theta) \\
+	\min_\theta& &\frac{1}{2} \theta^T R \theta r^T\theta + V(\theta) \\
 	\text{s.t.}& &C\theta\leq e+ T\phi
 	\end{array}\right.
 \end{equation}
 %
-with $R>0$ and the constraints such that the origin is contained in the interior for a vanishing parameter
-$\phi=0$, i.e. $0\in\{\theta:C\theta\leq e\}$.
+with the positive definite weight $R>0$ and the real parameter $\theta$. 
+%
+We furthermore assume that the constraints are such that the origin is an interior point for a vanishing parameter
+$\phi=0$, i.e. $0\in\{\theta:C\theta< e\}$.
 %
 Using
 %
 \begin{equation}
 	V(\theta) = \left\{\begin{split}
-		\max_x & \;\frac{1}{2} x^T Q x\\
+		\max_x & \;\frac{1}{2} x^T Q x + q^Tx\\
 		\text{s.t.} &\; Ax  \leq b +S\theta
 	\end{split}\right.
 \end{equation}
