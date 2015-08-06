@@ -1,0 +1,235 @@
+\documentclass{article}
+\usepackage{color}
+\usepackage[usenames]{xcolor} 
+\usepackage{amssymb,mathrsfs,amsthm,amsmath,lpic,cite,natbib}
+\usepackage{tikz}
+
+\newcommand\monthheight{1.2em}
+\newcommand\blockwidth{6cm}
+
+\renewcommand\thesubsection{\arabic{subsection}}
+
+
+\begin{document}
+
+\section*{Outline}
+
+The method of model predictive control combines optimising performance of a controlled system while respecting 
+system and input constraints.
+%
+The aim of robust model predictive control is to provide guarantees for stability while still being able to push
+a system to its physical limitations to optimise its performance.
+%
+Naturally, robustifying a model predictive controller leads to a more conservative controller and an obvious goal is
+to try to keep the conservativeness as minimal as possible.
+%
+The first part of this work is dedicated in reducing this redundant conservativeness which is introduced by approximating
+disturbances which are upper bounded by a fixed value.
+%
+In particular a robust model predictive controller using an active set solver approach is derived for linear systems
+with additive disturbances and quadratic cost functions which have to satisfy linear state and input constraints.
+%
+The novelty is that the disturbance is considered to constrained to a set which depends on the state and the input in
+a piecewise affine way.
+%
+The necessary set theoretic framework to handle such sets is elaborated as general as possible, as well as its numerical
+treatment for which computational bounds are presented.
+%
+Considering disturbance bounded in a piecewise affine way allows applying linear robust model predictive control
+methods for various classes of systems which are not necessarily perturbed in an additive way.
+%
+For example, it is shown that linear systems subject to linearly constrained multiplicative uncertainties have an
+equivalent linear system with piecewise affine additive disturbances, further it is presented how a piecewise affine 
+additive disturbance can be used to bound linearisation errors for nonlinear systems.
+%
+Hence, the usage of piecewise affine disturbance sets allows a less conservative robust treatment of nonlinear systems
+than conventional constant upper bounds, while still benefiting from all properties of the active set solver approach.
+
+Since the the active set solver approach for min-max robust control formulations is well understood, it would be beneficial
+to be able to rewrite stochastic model predictive control problems, i.e. model predictive control problems where the system
+is subject to probabilistic disturbances which have to satisfy probabilistic constraints, as robust model predictive control
+problems.
+%
+A promising way to transform probabilistic constraints into deterministic ones which guarantee the satisfaction of the probabilistic
+constraints is to use so called $p$-efficient sets.
+%
+These $p$-efficient sets have not yet been applied to model predictive control problems, but would allow robust treatment of stochastic
+model predictive control problems and therefore a fast online implementation.
+%
+Furthermore, $p$-efficient sets are not tied to distributions with compact support, allowing treatment of a more general class of
+disturbances to be numerically analysed with existing methods.
+\pagebreak
+
+\section*{Estimated thesis structure}
+
+\setcounter{subsection}{1}
+
+\subsection{Concepts in robust model predictive control}\label{chap:concepts}
+This section aims to give an overview of concepts and ideas that are not particular to
+the active-set solver approach presented later.
+%
+An abstract derivation of the idea to use a min-max approach to formulate robust model predictive control
+problems is presented.
+%
+Furthermore the concepts necessary to provide stability guarantees for the robust model predictive control
+scheme are explained.
+%
+This leads to a discussion about terminal cost terms and introduction of terminal constraints. 
+%
+Both of these concepts are well known and well established for nominal model predictive control, but have to 
+be slightly modified for the use in a disturbed setup. 
+%
+The emphasis of this section is the discussion about so called robust positive invariant sets, the maximal
+robust positive invariant set in particular, furthermore so called controllable sets are derived.
+%
+Using controllable and robust positive invariant sets as constraints and the terminal cost term in the min-max optimisation
+recursion, a proof of stability is presented.
+
+\subsection{Recursive multi-parametric quadratic programs}\label{chap:recursive:mpqp}
+In this section the active-set solver for quadratic min-max programs is described.
+%
+This builds the foundation to the approach presented in subsequent chapters.
+%
+An active set solver can explicitly solve an optimisation program for which the set of active constraints is
+known a priori, furthermore, using the knowledge about the structure of the solution to a quadratic program,
+an active set solver returns the terms necessary to produce the numeric optimiser.
+%
+Having the structural components of the solution of the quadratic program allows the treatment of so called
+multi-parametric quadratic programs, i.e quadratic programs which depend on a parameter.
+%
+It is presented how this is applied to quadratic min-max programs, such as the one arising in robust model
+predictive control.
+%
+In order to determine the set of active constraints the structure of the optimisers once again is used to
+justify a performing a line search over the initial state.
+%
+The procedure to perform the line search necessary is presented.
+
+\subsection{Parametrised constraint sets}\label{chap:mrpi:sets}
+One of the main contributions of this thesis is the treatment of disturbance sets that depend on a parameter,
+either the state and/or the input or a scaling parameter.
+%
+These sets have not received sufficient treatment in the literature to use them in a min-max type robust
+model predictive control problem.
+%
+This chapter presents some general properties of parametrised sets, convexity of the Pontryagin difference
+is of particular interest.
+%
+For numerical tractability special care is given to sets which depend on a parameter in a piecewise affine way.
+%
+An example of how to use such sets to account for nonlinearities in a robust model predictive setup is presented.
+%
+An algorithm to compute the maximal robust positive invariant set for piecewise affine disturbance sets is presented,
+together with the proof of its finite determinability.
+
+\subsection{An active-set solver for the solution of min-max robust model predictive control problems}
+In this chapter the active set solver discussed in chapter~\ref{chap:recursive:mpqp} is applied to quadratic
+robust model predictive control problems.
+%
+The abstract method described in chapter~\ref{chap:recursive:mpqp} to find the solution of multi parametric quadratic
+programs is translated for robust model predictive control problems.
+%
+As an illustration of the presented scheme the problem derived in the previous chapter is solved numerically and its solution
+is discussed.
+%
+Advantages of this approach over known explicit model predictive control approaches are highlighted.
+
+\subsection{$p$-efficient sets in stochastic model predictive control}
+This chapter presents the analysis of so called $p$-efficient points.
+%
+Using $p$-efficient points allows guaranteeing the satisfaction of probabilistic constraints by invoking deterministic
+constraints instead of probabilistic ones.
+%
+Properties of $p$-efficient sets are known for a particular kind of probabilistic constraints, which are not usual
+in stochastic model predictive control problems with probabilistic constraints.
+%
+In this chapter an approximate translation for more general constraint sets is presented.
+%
+The aim of the analysis presented is to reformulate stochastic model predictive control programs as robust model predictive
+control programs which guarantee the feasibility of the stochastic model predictive control program without being overly
+conservative.
+
+\subsection{Unbounded disturbances in stochastic model predictive control}
+A standard characteristic of probabilistic variable is that, different to robust variables, their realisations are not 
+necessarily bounded.
+%
+Justified by realism and physical meaning of variables, bounds are often assumed which also allows for numeric treatment.
+%
+For analytical purposes this assumption may not be necessary.
+%
+Hence this chapter presents analysis for stochastic model predictive control problems without compact supported disturbances,
+in particular its recursive feasibility properties.
+%
+Utilising $p$-efficiency sets may again allow implementation of the concepts presented in this chapter.
+
+
+\newpage
+
+\section*{Estimated timetable}
+
+
+\tikzset{entry/.style 2 args={
+	draw,
+	rectangle,
+	anchor=north west,
+	line width=.4pt,
+	inner sep=.3333em,
+	text width={\blockwidth/#2-.6666em-.4pt},
+	minimum height=#1*\monthheight,
+	align=center
+}}
+
+\begin{tikzpicture}[x=\blockwidth,y=-\monthheight]
+\foreach \vpos/\month in 	{1/Oct 2013,2/Nov 2013,3/Dec 2013,%
+							4/Jan 2014,5/Feb 2014,6/Mar 2014,%
+							7/Apr 2014,8/May 2014,9/Jun 2014,%
+							10/Jul 2014,11/Aug 2014,12/Sep 2014,%
+							13/Oct 2014,14/Nov 2014,15/Dec 2014,%
+							16/Jan 2015,17/Feb 2015,18/Mar 2015,%
+							19/Apr 2015,20/May 2015,21/Jun 2015,%
+							22/Jul 2015,23/Aug 2015,24/Sep 2015,%
+							25/Oct 2015,26/Nov 2015,27/Dec 2015,%
+							28/Jan 2016,29/Feb 2016,30/Mar 2016,%
+							31/Apr 2016,32/May 2016,33/Jun 2016,%
+							34/Jul 2016,35/Aug 2016,36/Sep 2016,%
+							37/Oct 2016,38/Nov 2016,39/Dec 2016,%
+							40/Jan 2017,41/Feb 2017,42/Mar 2017}
+	\node[anchor=north east] at (1,\vpos) {\month};
+
+	\draw (1,0) -- (1,43);
+	\draw (2,0) -- (2,43);
+	\draw (3,0) -- (3,43);
+	\draw (1,1) -- (3,1);
+
+	\node[anchor=north] at (1.5,0) {Research};
+	\node[anchor=north] at (2.5,0) {Writing};
+
+	\node[entry={3}{1}] at (1,1) {Familiarising with topic and predecessor's work};
+	\node[entry={6}{2}] at (1,4) {Deriving theory for PWA disturbance sets};
+	\node[entry={6}{2}] at (1.5,6) {Numerical implementation for inverted pendulum};
+
+	\node[entry={3}{2}] at (2,10) {Transfer report};
+	\node[entry={2}{2}] at (2.5,10) {ACC paper};
+
+	\node[entry={2}{2}] at (1,13) {Theory for scaled constraints sets};
+	\node[entry={1}{2}] at (1,17) {Computation of scaled MRPI set};
+	\node[entry={5}{2}] at (1.5,15) {Implementation of Matlab interface for LRS library};
+
+	\node[entry={4}{2}] at (2,18) {Ch. 2 - 4 of thesis};
+	\node[entry={1}{2}] at (2.5,18) {CDC paper};
+	\node[entry={1}{2}] at (2.5,19) {NMPC paper};
+
+	\node[entry={1}{1}] at (2,22) {NMPC poster};
+
+	\node[entry={4}{1}] at (1,22) {Theory for SMPC};
+	\node[entry={2}{1}] at (1,26) {Reformulation of SMPC into RMPC};
+	\node[entry={5}{1}] at (1,28) {Theory for disturbances with unbounded support in SMPC};
+
+	\node[entry={2}{1}] at (2,27) {Paper about $p$-efficiency sets in SMPC};
+	\node[entry={2}{2}] at (2.5,32) {Paper on results};
+	\node[entry={10}{2}] at (2,33) {Writing up thesis};
+
+\end{tikzpicture}
+
+
+\end{document}

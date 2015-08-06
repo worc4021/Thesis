@@ -17,7 +17,7 @@ Assume we want to solve the mpQP
 %
 \begin{equation}
 	J(\phi) = \left\{\begin{array}{rcl}
-	\min_\theta& &\frac{1}{2} \theta^T R \theta r^T\theta + V(\theta) \\
+	\min_\theta& &\frac{1}{2} \theta^T R \theta + r^T\theta + V(\theta) \\
 	\text{s.t.}& &C\theta\leq e+ T\phi
 	\end{array}\right.
 \end{equation}
@@ -54,7 +54,7 @@ active constraints we consider the primal equality constrained mpQP
 %
 \begin{equation}\label{app:mpQP:primal}
 	V_{\hat{\mathcal A}}(\theta_0) = \left\{\begin{split}
-		\max_x & \;\frac{1}{2} x^T Q x\\
+		\max_x & \;\frac{1}{2} x^T Q x + q^Tx\\
 		\text{s.t.} &\; A_{\hat{\mathcal A}}x  = b_{\hat{\mathcal A}} +S_{\hat{\mathcal A}}\theta_0
 	\end{split}\right.
 \end{equation}
@@ -62,9 +62,9 @@ active constraints we consider the primal equality constrained mpQP
 we get the Lagrangian
 %
 \begin{equation}\begin{split}
-	L_{\hat{\mathcal A}}(x,\lambda,\theta_0)  &= \frac{1}{2} x^T Q x + \lambda^T\left(A_{\hat{\mathcal A}}x - 
+	L_{\hat{\mathcal A}}(x,\lambda,\theta_0)  &= \frac{1}{2} x^T Q x +q^Tx + \lambda^T\left(A_{\hat{\mathcal A}}x - 
 	b_{\hat{\mathcal A}} - S_{\hat{\mathcal A}}\theta_0\right)\\
-	&=\frac{1}{2} x^T Q x + \left(A_{\hat{\mathcal A}}^T\lambda\right)^Tx 
+	&=\frac{1}{2} x^T Q x + \left(q + A_{\hat{\mathcal A}}^T\lambda\right)^Tx 
 	-\lambda^T \left(b_{\hat{\mathcal A}} + S_{\hat{\mathcal A}}\theta_0\right)
 \end{split}\end{equation}
 %
@@ -72,14 +72,15 @@ minimising over $x$ we obtain the unconstrained dual mpQP
 %
 \begin{equation}\label{app:mpQP:dual}
 	\min_\lambda -\frac{1}{2}\lambda^T A_{\hat{\mathcal A}} Q^{-1}A_{\hat{\mathcal A}}^T \lambda 
-	-(b_{\hat{\mathcal A}} + S_{\hat{\mathcal A}}\theta_0)^T\lambda
+	-(b_{\hat{\mathcal A}} + S_{\hat{\mathcal A}}\theta_0 + A_{\hat{\mathcal A}} Q^{-1}q)^T\lambda
+	-\frac{1}{2}q^TQ^{-1}q
 \end{equation}
 %
 To solve~\eqref{app:mpQP:primal} we solve the first order optimality conditions
 %
 \begin{equation}\label{app:kkt:conditions}
 	\begin{array}{ccccccc}
-		Q x &+& A^T_{\hat{\mathcal A}}\lambda & = & 0&& \\
+		Q x &+& A^T_{\hat{\mathcal A}}\lambda & = & -q && \\
 		A_{\hat{\mathcal A}} x & & & = & b_{\hat{\mathcal A}}& +& S_{\hat{\mathcal A}}\theta_0
 	\end{array}
 \end{equation}
@@ -103,7 +104,7 @@ we find
 \begin{equation}\Resize{
 	-\frac{1}{2}\underbrace{(N_\theta \theta_0 + N_\beta \beta + n)^T A_{\hat{\mathcal A}} Q^{-1}A^T_{\hat{\mathcal A}} 
 	(N_\theta \theta_0 + N_\beta \beta + n)}_{\neq f(\beta)} -\underbrace{( 
-	b_{\hat{\mathcal A}} + S_{\hat{\mathcal A}}\theta_0)^T(N_\theta \theta_0 + N_\beta \beta + 
+	b_{\hat{\mathcal A}} + S_{\hat{\mathcal A}}\theta_0 + A_{\hat{\mathcal A}} Q^{-1} q)^T(N_\theta \theta_0 + N_\beta \beta + 
 	n)}_{f(\theta_0)+f_c + (b^T_{\hat{\mathcal A}}+\theta^T_0S^T_{\hat{\mathcal A}})N_\beta 
 	\beta}
 	}
@@ -136,9 +137,9 @@ The constraint introduced for that purpose is called \emph{compatibility constra
 The optimal cost is given by
 %
 \begin{equation}\label{app:mpQP:cost:to:go}\begin{split}
-	V_{\hat{\mathcal A}}(\theta_0) = &\frac{1}{2}\theta^T_0 M_\theta^T Q M_\theta \theta_0 + m^TQM_\theta \theta_0 + 
-	\frac{1}{2} m^T Q m\\
-	&\frac{1}{2} \theta^T_0 Q_\theta \theta_0 + c^T_\theta \theta_0 + d_\theta,
+	V_{\hat{\mathcal A}}(\theta_0) = &\frac{1}{2}\theta^T_0 M_\theta^T Q M_\theta \theta_0 + \left(m^TQM_\theta + q^TM\right) \theta_0 + 
+	\left( \frac{1}{2} m^T Q m + q^T m\right)\\
+	&\frac{1}{2} \theta^T_0 Q_\theta \theta_0 + q^T_\theta \theta_0 + d_\theta,
 \end{split}\end{equation}
 %
 i.e. a quadratic function in the parameter.
@@ -147,7 +148,7 @@ Next we want to solve
 %
 \begin{equation}\label{mpQP:second:stage}
 	J_{\mathcal A,\hat{\mathcal A}}(\phi_0) = \left\{\begin{array}{rl}
-	\min_\theta & \frac{1}{2}\theta^TR\theta + V_{\hat{\mathcal A}}(\theta)\\
+	\min_\theta & \frac{1}{2}\theta^TR\theta + r^T\theta + V_{\hat{\mathcal A}}(\theta)\\
 	\text{s.t.} & C_{\mathcal A}\theta = e_{\mathcal A} + T_{\mathcal A} \phi
 	\end{array}\right.
 \end{equation}
@@ -159,7 +160,7 @@ the first order constraints of~\eqref{mpQP:second:stage} reduce to
 %
 \begin{equation}\label{mpQP:second:stage:conditions}
 	\begin{array}{ccccccc}
-		(R + Q_\theta)\theta &+& C^T_{{\mathcal A}}\eta & = & -c_\theta&& \\
+		(R + Q_\theta)\theta &+& C^T_{{\mathcal A}}\eta & = & -q_\theta-r && \\
 		C_{{\mathcal A}} \theta & & & = & e_{{\mathcal A}}& +& T_{{\mathcal A}}\phi_0
 	\end{array}
 \end{equation}
@@ -186,6 +187,8 @@ variable~$\zeta$, in order to guarantee continuity of~$\lambda$ we define $\beta
 %
 This implies that if $A_{\hat{\mathcal A}}$ is rank deficient the optimal dual variable $\lambda$
 depends continuously on~$\phi$.
+%
+This can be illustrated
 
 In order to compute the solution for the parameter~$\phi = \phi^\ast$ we perform a line-search in order
 to determine the set of active constraints at $\phi = \phi^\ast$.
