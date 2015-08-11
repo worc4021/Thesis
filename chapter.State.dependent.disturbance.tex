@@ -645,6 +645,137 @@ has~6 supporting hyperplanes and the algorithm terminates after three iterations
 %
 %
 %
+\section{Scaled disturbance sets}\label{sec:scaled:disturbance:sets}
+In this section we discuss the computation of the maximal positive invariant set for scaled disturbance
+sets, i.e. sets which are scaled by a scalar parameter~$\theta\geq-1$:
+%
+\begin{equation}
+\mathcal V(\theta) = \{v: Gv\leq(1+\theta){\bf{1}}\}
+= (1+\theta)\mathcal V(0).
+\end{equation}
+%
+For the sake of generality, we discuss the case for input constrained systems under a given feedback law
+we present the calculation in combination with a non-uniformly scaled input constraint set
+%
+\begin{equation}
+\mathcal U({\bf{\alpha}}) = \{u: Fu\leq\left(I+\text{diag}(\alpha_1,\dots,\alpha_p)\right){\bf{1}}\}.
+\end{equation}
+%
+The reason for allowing general scaling parameters for the input constraint set but restricting the scaling
+to a uniform one for the disturbance set will become clear in the proceeding discussion, it due to the
+way we avoid solving multi-parametric linear programs 
+
+The necessity of uniform scaling of the disturbance constraints is due to the method we use to avoid
+solving multi-parametric linear programs in every step of the proposed iteration.
+A representation of the MRPI set of a system parametrised with respect to a scaling parameter allows us
+to study the system's sensitivity to \emph{stronger/weaker} disturbances; similarly analysing the sensitivity to scaling of input 
+constraints can be useful to choose particular actuators.
+%
+\begin{rem}
+The set $\mathcal V(\theta)$ is non-empty and contains the origin for all $\theta>-1$ and hence the 
+maximum
+%
+\[
+0<\begin{array}[t]{rl}
+\displaystyle\max_v & c^T v\\
+\text{s.t.}& Gv \leq (1+\theta){\bf{1}}
+\end{array}
+\]
+%
+is positive for any non-zero $c$.
+\end{rem}
+%
+In the following we describe an algorithm to compute the MRPI set $\mathcal Z^\infty$ contained in 
+$\mathcal Z = \{(x,\theta):\mathcal F_i x+\mathcal G_i\theta \leq 1,\forall\, i\in\mathcal I\}$.
+As in the state dependent case we iteratively introduce constraints \emph{separating} points
+for which the successor state can lie outside the previous set, i.e. starting from $Z_0 = \mathcal Z$
+we determine the first iterate by enforcing all individual constraints onto all possible successor states:
+$Z_1=Z_0\cap D_0$ where $D_0$ is defined by
+%
+\begin{equation}\small
+\begin{split}
+	D_0 =& \{\mathcal F_i(\Psi x+v) + \mathcal G_i\theta \leq 1 \ \forall\, v\in\mathcal V(\theta), \ i\in\mathcal I_0\}\\
+	=&\Biggl\{\mathcal F_i\Psi x + \begin{array}[t]{rl}\displaystyle\max_v& F_i v \\ \text{s.t.}& Gv \leq 
+	(1+\theta){\bf{1}} \end{array}
+	 + \mathcal G_i \theta \leq 1 \ \forall\, i\in\mathcal I_0\Biggr\}\\
+	=&\Biggl\{\mathcal F_i\Psi x + (1+\theta)\underbrace{\begin{array}[t]{rl}\displaystyle\max_v& F_i v \\ 
+	\text{s.t.}& Gv \leq {\bf{1}}\end{array}}_{v_{0,i}^\ast}
+	 + \mathcal G_i \theta \leq 1 \ \forall\, i\in\mathcal I_0\Biggr\}\\
+	=&\{\mathcal F_i\Psi x + (\mathcal G_i + v_{0,i}^\ast)\theta \leq 1 - v_{0,1}^\ast \ \forall \, i\in\mathcal I_0
+	\}
+\end{split}\end{equation}
+%
+Using the same principle we define $Z_{k+1}=Z_k\cap D_k$ with $D_k$ given by
+%
+\begin{equation}\label{eq:parametrised:Dk}\small
+	D_k = \biggl\{\mathcal F_i\Psi^{k+1}x+ \biggl(\mathcal G_i +\sum_{0\leq l\leq k} v_{l,i}^\ast\biggr)\theta \leq 1 
+	- \sum_{0\leq l\leq k} v_{l,i}^\ast\, i\in\mathcal I_0\biggr\}
+\end{equation}
+%
+where we use 
+%
+\begin{equation}\label{eq:definition:v:ast}
+v_{l,i}^\ast = \begin{array}[t]{rl}\displaystyle\max_v & \mathcal F_i \Psi^{l} v \\ \text{s.t.}& Gv\leq{\bf{1}}
+\end{array}
+\end{equation}
+%
+Notice that~\eqref{eq:definition:v:ast} can be represented in various ways:
+\[
+\begin{array}{@{}rl@{\hspace{0.7em}}c@{\hspace{0.7em}}rl@{\hspace{0.7em}}c@{\hspace{0.7em}}rl@{}}
+\max_v&\mathcal F_i \Psi^l v &=& \max_{\tilde v}&\mathcal F_i \tilde  v &=& \max_{\tilde v}&\mathcal F_i \tilde v \\ 
+\text{s.t.}&v\in\bar{\mathcal{V}} & & \text{s.t.}&\Psi^{-l} \tilde v\in\bar{\mathcal{V}} & &
+\text{s.t.}& \tilde v\in\Psi^l\bar{\mathcal{V}}
+\end{array}
+\]
+%
+where $\bar{\mathcal{V}}=\mathcal V(0)$ for notational convenience. For any fixed $\hat\theta>-1$
+we have the closed form description
+%
+\begin{equation}\label{eq:closed:form:parametrised:iterates}
+\begin{split}
+	Z_{k+1}\vert_{\hat\theta} &= Z_{k}\vert_{\hat\theta}\cap\left(
+	\Psi^{-1}Z_k\vert_{\hat\theta}\ominus\Psi^{k-1}\mathcal V(\hat\theta)\right)\\
+	&=\bigcap_{0\leq l\leq k}\left(\Psi^{-l}\mathcal Z\vert_{\hat\theta}\underset{0\leq i\leq l-1}{\bigominus} 
+	\Psi^i \mathcal V(\hat\theta)
+	\right).
+\end{split}
+\end{equation}
+%
+The iteration terminates when $Z_k\subseteq Z_{k+1}$. As in section~\ref{sec:state:dep:MRPI}
+we will require $\mathcal Z\vert_{\hat\theta}$ to be contained in an observable band: $\mathcal Z\vert_{\hat\theta}
+=\{x:\mathcal Fx \leq {\bf{1}}-\mathcal G\hat\theta\}\subseteq \mathcal B=\{x:\Gamma x\leq {\bf{1}}\wedge -\Gamma 
+x\leq {\bf{1}}\}$ for all $\hat\theta>-1$. We have the following result:
+%
+\begin{thm}
+Let the system constraints be contained in a band $\mathcal Z\vert_{\hat\theta}\subseteq\mathcal 
+B=\{x:\Gamma x\leq {\bf{1}}\wedge -\Gamma x\leq {\bf{1}}\}$ for any fixed $\hat\theta$, let the
+pair $(\Psi,\Gamma)$ be observable and let $\mathcal V(0)$ be bounded, then $Z_N\subseteq Z_{N+1}$
+for a finite $N$. Hence the MRPI set $\mathcal Z^\infty = Z_N$ is a finite polyhedron.
+\end{thm}
+%
+\begin{proof}
+The proof is similar to that of Lemma~\ref{thm:finite:MRPI:set:state:dependable}.
+First we argue that for each fixed $\hat\theta$ the set $Z_k\vert_{\hat\theta}$ becomes compact using the same
+observability argument as in Lemma~\ref{thm:finite:MRPI:set:state:dependable}.
+We then use the representation~\eqref{eq:closed:form:parametrised:iterates} to argue that $D_k$ 
+in~\eqref{eq:parametrised:Dk} grows exponentially and hence contains any compact set after a finite number
+of iterations. Fixing $\theta=\hat\theta$ does not affect the result since
+our argument is constructed for a fixed matrix $\Gamma$ with rows scaled by 
+$(1-\mathcal G_i\hat\theta)^{-1}$; clearly we can re-scale the rows to accommodate any other choice of $\hat\theta>-1$.
+\end{proof}
+
+The iterative process described above allows uniform scaling of the disturbance set. As mentioned earlier, the 
+algorithm can be extended to the case of non-uniformly scaled input constraints to accommodate more degrees of freedom for 
+system analysis simply by using 
+%
+\[
+\mathcal Z = \{(x,\theta,\alpha): \mathcal F x + \mathcal G\theta + 
+\mathcal H \alpha \leq {\bf{1}}\}.
+\]
+%
+This does not affect the algorithm since at each step of the iteration 
+the elements of $\mathcal H$ remain unchanged. 
+
 \section{Problem Formulation}
 In this section we present the min-max optimisation problem we will solve in order to
 obtain a robust model predictive controller for a linear system subject to state and 

@@ -1,7 +1,9 @@
-\documentclass{article}
+\documentclass[a4paper,12pt]{scrartcl}
+\usepackage[english]{babel}
+\usepackage[margin=20mm,footskip=10mm]{geometry}
 \usepackage{color}
 \usepackage[usenames]{xcolor} 
-\usepackage{amssymb,mathrsfs,amsthm,amsmath,lpic,cite,natbib}
+\usepackage{amssymb,mathrsfs,amsthm,amsmath,lpic,cite,natbib,setspace}
 \usepackage{tikz}
 
 \newcommand\monthheight{1.2em}
@@ -11,8 +13,16 @@
 
 
 \begin{document}
-
+\pagestyle{empty}
+\begin{center}
+{\Large{University of Oxford\\ \vspace{2em} Submission for Confirmation of Status\\ \vspace{4em}}}
+{\Huge{Robust Model Predictive Control\\}}
+{\Large{\vspace{3em} Rainer Manuel Schaich\\ \vspace{2em} Supervisor: Mark Cannon\\ \vspace{2em} \today}}
+\end{center}
+\pagebreak
+\pagestyle{plain}
 \section*{Outline}
+\doublespacing
 
 The method of model predictive control combines optimising performance of a controlled system while respecting 
 system and input constraints.
@@ -64,6 +74,27 @@ disturbances to be numerically analysed with existing methods.
 
 \setcounter{subsection}{1}
 
+\singlespacing
+\begin{tabular}{|p{.8\textwidth}|p{.2\textwidth}|}
+\hline
+\textbf{Chapter} & \textbf{Completion}\hfill \\
+\hline\hline
+Concepts of robust model predictive control & 90\% \\
+\hline 
+Recursive mpQP and line-search & 100\% \\
+\hline
+Parametrised constraint sets & 100\% \\
+\hline
+Active-set solver for min-max programs & 100\% \\
+\hline
+$p$-efficient sets in SMPC & 15\% \\
+\hline
+Unbounded disturbances in SMPC & $>$5\% \\
+\hline\hline
+\textbf{Overall} & 65\% \\ \hline
+\end{tabular}
+
+\doublespacing
 \subsection{Concepts in robust model predictive control}\label{chap:concepts}
 This section aims to give an overview of concepts and ideas that are not particular to
 the active-set solver approach presented later.
@@ -164,7 +195,7 @@ Utilising $p$-efficiency sets may again allow implementation of the concepts pre
 
 
 \newpage
-
+\singlespacing
 \section*{Estimated timetable}
 
 
