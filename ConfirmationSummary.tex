@@ -24,7 +24,7 @@
 \section*{Outline}
 \doublespacing
 
-The method of model predictive control combines optimising performance of a controlled system while respecting 
+The method of model predictive control optimises the performance of a controlled system while respecting 
 system and input constraints.
 %
 The aim of robust model predictive control is to provide guarantees for stability while still being able to push
@@ -33,8 +33,8 @@ a system to its physical limitations to optimise its performance.
 Naturally, robustifying a model predictive controller leads to a more conservative controller and an obvious goal is
 to try to keep the conservativeness as minimal as possible.
 %
-The first part of this work is dedicated in reducing this redundant conservativeness which is introduced by approximating
-disturbances which are upper bounded by a fixed value.
+The first part of this work is dedicated to reducing conservativeness which is introduced by approximating
+disturbances which are upper bounded by fixed values, or more generally are known to belong to fixed sets.
 %
 In particular a robust model predictive controller using an active set solver approach is derived for linear systems
 with additive disturbances and quadratic cost functions which have to satisfy linear state and input constraints.
@@ -42,20 +42,20 @@ with additive disturbances and quadratic cost functions which have to satisfy li
 The novelty is that the disturbance is considered to constrained to a set which depends on the state and the input in
 a piecewise affine way.
 %
-The necessary set theoretic framework to handle such sets is elaborated as general as possible, as well as its numerical
-treatment for which computational bounds are presented.
+A set theoretic framework to handle such sets is developed in the most general setting possible and its numerical
+properties are considered, for which computational bounds are presented.
 %
-Considering disturbance bounded in a piecewise affine way allows applying linear robust model predictive control
-methods for various classes of systems which are not necessarily perturbed in an additive way.
+Considering disturbances that are bounded in a piecewise affine way allows linear robust model predictive control
+methods to be applied to various classes of systems which are not necessarily perturbed in an additive way.
 %
 For example, it is shown that linear systems subject to linearly constrained multiplicative uncertainties have an
-equivalent linear system with piecewise affine additive disturbances, further it is presented how a piecewise affine 
+equivalent linear representation with piecewise affine additive disturbances, further it is presented how a piecewise affine 
 additive disturbance can be used to bound linearisation errors for nonlinear systems.
 %
 Hence, the usage of piecewise affine disturbance sets allows a less conservative robust treatment of nonlinear systems
 than conventional constant upper bounds, while still benefiting from all properties of the active set solver approach.
 
-Since the the active set solver approach for min-max robust control formulations is well understood, it would be beneficial
+Since the active set solver approach for min-max robust control formulations is well understood, it would be beneficial
 to be able to rewrite stochastic model predictive control problems, i.e. model predictive control problems where the system
 is subject to probabilistic disturbances which have to satisfy probabilistic constraints, as robust model predictive control
 problems.
@@ -108,10 +108,10 @@ scheme are explained.
 This leads to a discussion about terminal cost terms and introduction of terminal constraints. 
 %
 Both of these concepts are well known and well established for nominal model predictive control, but have to 
-be slightly modified for the use in a disturbed setup. 
+be slightly modified for the use in a problem formulation that includes unknown model disturbances. 
 %
 The emphasis of this section is the discussion about so called robust positive invariant sets, the maximal
-robust positive invariant set in particular, furthermore so called controllable sets are derived.
+robust positive invariant set in particular, furthermore controllable sets are derived.
 %
 Using controllable and robust positive invariant sets as constraints and the terminal cost term in the min-max optimisation
 recursion, a proof of stability is presented.
@@ -119,7 +119,7 @@ recursion, a proof of stability is presented.
 \subsection{Recursive multi-parametric quadratic programs}\label{chap:recursive:mpqp}
 In this section the active-set solver for quadratic min-max programs is described.
 %
-This builds the foundation to the approach presented in subsequent chapters.
+This builds the foundations of the approach presented in subsequent chapters.
 %
 An active set solver can explicitly solve an optimisation program for which the set of active constraints is
 known a priori, furthermore, using the knowledge about the structure of the solution to a quadratic program,
@@ -134,7 +134,7 @@ predictive control.
 In order to determine the set of active constraints the structure of the optimisers once again is used to
 justify a performing a line search over the initial state.
 %
-The procedure to perform the line search necessary is presented.
+The procedure to perform this line search is presented.
 
 \subsection{Parametrised constraint sets}\label{chap:mrpi:sets}
 One of the main contributions of this thesis is the treatment of disturbance sets that depend on a parameter,
@@ -168,30 +168,50 @@ Advantages of this approach over known explicit model predictive control approac
 \subsection{$p$-efficient sets in stochastic model predictive control}
 This chapter presents the analysis of so called $p$-efficient points.
 %
-Using $p$-efficient points allows guaranteeing the satisfaction of probabilistic constraints by invoking deterministic
+Using $p$-efficient points allows the satisfaction of probabilistic constraints to be guaranteed by invoking deterministic
 constraints instead of probabilistic ones.
 %
 Properties of $p$-efficient sets are known for a particular kind of probabilistic constraints, which are not usual
 in stochastic model predictive control problems with probabilistic constraints.
 %
-In this chapter an approximate translation for more general constraint sets is presented.
+In a stochastic model predictive setup $p$-efficient sets would allow the controller to identify uncertain sets for 
+model parameters, disturbances, etc. that correspond to specified probabilities, they can be used in a non-conservative way 
+and are computationally efficient.
+%
+Conservativeness does not generally need to be introduced, instead in particular cases explicit formulations can be used 
+directly.
+%
+Furthermore, the required computations are handled offline and $p$-efficient sets can be approximated by polytopic
+sets in cases in which a closed form description does not exist.
+%
+This can be done with arbitrary precision by sampling the cumulative density function. 
+%
+In this chapter an approximate translation for more general constraint sets is presented, this allows treatment of
+more general probabilistic constraints, such as those that appear in stochastic model predictive control problems.
 %
 The aim of the analysis presented is to reformulate stochastic model predictive control programs as robust model predictive
 control programs which guarantee the feasibility of the stochastic model predictive control program without being overly
 conservative.
+%
+This would allow a robust treatment of stochastic model predictive control problems, i.e. maximal \emph{stochastic} positive 
+invariant sets could be computed in an explicit way, as well as allow robust analysis methods on stochastically constrained
+systems.
+
 
 \subsection{Unbounded disturbances in stochastic model predictive control}
-A standard characteristic of probabilistic variable is that, different to robust variables, their realisations are not 
+A standard characteristic of stochastic parameters is that, unlike their robust counterparts, their realisations are not 
 necessarily bounded.
 %
-Justified by realism and physical meaning of variables, bounds are often assumed which also allows for numeric treatment.
+Justified by realism and physical meaning of variables, bounds are often assumed which also allow for numeric treatment.
 %
 For analytical purposes this assumption may not be necessary.
 %
 Hence this chapter presents analysis for stochastic model predictive control problems without compact supported disturbances,
 in particular its recursive feasibility properties.
 %
-Utilising $p$-efficiency sets may again allow implementation of the concepts presented in this chapter.
+Utilising $p$-efficiency sets may again allow implementation of the concepts presented in this chapter, in particular
+a comparison with sampling based methods would be presented, as they often perform poorly when probability densities with a 
+long tails are handled.
 
 
 \newpage

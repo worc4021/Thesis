@@ -5,13 +5,28 @@
 %load any additional packages
 \usepackage{color}
 \usepackage[usenames]{xcolor} 
-\usepackage{amssymb,mathrsfs,amsthm,amsmath,lpic,cite,natbib}
+\usepackage{amssymb,mathrsfs,amsthm,amsmath,lpic,cite,natbib,subfigure,setspace}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows,positioning,patterns,decorations.pathreplacing}
+
+\tikzset{
+    at xy split/.style 2 args={
+        at={(#1,#2)}
+    },
+    a/.style={circle, draw=red},`'
+    b/.style={rectangle, draw=blue}
+}
 
 % \includeonly{chapter.State.dependent.disturbance}
 
 %input macros (i.e. write your own macros file called mymacros.tex 
 %and uncomment the next line)
 %\include{mymacros}
+
+
+% \includeonly{app.PDE}
+
 
 \title{Robust Model Predictive Control}   %note \\[1ex] is a line break in the title
 
@@ -48,6 +63,7 @@
 \newcounter{thmcount}[chapter]
 \renewcommand{\thethmcount}{\thechapter.\arabic{thmcount}}
 \renewcommand{\theequation}{\thechapter.\arabic{equation}}
+\renewcommand{\thefigure}{\thechapter.\Roman{figure}}
 
 
 % \newcounter{subeq}[equation]
@@ -109,7 +125,6 @@
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{3}
 
-
 \maketitle    
 
 \begin{romanpages}          % start roman page numbering
@@ -117,13 +132,16 @@
 \listoffigures              % generate and include a list of figures
 \end{romanpages}            % end roman page numbering
 
+% \doublespace
 \include{chapter.Introduction}
 \include{chapter.Concepts}
 \include{appendix.mpQP}
 \include{chapter.State.dependent.disturbance}
+\include{chapter.quadratic.min.max}
 
 %now enable appendix numbering format and include any appendices
 \appendix
+\include{app.PDE}
 \include{appendix.degenerate.linear.systems}
 \include{appendix.terminal.controller}
 \include{app.determining.PWA}
@@ -134,7 +152,7 @@
 %uncomment next line to change bibliography name to references
 %\renewcommand{\bibname}{References}
 \bibliography{MyLib}        %use a bibtex bibliography file refs.bib
-\bibliographystyle{plain}  %use the plain bibliography style
+\bibliographystyle{plainnat}  %use the plain bibliography style
 
 
 \end{document}

@@ -21,22 +21,22 @@ chapter.
 %
 %
 \section{Parametric convex sets}\label{sec:parametric:convex:sets}
-In this section we discuss \emph{parametric convexity}, an attribute of sets valued maps 
+In this section we discuss \emph{parametric convexity}, an attribute of sets valued maps
 (so called point-to-set maps, see e.g.~\cite{Hogan:1973}) we exploit later on to prove 
 convexity of a generalised Pontryagin difference.
 %
 \begin{defn}[Parametric Convexity]\label{def:parametric:convexity}
-	Let $X\subseteq\mathbb R^n, Y\subseteq\mathbb R^m$, let $\mathcal P(Y)$ denote the power set of $Y$, 
-	and $T:X\rightarrow \mathcal P(Y)$, $X\ni s\mapsto T(s)\subset Y$ be a 
-	continuous point-to-set map. The map $T$ is called \emph{parametrically convex} if it satisfies
+	Let $X\subseteq\mathbb R^d, Y\subseteq\mathbb R^n$, let $\mathcal P(Y)$ denote the power set of $Y$, 
+	and $\mathcal W:X\rightarrow \mathcal P(Y)$, $X\ni p\mapsto \mathcal W(p)\subset Y$ be a 
+	continuous point-to-set map. The map $\mathcal W$ is called \emph{parametrically convex} if it satisfies
 	\begin{equation}\label{eq:def:parametrically:convex}
-	T(\lambda s_1 + (1-\lambda)s_2)\subseteq\lambda T(s_1) \oplus (1-\lambda) T(s_2)
+	\mathcal W(\lambda p_1 + (1-\lambda)p_2)\subseteq\lambda \mathcal W(p_1) \oplus (1-\lambda) \mathcal W(p_2)
 	\end{equation}
-	for all $s_1,s_2\in X$ and $\lambda\in[0,1]$.
+	for all $p_1,p_2\in X$ and $\lambda\in[0,1]$.
 \end{defn}
 %
-For sets to be parametrically convex the dimensions~$n$ and~$m$ do not need to be the same, see e.g.
-Figure~\ref{fig:parametrically:convex:set} for a piecewise affinely scaled square where~$n=1$ and $m=2$.
+For sets to be parametrically convex the dimensions~$d$ and~$n$ do not need to be the same, see e.g.
+Figure~\ref{fig:parametrically:convex:set} for a piecewise affinely scaled square where~$d=1$ and $n=2$.
 %
 \begin{figure}
 \centering
@@ -48,51 +48,51 @@ for $\theta\in[0,4]$. $\mathcal X(\theta)$ is parametrically convex in~$\theta$.
 \label{fig:parametrically:convex:set}
 \end{figure}
 %
-Notice that Definition~\ref{def:parametric:convexity} does not require convexity of~$T(s)$ for all
-$s\in X$, we will however only treat maps~$T$ for which $T(s)$ is convex.
+Notice that Definition~\ref{def:parametric:convexity} does not require convexity of~$\mathcal W(p)$ for all
+$p\in X$, we will however only treat maps~$\mathcal W$ for which $\mathcal W(p)$ is convex.
 %
 In order to compute maximal positive invariant sets for the considered system we need to generalise
 the Pontryagin set difference (see e.g.~\cite{blanchini:2007}) to accommodate parametrically convex sets.
 %
 \begin{defn}[Parametric Pontryagin Difference]\label{def:parametric:pontryagin:difference}
-	Let $S\subseteq X$ and let $T:X\to\mathcal P(X)$ be a continuous point-to-set map such that
-	$T(x)$ is convex for all $x\in X$, then the \emph{parametric Pontryagin difference} 
-	$S\ominus T(S)$ is 
+	Let $S\subseteq X$ and let $\mathcal W:X\to\mathcal P(X)$ be a continuous point-to-set map such that
+	$\mathcal W(p)$ is convex for all $p\in X$, then the \emph{parametric Pontryagin difference} 
+	$S\ominus \mathcal W(S)$ is 
 	\begin{equation}\label{eq:definition:parametric:pontryagin:difference}
-		S\ominus T(S) = \left\{x\in X: \{x\} \oplus T(x)\subseteq S\right\},
+		S\ominus \mathcal W(S) = \left\{x\in X: \{x\} \oplus \mathcal W(x)\subseteq S\right\},
 	\end{equation}
-	where $T(S)$ denotes the image of $S$ under the map $T$. 
+	where $\mathcal W(S)$ denotes the image of $S$ under the map $\mathcal W$. 
 \end{defn}
 %
 At first it may seem sensible to generalise the Pontryagin difference even further and define
 %
 \begin{equation}\label{eq:extended:parametric:pontryagin:difference}
 \begin{split}
-	S\ominus T(R) &= \{x:\{x\}\oplus T(r)\subseteq S\,\forall\, r\in R\}\\
-	&=\{x:\{x\}\oplus\bigcup_{r\in R} T(r)\subseteq S\}.
+	S\ominus \mathcal W(R) &= \{x:\{x\}\oplus \mathcal W(r)\subseteq S\,\forall\, r\in R\}\\
+	&=\{x:\{x\}\oplus\bigcup_{r\in R} \mathcal W(r)\subseteq S\}.
 \end{split}
 \end{equation}
 %
-However, since $\bigcup_{r\in R} T(r)$ may or may not be convex, we can not make any useful
-statements about $S\ominus T(R)$. 
+However, since $\bigcup_{r\in R} \mathcal W(r)$ may or may not be convex, we can not make any useful
+statements about $S\ominus \mathcal W(R)$. 
 %
-In the case that~$T(x)$ is constant, i.e. $\bigcup_{x\in X}T(x)=T(x)=:C$,
-we see that $S\ominus T(S)=S\ominus C$ which is the Pontryagin difference for regular sets.
+In the case that~$\mathcal W(p)$ is constant, i.e. $\bigcup_{p\in X}\mathcal W(p)=\mathcal W(p)=:C$,
+we see that $S\ominus \mathcal W(S)=S\ominus C$ which is the Pontryagin difference for regular sets.
 %
 For the parametric Pontryagin difference of a convex set and a parametrically convex map we 
 have the following result.
 %
 \begin{thm}\label{thm:convexity:of:pontryagin:difference}
-  Let $S\subseteq X$ be a convex set and let $T:X\rightarrow\mathcal P(X)$ be a parametrically convex point-to-set
-  map such that $T(x)$ is convex for all $x\in X$, then $S\ominus T(S)$ is convex.
+  Let $S\subseteq X$ be a convex set and let $\mathcal W:X\rightarrow\mathcal P(X)$ be a parametrically convex point-to-set
+  map such that $\mathcal W(p)$ is convex for all $p\in X$, then $S\ominus \mathcal W(S)$ is convex.
 \end{thm}
 %
 \begin{proof}
-To prove the convexity of $ Z :=  S\ominus T( S)$ we pick any $z_1,z_2\in Z$, then
+To prove the convexity of $ Z :=  S\ominus \mathcal W( S)$ we pick any $z_1,z_2\in Z$, then
 by definition of the parametric Pontryagin difference, we have
 %
 \begin{equation}
-	\{z_i\} \oplus T(z_i) \subseteq S,\; i=1,2.
+	\{z_i\} \oplus \mathcal W(z_i) \subseteq S,\; i=1,2.
 \end{equation}
 %
 To see that $ Z$ is convex we show that line segments between
@@ -100,12 +100,12 @@ all possible $z_1$ and $z_2$ are subsets of $ Z$, i.e.~for all $\lambda \in [0,1
 \begin{equation}
 \begin{aligned}
 	\{ \lambda z_1 + (1-&\lambda)z_2
-	\}\oplus T\left( \lambda z_1 + (1-\lambda)z_2\right)\\
+	\}\oplus \mathcal W\left( \lambda z_1 + (1-\lambda)z_2\right)\\
 	\subseteq&\left\{ \lambda z_1 + (1-\lambda)z_2
-	\right\}\oplus \lambda T(z_1) \oplus (1-\lambda)
-	T(z_2)\\
-	\subseteq &\lambda\underbrace{(\{z_1\}\oplus T(z_1))}_{\subseteq S}\oplus
-	(1-\lambda)\underbrace{(\{z_2\}\oplus T(z_2))}_{\subseteq S}\\
+	\right\}\oplus \lambda \mathcal W(z_1) \oplus (1-\lambda)
+	\mathcal W(z_2)\\
+	\subseteq &\lambda\underbrace{(\{z_1\}\oplus \mathcal W(z_1))}_{\subseteq S}\oplus
+	(1-\lambda)\underbrace{(\{z_2\}\oplus \mathcal W(z_2))}_{\subseteq S}\\
 	\subseteq& Z
 \end{aligned}
 \end{equation}
@@ -113,54 +113,404 @@ all possible $z_1$ and $z_2$ are subsets of $ Z$, i.e.~for all $\lambda \in [0,1
 where the last inclusion follows from the convexity of $\mathcal S$.
 \end{proof}
 %
-Now consider a parametrically convex set of the form
+% Now consider a parametrically convex set of the form
+% %
+% \begin{equation}\label{eq:parametric:polyhedron}
+% 	T(s)=\{t:Gt\leq H(s)\},
+% \end{equation}
+% %
+% where each row of $H(s)$ is a convex function in $s\in S$, i.e. each element $H_i(s)$ of 
+% $H(s)$ satisfies $H_i(\lambda s_1+(1-\lambda)s_2)\leq \lambda H_i(s_1)+(1-\lambda)H_i(s_2)$ 
+% for all $\lambda\in[0,1]$ and $s_1, s_2\in S$. 
+% %
+% We will use sets for which $H(s)$ is piecewise affine in $s\in S$, i.e. sets
+% for which $H_i(s) = \max_k\{f_k s + g_k\}$.
+% %
+% For sets of this type we have the following result.
+% %
+% \begin{thm}\label{thm:convex:parametric:set}
+%   The point-to-set map $T(s)$ defined by~\eqref{eq:parametric:polyhedron} is parametrically 
+%   convex for all $s\in S$ if $H(s)$ is elementwise convex in $s\in S\subseteq X \subset 
+%   \mathbb R^n$.
+% \end{thm}
+% %
+% \begin{proof}
+% To show that $T(\lambda s_1 + (1-\lambda)s_2)\subseteq \lambda T(s_1) \oplus(1-\lambda)
+% T(s_2)$ for all $\lambda \in [0,1]$ and $s_1, s_2\in S$ we note that
+% %
+% \begin{equation}
+% \begin{aligned}
+%   T&(\lambda s_1 + (1-\lambda)s_2)\\
+%   =& \{t:\; G t \leq H(\lambda s_1 + (1-\lambda)s_2)\}\\
+%   \subseteq& \{t:\;Gt\leq\lambda H(s_1)+(1-\lambda) H(s_2)\}\\
+%   =&\{t:\;Gt\leq\lambda H(s_1)\}\oplus\{t:\;Gt\leq(1-\lambda)H(s_2)\}\\
+%   =&\lambda T(s_1)\oplus(1-\lambda) T(s_2).
+%   \end{aligned}
+% \end{equation}
+% %
+% \end{proof} 
+% %
+% Notice that rays and vertices of $T(s)$ as defined in~\eqref{eq:parametric:polyhedron} will
+% be linear combinations of $H_i(s)$, this implies that for piecewise affine $H(s)$ rays
+% and vertices $t_k(s)$ will themselves be piecewise affine in $s\in S$, we will exploit
+% this fact later on.
 %
-\begin{equation}\label{eq:parametric:polyhedron}
-	T(s)=\{t:Gt\leq H(s)\},
+%
+In the following we derive a property for piecewise affine parametric set-valued maps that will
+allow convenient computation, namely that it is sufficient to check the number of vertices of 
+instances $\mathcal W(p)$ on the boundaries of the parameter space to guarantee the parametric convexity.
+%
+The statement is summarised in Corollary~\ref{thm:p:convexity:PWA:set:constant:num:verts} in this section.
+%
+First we introduce the \emph{graph} of $\mathcal W$
+%
+\[
+	\mathscr G(\mathcal W) = \{(p,x) \in\mathbb R^{d+n}: x\in\mathcal W(p)\},
+\]
+%
+its \emph{interior}
+%
+\[
+	\text{int}(\mathscr G(\mathcal W)) = \{(p,x) \in\mathbb R^{d+n}: \forall d\in\mathbb R^n\;\exists 
+	\epsilon>0 : x+\epsilon d\in \mathcal W(p)\}
+\]
+%
+and its \emph{boundary}
+\[
+	\partial \mathscr G(\mathcal W) = \mathscr G(\mathcal W)\setminus \textup{int}(\mathscr G(\mathcal W)).
+\]
+%
+We define the \emph{extended normal cone} as
+%
+\[
+	\mathcal N\mathcal W(p,x) = \{d\in\mathbb R^n: x+\epsilon d \not\in \mathcal W(p)\; \forall \epsilon>0\}
+\]
+for all $(p,x)\in\partial\mathscr G(\mathcal W)$.
+%
+\begin{rem}
+%
+Notice that we define the extended normal cone without an inner product. 
+%
+The way it is defined here, the conventional normal cone (e.g.~\cite{Boyd:04}) for a convex set $\mathcal C$
+%
+\[
+	N_{\mathcal C}(x) = \{y: \langle y,x-z\rangle\geq0\;\forall z\in\mathcal C\}
+\]
+%
+is be contained in the extended normal cone
+%
+\[
+	\mathcal N_{\mathcal C}(x) = \{y:\exists\epsilon>0\;x+\epsilon y\not\in\mathcal C\}.
+\]
+%
+Furthermore, we have that $\langle d, y\rangle\geq0$ for all $d\in\mathcal N_{\mathcal C}(x), y\in N_{\mathcal C}(x)$.
+%
+\end{rem}
+%
+\begin{rem}
+%
+Notice further that all definitions above are defined relatively for the \emph{set variable} $x$ rather than for graph
+variable $(p,x)$.
+%
+\end{rem}
+%
+We state the central theorem to connect parametric convexity of a set valued map $\mathcal W$ with properties of its graph
+$\mathscr G(\mathcal W)$.
+%
+\begin{thm}\label{thm:p:convexity:graph}
+The map $\mathcal W$ is parametrically convex iff for all $(p_1,x_1),(p_2,x_2)\in\partial\mathscr G(\mathcal W)$
+with $\mathcal N\mathcal W(p_1,x_1)\cap\mathcal N\mathcal W(p_2,x_2)\neq\emptyset$ and $p_1\neq p_2$ 
+%
+\begin{equation}\label{eq:graph:def:p:convexity}
+\lambda (p_1,x_1) + (1-\lambda) (p_2,x_2) \not\in\textup{int} (\mathscr G(\mathcal W))
 \end{equation}
 %
-where each row of $H(s)$ is a convex function in $s\in S$, i.e. each element $H_i(s)$ of 
-$H(s)$ satisfies $H_i(\lambda s_1+(1-\lambda)s_2)\leq \lambda H_i(s_1)+(1-\lambda)H_i(s_2)$ 
-for all $\lambda\in[0,1]$ and $s_1, s_2\in S$. 
+holds for all $\lambda\in(0,1)$.
 %
-We will use sets for which $H(s)$ is piecewise affine in $s\in S$, i.e. sets
-for which $H_i(s) = \max_k\{f_k s + g_k\}$.
-%
-For sets of this type we have the following result.
-%
-\begin{thm}\label{thm:convex:parametric:set}
-  The point-to-set map $T(s)$ defined by~\eqref{eq:parametric:polyhedron} is parametrically 
-  convex for all $s\in S$ if $H(s)$ is elementwise convex in $s\in S\subseteq X \subset 
-  \mathbb R^n$.
 \end{thm}
 %
 \begin{proof}
-To show that $T(\lambda s_1 + (1-\lambda)s_2)\subseteq \lambda T(s_1) \oplus(1-\lambda)
-T(s_2)$ for all $\lambda \in [0,1]$ and $s_1, s_2\in S$ we note that
 %
-\begin{equation}
-\begin{aligned}
-  T&(\lambda s_1 + (1-\lambda)s_2)\\
-  =& \{t:\; G t \leq H(\lambda s_1 + (1-\lambda)s_2)\}\\
-  \subseteq& \{t:\;Gt\leq\lambda H(s_1)+(1-\lambda) H(s_2)\}\\
-  =&\{t:\;Gt\leq\lambda H(s_1)\}\oplus\{t:\;Gt\leq(1-\lambda)H(s_2)\}\\
-  =&\lambda T(s_1)\oplus(1-\lambda) T(s_2).
-  \end{aligned}
+Assume~\eqref{eq:graph:def:p:convexity} holds for $(p_1,x_1),(p_2,x_2)\in\partial\mathscr G(\mathcal W)$.
+%
+Then the Minkowski functional (see e.g.~\cite{Rudin:91}) yields $\mu(\mathcal W(\lambda p_1 + (1-\lambda)p_2),
+\lambda x_1+(1-\lambda)x_2)\geq1$,
+i.e. all interpolation points lie either on the boundary or outside the set $\mathcal W(\lambda p_1+(1-\lambda)p_2)$
+therefore the set of all possible interpolation points 
+%
+\[
+	\lambda \mathcal W(p_1)\oplus (1-\lambda)\mathcal W(p_2) = \{x:x=\lambda x_1 + (1-\lambda) x_2 \wedge x_1\in\mathcal 
+	W(p_1) \wedge x_2\in\mathcal W(p_2)\}
+\]
+%
+contains the set $\mathcal W(\lambda p_1 + (1-\lambda)p_2)$.
+%
+Now assume $\mathcal W$ is parametrically convex but~\eqref{eq:graph:def:p:convexity} is not satisfied for 
+some $(p_1,x_1),(p_2,x_2)\in\partial\mathscr G(\mathcal W)$ with $\mathcal N\mathcal W(p_1,x_1)\cap\mathcal 
+N\mathcal W(p_2,x_2)\neq\emptyset$, i.e. $\lambda x_1 + (1-\lambda)x_2\in\text{int}(\mathcal W(\lambda p_1 + 
+(1-\lambda)p_2)$.
+%
+This implies that a full dimensional ball $B_\epsilon(x ) = \{y:\| 
+x-y\|<\epsilon\}$
+is contained in $\mathcal W(\lambda p_1 + (1-\lambda)p_2)$, i.e. $B_\epsilon(\lambda x_1 + (1-\lambda)x_2 )\subset
+\mathcal W(\lambda p_1 + (1-\lambda)p_2)$ for some $\epsilon>0$.
+%
+Since $\mathcal N\mathcal W(p_1,x_1)\cap\mathcal N\mathcal W(p_2,x_2)\neq\emptyset$, there exist directions 
+$d\in\mathcal N\mathcal W(p_1,x_1)\cap\mathcal N\mathcal W(p_2,x_2)$ which can not be represented as $d=\lambda d_1+
+(1-\lambda)d_2$ with $x_1 + \epsilon d_1\in\mathcal W(p_1)$ and $x_2  + \epsilon d_2\in\mathcal W(p_2)$, however since $B_\epsilon$ is full dimensional
+all directions exist, $x+\epsilon d\in\mathcal W(\lambda p_1 + (1-\lambda)p_2)$.
+%
+Hence, $\mathcal W$ can not be parametrically convex.
+\end{proof}
+
+\begin{rem}
+Notice that condition~\eqref{eq:graph:def:p:convexity} is a non-convexity condition on the graph $\mathscr G(\mathcal W)$.
+%
+If $\mathscr G(\mathcal W)$ is strictly convex anywhere~\eqref{eq:graph:def:p:convexity} is violated and 
+$\mathcal W$ can not be parametrically convex.
+\end{rem}
+%
+\begin{rem}
+%
+Furthermore notice that the condition on the extended normal cones is only a restriction on the choice of 
+$(p,x)$.
+%
+It is to avoid choices such that the entire line between $(p_1,x_1)$ and $(p_2,x_2)$ is contained in the interior
+of the graph by convexity of $\mathcal W(p_i)$.
+%
+\end{rem}
+%
+\begin{figure}
+\centering 
+\begin{lpic}{pConvexSetsAbstract}
+\lbl{74,16;$p$}
+\lbl{52,20,90;$\mathcal W(p_2)$}
+\lbl{10,20,90;$\mathcal W(p_1)$}
+\lbl[bl]{17,35,45;$\mathcal N\mathcal W(p_1,x_1)$}
+\lbl[bl]{58,37,45;$\mathcal N\mathcal W(p_2,x_2)$}
+\lbl[bl]{62,17,45;$\textup{int}(\mathscr{G}(\mathcal W))$}
+\lbl[l]{77,4;$\partial \mathscr{G}(\mathcal W)$}
+\end{lpic}
+\caption[Example p-convex set]{Illustration of the concepts for a scalar parametrically convex map in one-dimension.}
+\end{figure}
+%
+\begin{korr}
+%
+Let $\mathcal W(p):=\{x\in\mathbb R^n: r(p,x)\leq0\}$ define a set-valued map with a continuous function 
+$r: \mathbb R^d \times\mathbb R^n \rightarrow \mathbb R,(p,x)\mapsto r(p,x)$, then $\mathcal W$ is parametrically
+convex iff the function $r$ is concave in $p\in\mathbb R^d$ and convex in $x\in\mathbb R^n$.
+%
+\end{korr}
+%
+\begin{proof}
+The convexity in $x\in\mathbb R^n$ is required to satisfy the requirement that $\mathcal W(p)$ is convex
+for all fixed values of $p\in\mathbb R^d$. 
+%
+Assume that for some region $\Omega\subset\mathbb R^d$ the function $r(\cdot,x)$ is non-concave (i.e. 
+strictly convex), any convex subset $\mathcal C\subseteq\Omega$ will hence be such that $\mathscr 
+G(\mathcal W)\vert_{\mathcal C}$ is a convex set.
+%
+In particular all lines between all $(p_1,x_1),(p_2,x_2)\in \partial\mathscr G(\mathcal W)\vert_{\mathcal C}$ will satisfy
+$\lambda (p_1,x_1) + (1-\lambda) (p_2,x_2) \in\textup{int} (\mathscr G(\mathcal W))\vert_{\mathcal C}$ since
+$\mathscr G(\mathcal W)\vert_{\mathcal C}$ is strictly convex in $p$.
+%
+This implies that $r(\cdot,x)$ can not be non-concave in any non-trivial set $\Omega\subseteq\mathbb R^d$ and still
+be parametrically convex.
+\end{proof}
+%
+\begin{korr}\label{thm:polytopic:set:not:p:convex}
+The polytopic parametric set valued map $\mathcal W(p):=\{x: a_i x + b_i p\leq c_i \forall i\leq m\}$ is not parametrically convex for 
+any non-trivial matrix $B$.
+\end{korr}
+%
+\begin{proof}
+The graph $\mathscr G(\mathcal W)$ is given by
+%
+\begin{equation*}
+	\mathscr G(\mathcal W) = \{(p,x):a_i x + b_i p\leq c_i \forall i\leq m\}
+\end{equation*}
+%
+and hence is a convex set and violates Theorem~\ref{thm:p:convexity:graph}.
+\end{proof}
+%
+We now can prove the following central corollary.
+%
+\begin{korr}\label{thm:p:convexity:PWA:set:constant:num:verts}
+The piecewise affine polytopic parametric set valued map 
+%
+\begin{equation}\label{eq:definition:PWA:polytopic:set:general}
+	\mathcal W(p) := \left\{x: a_i x \leq \max_{k\leq l}\{b_{i,k} + C_{i,k}p\},i\leq m\right\}
 \end{equation}
 %
-\end{proof} 
+is parametrically convex iff the number of vertices $v_i(p)$ and rays $u_i(p)$ is constant.
+\end{korr}
 %
-Notice that rays and vertices of $T(s)$ as defined in~\eqref{eq:parametric:polyhedron} will
-be linear combinations of $H_i(s)$, this implies that for piecewise affine $H(s)$ rays
-and vertices $t_k(s)$ will themselves be piecewise affine in $s\in S$, we will exploit
-this fact later on.
+\begin{proof}
+For clarity this proof is divided in 3 parts:
+\begin{enumerate}
+\item Notice that $h_i(p) = \max_{k\leq l} \{b_{i,k} + C_{i,k}p\}$ is a multi-parametric linear program (mpLP),
+its solution is a piecewise affine function $h_i(p) = b_{i,k^\ast_i} + C_{i,k^\ast_i}p$ where $k^\ast_i(p)$ is constant
+inside a polytopic complex, see e.g.~\cite{spjotvold:2005}.
+%
+That means that there exists a finite partitioning $\mathbb R^d = \bigcup_{i\leq t} \mathcal P_i$ with convex polyhedra 
+$\mathcal P_i$ such that ${\bf{k}}^\ast\vert_{\mathcal P_i} = (k_1^\ast,\dots,k_m^\ast) = const$.
+%
+A standard degeneracy assumption is that in neighbouring partitions ${\bf{k}}^\ast\vert_{\mathcal P_i}$ and 
+${\bf{k}}^\ast\vert_{\mathcal P_j}$ differ in exactly one element.
+%
+This partitioning implies that the graph $\mathscr G(\mathcal W)$ is given as a finite union of polyhedra
+%
+\begin{equation*}
+	\mathscr G(\mathcal W) = \bigcup_{j\leq t} \left\{x: a_i x \leq b_{i,k_i^\ast} + C_{i,k_i^\ast}p,i\leq m
+	\right\}\bigr\vert_{\mathcal P_j}
+\end{equation*}
+%
+But this implies that if the number of vertices or rays changes in any partition $\mathcal P_i$ then $\mathscr
+G(\mathcal W)\vert_{\mathcal P_i}$ is a strictly convex polytope and theorem~\ref{thm:polytopic:set:not:p:convex} applies.
+%
+\item Our attention hence is concentrated to the boundaries of the partitions $\mathcal P_i$.
+%
+These are the points $\mathcal P_i \cap \mathcal P_j$ where some mpLP changes its solution, i.e. 
+$b_{i,k_{i_1}^\ast} + C_{i,k_{i_1}^\ast} p = b_{i,k_{i_2}^\ast} + C_{i,k_{i_2}^\ast} p$.
+%
+Notice that a vertex $v_i(p)$ is given by \emph{active} and \emph{inactive} inequalities, i.e. $\mathcal A_i(p)$ and
+$\mathcal I_i(p) = \{1,\dots,m\}\setminus\mathcal A_i(p)$ respectively.
+%
+\begin{equation*}\begin{split}
+	a_j v_i(p) &= b_{j,k_j^\ast} + C_{j,k_j^\ast} p \quad\forall j\in\mathcal A_i(p)\\
+	a_j v_i(p) &< b_{j,k_j^\ast} + C_{j,k_j^\ast} p \quad\forall j\in\mathcal I_i(p)
+\end{split}\end{equation*}
+%
+In order for the number of vertices to change, there must be a hyperplane $fp=g$, such that the number of vertices for $fp<g$ is 
+$N$ and for $fp>g$ is at least $N+1$.
+%
+It follows from the previous discussion that $\{p:fp=g\} = \textup{aff}\{\mathcal P_i\cap\mathcal P_j\}$ for some $i\neq j$.
+%
+For vertices $v_i(p)$ and $v_j(p)$ to merge the index sets $\mathcal A_i(p)$ and $\mathcal A_j(p)$ have to differ in only one 
+element, i.e. $\mathcal A_i(p) = \mathcal J\cup \{s\}$ and $\mathcal A_j(p) = \mathcal J\cup\{u\}$ for $fp>g$.
+%
+Furthermore, for $p$ with $fp\leq g$ we have $v_i(p)=v_j(p)$, this implies $\mathcal A_i(p) = \mathcal A_j(p)$.
+%
+Since only one alteration of the active index set is considered (due to generic assumptions), the active set $\mathcal A_i(p) = \mathcal A_j(p)
+= \mathcal J \cup \{s,u\}$.
+%
+Hence on the hyperplane $fp=g$ both, the maximising index ${\bf{k}}^\ast(p)$ and the active index sets $\mathcal A_i(p)$ 
+and $\mathcal A_j(p)$ change, which is degenerate.
+%
+\item In order for the degenerate graph $\mathscr G(W)$ to be parametrically convex the overdetermined vertex $v_i(p)=v_j(p)$
+have to be identical, in particular their dependence on $p$ has to be identical.
+%
+This can be expressed with the implicit function theorem:
+%
+\begin{equation*}\begin{split}
+	\frac{d}{dp}\left(	A_{\mathcal J\cup \{s\}} v_i(p) - b_{\mathcal J\cup \{s\}} - C_{\mathcal J\cup \{s\},{\bf{k}}^\ast} p\right) &= 0\\
+	\frac{d}{dp}\left(	A_{\mathcal J\cup \{u\}} v_i(p) - b_{\mathcal J\cup \{u\}} - C_{\mathcal J\cup \{u\},{\bf{k}}^\ast} p\right) &= 0
+\end{split}\end{equation*}
+%
+which leads to 
+%
+\begin{equation*}\begin{split}
+	A_{\mathcal J\cup \{s\}} \frac{dv_i}{dp} &= C_{\mathcal J\cup \{s\},{\bf{k}}^\ast}\\
+	A_{\mathcal J\cup \{u\}} \frac{dv_i}{dp} &= C_{\mathcal J\cup \{u\},{\bf{k}}^\ast}
+\end{split}\end{equation*}
+%
+since we can assume that the inequalities are non-redundant for some right hand side, we obtain that 
+%
+\begin{equation}\label{eq:derivative:condition:on:index:sets}
+	\frac{dv_i}{dp} = A_{\mathcal J\cup \{s\}}^{-1}C_{\mathcal J\cup \{s\},{\bf{k}}^\ast} = 
+	A_{\mathcal J\cup \{u\}}^{-1}C_{\mathcal J\cup \{u\},{\bf{k}}^\ast}
+\end{equation}
+%
+has to hold for the degenerate graph to remain parametrically convex.
+%
+Notice that~\eqref{eq:derivative:condition:on:index:sets} is again a degenerate condition, since arbitrarily small perturbations
+will produce different behaviour.
+\end{enumerate}
+\end{proof}
+%
+\begin{rem}
+Corollary~\ref{thm:p:convexity:PWA:set:constant:num:verts} is essential for numerical examples, as it can be reformulated to:
+%
+The set valued map defined by~\eqref{eq:definition:PWA:polytopic:set:general} is parametrically convex iff it has a constant 
+number of vertices throughout the parameter space~$X$.
+%
+\\[1em]
+%
+Since the map is continuous it is sufficient to verify this at the vertices of the parameter space.
+%
+\end{rem}
+%
+To illustrate the effects of perturbations to a degenerate piecewise affine map, consider the following low dimensional 
+examples:
+%
+\begin{quote}
+Let $\mathcal W_i(p)$ be defined by
+%
+\begin{equation*}\begin{split}
+	\mathcal W_1(p) = \left\{x : \left(\begin{array}{cc}
+	1&1\\
+	-1&1\\
+	0&1\\
+	0&-1 
+	\end{array}\right)x \leq \left(\begin{array}{c}
+	\max\{1+p,\frac{1}{2}+2p\} \\
+	\max\{1+p,\frac{1}{2}+2p\} \\
+	\frac{1}{2}+2p \\
+	1
+	\end{array}\right)
+	\right\}\\
+%
+	\mathcal W_2(p) = \left\{x : \left(\begin{array}{cc}
+	1&1\\
+	-1&1\\
+	0&1\\
+	0&-1 
+	\end{array}\right)x \leq \left(\begin{array}{c}
+	\max\{1+p,\frac{1}{2}+(2+\epsilon)p\} \\
+	\max\{1+p,\frac{1}{2}+2p\} \\
+	\frac{1}{2}+2p \\
+	1
+	\end{array}\right)
+	\right\}\\
+%
+	\mathcal W_3(p) = \left\{x : \left(\begin{array}{cc}
+	1&1\\
+	-1&1\\
+	0&1\\
+	0&-1 
+	\end{array}\right)x \leq \left(\begin{array}{c}
+	\max\{1+p,\frac{1}{2}+\epsilon+2p\} \\
+	\max\{1+p,\frac{1}{2}+2p\} \\
+	\frac{1}{2}+2p \\
+	1
+	\end{array}\right)
+	\right\}
+	\end{split}
+\end{equation*}
+%
+%
+\begin{figure}
+\begin{center}
+\subfigure[$\mathcal W_1(p)$]{\includegraphics[width=.45\textwidth]{pConvDegenerateSet}}
+\subfigure[$\mathcal W_2(p)$]{\includegraphics[width=.45\textwidth]{pConvPertInLinTerm}}\\
+\subfigure[$\mathcal W_3(p)$]{\includegraphics[width=.45\textwidth]{pConvPertInConstantTerm}}
+\end{center}
+\caption[Degenerate PWA p-convex sets]{For $\mathcal W_1(p)$ the right hand side was chosen in order 
+to satisfy~\eqref{eq:derivative:condition:on:index:sets} 
+and for the graph to be degenerate. For both $\mathcal W_{2,3}(p)$ there is no drop in number of vertices for different 
+$p\in[-1,\infty),\epsilon=10^{-1}$.}
+\label{fig:degenerate:PWA:set:and:comparison}
+\end{figure}
+%
+See figure~\ref{fig:degenerate:PWA:set:and:comparison} for an illustration.
+\end{quote}
 %
 %
 %
 %
 %
 \section{Example}\label{sec:example:linearisation:error:as:state:dependent:constraint}
-In this section we derive a disturbance set that is of the form~\eqref{eq:parametric:polyhedron}
+In this section we derive a disturbance set that is of the form~\eqref{eq:derivative:condition:on:index:sets}
 with a piecewise affine right hand side~$H(s)$. 
 %
 Consider a discrete time nonlinear system of the form
@@ -228,7 +578,7 @@ Notice that sampling the set $\gimel(x,u) = \left\{v : \min\{H^x x + H^u u\} \le
 leads to an inner approximation which is convexified by taking its convex hull.
 %
 The set $V^K(x,u)$ as defined in~\eqref{eq:derivation:of:PWA:disturbance:set} is of the
-type~\eqref{eq:parametric:polyhedron} with a piecewise linear right hand side. We may
+type~\eqref{eq:derivative:condition:on:index:sets} with a piecewise linear right hand side. We may
 want to add a constant term to accommodate model uncertainties.
 %
 %
@@ -552,6 +902,43 @@ on how many iterations the described algorithm could require.
 %
 %
 %
+%
+\section[Stage constraints]{Stage constraints for state and input dependent constraints}\label{sec:stage:constraints:state:dependent}
+%
+In this section we present an algorithm to compute the stage constraints~\eqref{eq:concepts:def:stage:constraints}
+a setup with piecewise affine disturbance constraints, i.e. the disturbance set is given by
+%
+\begin{equation}
+	\mathcal V(x,u) = \left\{v: G_i v\leq \max_{k\leq N_i}\{H_{i,k}^x x + H_{i,k}^u + h_{i,k}\}\; 
+	i\in\mathcal I_{\mathcal V}\right\}
+\end{equation}
+%
+and $u\in\mathcal U=\{u:Fu\leq{\bf{1}}\}$.
+%
+The stage constraints are initialised with the polytopic MRPI set $\mathcal X_0=\mathcal X^\infty = 
+\{x:\Xi_{i,0} x\leq\xi_{i,0}\;i\in\mathcal I_0\}$ and hence the stage constraints for the penultimate stage~$\mathcal Z_1$
+are given by
+%
+\begin{equation*}\begin{split}
+	\mathcal Z_1 &= \{(x,u): Fu\leq{\bf{1}}\wedge \Xi_{i,0}(Ax+Bu + v)\leq\xi_{i,0}\; \forall v\in\mathcal V(x,u), i\in\mathcal I_0\}\\
+	&=\left\{(x,u): Fu\leq{\bf{1}}\wedge \Xi_{i,0}A x + \Xi_{i,0} Bu + \max_{v\in\mathcal V(x,u)} \Xi_{i,0}v \leq \xi_{i,0} \;\forall i\in\mathcal I_0
+	\right\}\\
+	&=\left\{(x,u): Fu\leq{\bf{1}}\wedge \Xi_{i,0}A x + \Xi_{i,0} Bu + \max_{j\in\mathcal I_{\mathcal V}} \Xi_{i,0}v_j(x,u) \leq \xi_{i,0} \;\forall i\in\mathcal I_0
+	\right\}\\
+	&=\left\{(x,u): Fu\leq{\bf{1}}\wedge \Xi_{i,0}A x + \Xi_{i,0} Bu + \Xi_{i,0}v_{j^\ast}(x,u) \leq \xi_{i,0} \;\forall i\in\mathcal I_0
+	\right\}
+\end{split}\end{equation*}
+%
+as in the iteration for the MRPI set~$v_{j^\ast}(x,u)$ does not need to be explicitly determined along each facet.
+%
+Instead introducing all possible~$v_j(x,u)$ and using an inequality reduction algorithm will produce the desired
+result of $\mathcal Z_1 = \{(x,u): E_{i,1}^x x + E_{i,1}^u u\leq e_{i,1};\forall i\in\mathcal J_1\}$,
+its projection $\mathcal X_1$ can be obtained by any projection method and is then given by~$\mathcal X_1 = \{x:\Xi_{i,1}x\leq\xi_{i,1}\;\forall i\in\mathcal I_1\}$.
+This procedure is repeated recursively for the desired horizon length~$N$.
+%
+%
+%
+%
 \section{Example}\label{sec:example:parametrised:MRPI:set}
 \begin{figure}
 \centering
@@ -569,7 +956,7 @@ on how many iterations the described algorithm could require.
 %
 %
 %
-In this section we discuss the calculation of the MRPI set for a linearised simplified model of the magnetic 
+In this section we present the calculation of the MRPI set and stage constraints for a linearised simplified model of the magnetic 
 levitation system depict in figure~\ref{fig:levitating:ball}. 
 %
 The system dynamics for the ball are given by $m \ddot y = m g - c\frac{i^2}{y^2}$, where $m,g,c,i$ and $y$ 
@@ -635,13 +1022,20 @@ terminates after 3 iterations and produces the set depict in figure~\ref{fig:MRP
 %
 \begin{figure}
 \centering
-\includegraphics[scale=.65]{invariantSetStateDependant}
-\caption{The maximal robust positively invariant set for the levitating ball system
-has~6 supporting hyperplanes and the algorithm terminates after three iterations.}
+\begin{tikzpicture}
+\draw (0,0) node {\includegraphics[scale=.65]{stageconstraintsStateDependent}};
+\draw[latex'-] (1.2,0) to[out=30,in=180] (3,.6) node[right] {$\mathcal X^\infty$};
+\draw[latex'-] (-.7,1.4) to[out=30,in=180] (1.5,2) node[right] {$\mathcal X_1$};
+\draw[latex'-] (-1.6,2.5) to[out=30,in=180] (.3,3) node[right] {$\mathcal X_2$};
+\draw[latex'-] (-2.4,3.2) to[out=30,in=180] (-.3,3.7) node[right] {$\mathcal X_3$};
+\draw[latex'-] (-3.3,3.7) to[out=30,in=180] (-1.2,4.5) node[right] {$\mathcal X_4$};
+\end{tikzpicture}
+\caption[Example MRPI set]{The maximal robust positively invariant set~$\mathcal X^\infty$ for the levitating ball system
+has~6 supporting hyperplanes and the algorithm terminates after three iterations. The projected stage 
+constraints~$\mathcal X_1,\dots,\mathcal X_4$.}
 \label{fig:MRPI:set:levitating:ball}
 \end{figure}
-%
-%
+
 %
 %
 %
@@ -654,43 +1048,44 @@ sets, i.e. sets which are scaled by a scalar parameter~$\theta\geq-1$:
 = (1+\theta)\mathcal V(0).
 \end{equation}
 %
-For the sake of generality, we discuss the case for input constrained systems under a given feedback law
+For the sake of generality, we present the case for input constrained systems under a given feedback law,
 we present the calculation in combination with a non-uniformly scaled input constraint set
 %
-\begin{equation}
+\begin{equation}\label{eq:parametrised:input:constraints:non:uniform}
 \mathcal U({\bf{\alpha}}) = \{u: Fu\leq\left(I+\text{diag}(\alpha_1,\dots,\alpha_p)\right){\bf{1}}\}.
 \end{equation}
 %
 The reason for allowing general scaling parameters for the input constraint set but restricting the scaling
-to a uniform one for the disturbance set will become clear in the proceeding discussion, it due to the
-way we avoid solving multi-parametric linear programs 
+to a uniform one for the disturbance set will become clear in the proceeding discussion.
 
 The necessity of uniform scaling of the disturbance constraints is due to the method we use to avoid
 solving multi-parametric linear programs in every step of the proposed iteration.
 A representation of the MRPI set of a system parametrised with respect to a scaling parameter allows us
 to study the system's sensitivity to \emph{stronger/weaker} disturbances; similarly analysing the sensitivity to scaling of input 
 constraints can be useful to choose particular actuators.
-%
+
 \begin{rem}
 The set $\mathcal V(\theta)$ is non-empty and contains the origin for all $\theta>-1$ and hence the 
 maximum
 %
-\[
+\begin{equation*}
 0<\begin{array}[t]{rl}
 \displaystyle\max_v & c^T v\\
 \text{s.t.}& Gv \leq (1+\theta){\bf{1}}
 \end{array}
-\]
+\end{equation*}
 %
 is positive for any non-zero $c$.
 \end{rem}
 %
 In the following we describe an algorithm to compute the MRPI set $\mathcal Z^\infty$ contained in 
 $\mathcal Z = \{(x,\theta):\mathcal F_i x+\mathcal G_i\theta \leq 1,\forall\, i\in\mathcal I\}$.
+%
 As in the state dependent case we iteratively introduce constraints \emph{separating} points
 for which the successor state can lie outside the previous set, i.e. starting from $Z_0 = \mathcal Z$
-we determine the first iterate by enforcing all individual constraints onto all possible successor states:
-$Z_1=Z_0\cap D_0$ where $D_0$ is defined by
+we determine the first iterate by enforcing all individual constraints onto all possible successor states.
+%
+Hence $Z_1=Z_0\cap D_0$ where $D_0$ is defined by
 %
 \begin{equation}\small
 \begin{split}
@@ -720,6 +1115,7 @@ v_{l,i}^\ast = \begin{array}[t]{rl}\displaystyle\max_v & \mathcal F_i \Psi^{l} v
 \end{equation}
 %
 Notice that~\eqref{eq:definition:v:ast} can be represented in various ways:
+%
 \[
 \begin{array}{@{}rl@{\hspace{0.7em}}c@{\hspace{0.7em}}rl@{\hspace{0.7em}}c@{\hspace{0.7em}}rl@{}}
 \max_v&\mathcal F_i \Psi^l v &=& \max_{\tilde v}&\mathcal F_i \tilde  v &=& \max_{\tilde v}&\mathcal F_i \tilde v \\ 
@@ -728,8 +1124,9 @@ Notice that~\eqref{eq:definition:v:ast} can be represented in various ways:
 \end{array}
 \]
 %
-where $\bar{\mathcal{V}}=\mathcal V(0)$ for notational convenience. For any fixed $\hat\theta>-1$
-we have the closed form description
+where $\bar{\mathcal{V}}=\mathcal V(0)$ for notational convenience. 
+%
+For any fixed $\hat\theta>-1$ we have the closed form description
 %
 \begin{equation}\label{eq:closed:form:parametrised:iterates}
 \begin{split}
@@ -741,10 +1138,14 @@ we have the closed form description
 \end{split}
 \end{equation}
 %
-The iteration terminates when $Z_k\subseteq Z_{k+1}$. As in section~\ref{sec:state:dep:MRPI}
-we will require $\mathcal Z\vert_{\hat\theta}$ to be contained in an observable band: $\mathcal Z\vert_{\hat\theta}
-=\{x:\mathcal Fx \leq {\bf{1}}-\mathcal G\hat\theta\}\subseteq \mathcal B=\{x:\Gamma x\leq {\bf{1}}\wedge -\Gamma 
-x\leq {\bf{1}}\}$ for all $\hat\theta>-1$. We have the following result:
+The iteration terminates when $Z_k\subseteq Z_{k+1}$. 
+%
+As in section~\ref{sec:parametrised:MRPI:set} we will require $\mathcal Z\vert_{\hat\theta}$ to be contained 
+in an observable band: $\mathcal Z\vert_{\hat\theta}=\{x:\mathcal Fx \leq {\bf{1}}-\mathcal 
+G\hat\theta\}\subseteq \mathcal B=\{x:\Gamma x\leq {\bf{1}}\wedge -\Gamma 
+x\leq {\bf{1}}\}$ for all $\hat\theta>-1$. 
+%
+We have the following result:
 %
 \begin{thm}
 Let the system constraints be contained in a band $\mathcal Z\vert_{\hat\theta}\subseteq\mathcal 
@@ -754,19 +1155,25 @@ for a finite $N$. Hence the MRPI set $\mathcal Z^\infty = Z_N$ is a finite polyh
 \end{thm}
 %
 \begin{proof}
-The proof is similar to that of Lemma~\ref{thm:finite:MRPI:set:state:dependable}.
+The proof is similar to that of Lemma~\ref{thm:finite:terminability:MRPI:algorithm}.
+%
 First we argue that for each fixed $\hat\theta$ the set $Z_k\vert_{\hat\theta}$ becomes compact using the same
-observability argument as in Lemma~\ref{thm:finite:MRPI:set:state:dependable}.
+observability argument as in Lemma~\ref{thm:finite:terminability:MRPI:algorithm}.
+%
 We then use the representation~\eqref{eq:closed:form:parametrised:iterates} to argue that $D_k$ 
 in~\eqref{eq:parametrised:Dk} grows exponentially and hence contains any compact set after a finite number
-of iterations. Fixing $\theta=\hat\theta$ does not affect the result since
-our argument is constructed for a fixed matrix $\Gamma$ with rows scaled by 
-$(1-\mathcal G_i\hat\theta)^{-1}$; clearly we can re-scale the rows to accommodate any other choice of $\hat\theta>-1$.
+of iterations. 
+%
+Fixing $\theta=\hat\theta$ does not affect the result since our argument is constructed for a fixed 
+matrix $\Gamma$ with rows scaled by $(1-\mathcal G_i\hat\theta)^{-1}$; clearly we can re-scale the 
+rows to accommodate any other choice of $\hat\theta>-1$.
 \end{proof}
 
-The iterative process described above allows uniform scaling of the disturbance set. As mentioned earlier, the 
-algorithm can be extended to the case of non-uniformly scaled input constraints to accommodate more degrees of freedom for 
-system analysis simply by using 
+The iterative process described above allows uniform scaling of the disturbance set. 
+%
+As mentioned earlier, the algorithm can be extended to the case of non-uniformly scaled input constraints, 
+$u \in \mathcal U(\alpha)$ with $\mathcal U(\alpha)$ as defined in~\eqref{eq:parametrised:input:constraints:non:uniform},
+to accommodate more degrees of freedom for system analysis simply by using 
 %
 \[
 \mathcal Z = \{(x,\theta,\alpha): \mathcal F x + \mathcal G\theta + 
@@ -775,108 +1182,31 @@ system analysis simply by using
 %
 This does not affect the algorithm since at each step of the iteration 
 the elements of $\mathcal H$ remain unchanged. 
-
-\section{Problem Formulation}
-In this section we present the min-max optimisation problem we will solve in order to
-obtain a robust model predictive controller for a linear system subject to state and 
-input dependent disturbance.
 %
-The cost functions we consider are quadratic, i.e.
 %
-\begin{subequations}\label{ch:par:con:the:problem}
-\begin{equation}\label{ch:par:con:the:problem:cost}
-	J_m^\ast(x) = \min_u \max_{w,x^+} \frac{1}{2}\left(x^T Q x + u^T R u - \gamma^2 w^T w\right) +
-	J_{m-1}^\ast(x^+)
-\end{equation}
 %
-subject to the system dynamics
 %
-\begin{equation}\label{ch:par:con:the:problem:system}
-	x^+ = Ax + Bu + Dw,
-\end{equation}
 %
-the disturbance constraints
+\section{Stage constraints for scaled constraints}\label{sec:stage:constraints:scaled}
 %
-\begin{equation}\label{ch:par:con:the:problem:disturbance}
-	w\in\mathcal W(x,u) \mathrel{\mathop:}= \left\{w:Gw \leq \max_k\{H^x_k x + H^u_k u + h_k\}\right\}
-\end{equation}
+In this section we present the computation of the stage constraints~\eqref{eq:concepts:def:stage:constraints}
+for a scaled setup, i.e.~$v\in\mathcal V(\theta)=\{v:Gv\leq(1+\theta){\bf{1}}\}$ and $u\in\mathcal U(\alpha) = \{
+u:Fu\leq(I+\text{diag}(\alpha_1,\alpha_2,\dots)){\bf{1}}\}$.
 %
-and the stage constraints
+Starting from~$\mathcal Z^\infty = \mathcal Z_0 = \{(x,\theta,\alpha): \mathcal F_{i,0}x + \mathcal G_{i,0}\theta + 
+\mathcal H_{i,0}\alpha \leq {\bf{1}}\}$ the first stage is given by
 %
-\begin{equation}\label{ch:par:con:the:problem:stage:constraints}
-	(x,u)\in\mathcal Z_m =\left\{(x,u):\Xi_m^x x + \Xi_m^u u \leq \xi_m\right\}.
-\end{equation}
-\end{subequations}
+\begin{equation}\begin{split}
+	\mathcal F_{i,0}(Ax + Bu + v) +\mathcal G_{i,0}\theta +\mathcal H_{i,0}\alpha\leq1\;\forall v\in\mathcal V(\theta)\\
+	\Leftrightarrow\mathcal F_{i,0}Ax + \mathcal F_{i,0}Bu + \max_{Gv\leq(1+\theta){\bf{1}} } \mathcal F_{i,0} v 
+	+\mathcal G_{i,0}\theta +\mathcal H_{i,0}\alpha\leq1\\
+	 \Leftrightarrow\mathcal F_{i,0}Ax + \mathcal F_{i,0}Bu + (1+\theta)\max_{Gv\leq{\bf{1}} } \mathcal F_{i,0} v 
+	+\mathcal G_{i,0}\theta +\mathcal H_{i,0}\alpha\leq1\\
+	 \Leftrightarrow\mathcal F_{i,0}Ax + \mathcal F_{i,0}Bu 
+	+(\mathcal G_{i,0}+\max_{Gv\leq{\bf{1}} } \mathcal F_{i,0} v) \theta +\mathcal H_{i,0}\alpha\leq1- \max_{Gv\leq{\bf{1}} } \mathcal F_{i,0} v
+\end{split}\end{equation}
 %
-Both the cost-to-go $J_{m-1}^\ast(x^+)$ in~\eqref{ch:par:con:the:problem:cost} as well as the
-stage constraint set~$\mathcal Z_m$ in~\eqref{ch:par:con:the:problem:stage:constraints} are 
-recursively defined.
+hence there exists a description $\mathcal Y_1 = \{(x,u,\theta,\alpha): E_1^x x + E_1^u u + E_1^\theta \theta + E_1^\alpha \alpha\leq{\bf{1}}\}$.
 %
-The cost-to-go is initialised with $J_0^\ast(x) = \frac{1}{2}x^T P_0 x$ with~$P_0$ the unconstraint
-optimal solution to the min-max problem, i.e.~$P_0=P$ in appendix~\ref{app:terminal:controller}.
-%
-The sets of stage constraints are computed in advance to satisfy the recursive definition
-%
-\begin{subequations}\label{ch:par:con:def:stage:constraints}
-\begin{equation}
-	\mathcal Z_m:=\left\{(x,u):Ax+Bu+Dw\in\mathcal X_{m-1} \forall w\in\mathcal W(x,u)\right\},
-\end{equation}
-%
-where $\mathcal X_m$ denotes the projection of $\mathcal Z_m$, i.e. the constraints on the state alone
-%
-\begin{equation}
-	\mathcal X_m\mathrel{\mathop:}=\left\{x:\exists u : (x,u)\in\mathcal Z_m\right\}.
-\end{equation}
-%
-The state constraints $\mathcal X_m$ are initialised with the MRPI set~$\mathcal X^\infty$ 
-of the system~\eqref{ch:par:con:the:problem:system} subject to the unconstrained optimal
-feedback controller calculated in appendix~\ref{app:terminal:controller}, i.e.~
-%
-\begin{equation}
-	\mathcal X_0 =\mathcal X^\infty \mathrel{\mathop:}= \{x: (A+BK)x+Dw\in\mathcal X^\infty\;
-	\forall w\in\mathcal W(x,Kx)\},
-\end{equation}
-\end{subequations}
-%
-\par
-%
-In order to solve the min-max problem~\eqref{ch:par:con:the:problem} as a sequence of
-multi-parametric quadratic programs, as presented in chapter~\ref{app:chp:mpqp}, we 
-split~\eqref{ch:par:con:the:problem} into recursively defined maximisations and minimisations.
-%
-The maximisation is given by
-%
-\begin{subequations}\label{ch:par:con:the:maximisation}
-	\begin{equation}
-		\hat J_m^\ast(x,u) =\max_{w,x^+} -\frac{\gamma^2}{2} w^Tw + J_{m-1}^\ast(x^+)
-	\end{equation}
-	%
-	subject to
-	%
-	\begin{equation}
-		x^+ = Ax + Bu + Dw
-	\end{equation}
-	%
-	and
-	%
-	\begin{equation}\label{ch:par:con:affine:rhs}
-		Gw \leq \max_k\left\{H^x_k x + H^u_k u + h_k\right\}.
-	\end{equation}
-\end{subequations}
-%
-The minimisation is given by
-%
-\begin{subequations}\label{ch:par:con:the:minimisation}
-	\begin{equation}
-		J_m^\ast(x) = \min_u \frac{1}{2}\left( x^T Q x + u^T R u \right) + \hat J_m^\ast(x,u)
-	\end{equation}
-	subject to
-	\begin{equation}
-		\Xi_m^x x + \Xi_m^u u \leq \xi_m.
-	\end{equation}
-\end{subequations}
-%
-Now an active set solver as discussed in chapter~\ref{app:chp:mpqp} can be applied, with one additional
-line search to determine the right hand side of~\eqref{ch:par:con:affine:rhs}.
-%
-This can be done as described in appendix~\ref{app:determining:pwa}.
+Projecting the set $\mathcal Y_1$ onto $(x,\theta,\alpha)$ leads to $\mathcal Z_1 = \{(x,\theta,\alpha): \mathcal F_{i,1}x + \mathcal G_{i,1}\theta + 
+\mathcal H_{i,1}\alpha \leq {\bf{1}}\}$ and the remaining stage constraints can be recursively calculated up to the desired stage~$N$.

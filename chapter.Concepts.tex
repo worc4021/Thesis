@@ -1,8 +1,320 @@
 %!TEX root = main.tex
 
+% %
+% We denote trajectories of the disturbance and input by~${\bf{w}}=(w_0,\dots,w_{N-1})\in\mathcal W^N$ and 
+% ${\bf{u}} = (u_0,\dots,u_{N-1})\in\mathcal U^N$ respectively, the resulting state trajectory is then denoted 
+% by~${\bf{x}}^{\bf{u},\bf{w}}(x_0) = (x_0,f(x_0,u_0,w_0),\dots)$
+% %
+% For notational convenience we denote by~$x_i$ the $i$-th state of the optimal state trajectory for
+% the performance criterion
+% %
+% \begin{equation}\label{eq:concepts:general:objective:no:term:cost}
+% 	J_m(x_{m}) = \min_{u_{m}\in\mathcal U}\max_{w_{m}\in\mathcal W} l(x_{m},u_{m}) - \gamma(w_{m}) + J_{m-1}(x_{m+1}),
+% \end{equation}
+% %
+% i.e. $x_i$ is the $i$-th column of the optimal state trajectory~${\bf{x}}^{\bf{u}^\ast,\bf{w}^\ast}(x_0)$
+% with the optimisers~${\bf{u}}^\ast$ and~${\bf{w}}^\ast$.
+% %
+% We assume that we have $\mathcal K^\infty$ functions $\alpha_i, i\in\{1,\dots,8\}$ such that
+% %
+% \begin{subequations}
+% \begin{equation}
+% 	\alpha_1(\norm{x}) + \alpha_2(\norm{u}) \leq l(x,u) \leq \alpha_3(\norm{x}) + \alpha_4(\norm{u})
+% \end{equation}
+% and
+% \begin{equation}
+% 	\alpha_5(\norm{w})\leq\gamma(w)\leq\alpha_6(\norm{w}).
+% \end{equation}
+% \end{subequations}
+% %
+% Furthermore we assume that $l(x,u)$ and $\gamma(w)$ are convex in $u\in\mathcal U$ and $w\in\mathcal W$
+% respectively.
+% %
+% To initialise the recursion we use $J_0(x) = V(x)$ as the unconstrained infinite horizon solution
+% %
+% \begin{equation}
+% 	V(x_0) = \lim_{N\rightarrow\infty} \min_{u_0}\max_{w_0}\dots \min_{u_{N}}\max_{w_{N}}\sum_{i=0}^{N}l(x_i,u_i)-\gamma(w_i)
+% \end{equation}
+% %
+% its optimal solution is given by
+% %
+% \begin{equation}
+% 	\bigl(\kappa(x),\nu(x,\kappa(x)\bigr) = \arg\min_{u_0,\dots}\max_{w_0,\dots} \sum_{i=0}^\infty l(x_i,u_i) - \gamma(w_i)
+% \end{equation}
+% %
+% notice that this implies
+% \begin{gather}
+% 	V(x_0) = \min_{u_0}\max_{w_0} l(x_0,u_0)-\gamma(w_0) + V(f(x_0,u_0,w_0))\geq 
+% \end{gather}
+% %
+% \begin{gather}
+% 	\alpha_7(\norm{x}) \leq V(x) \leq \alpha_8(\norm{x}) \nonumber \\
+% 	V(f(x,\kappa(x),w))-V(x) \leq -l(x,\kappa(x)) + \gamma(w)\label{eq:concepts:ISS:property:general}
+% \end{gather}
+% %
+% for the unconstrained optimal infinite horizon controller~$u = \kappa(x)$, i.e. $\kappa$ satisfies 
+% %
+% if it exists.
+% %
+% Notice that~\eqref{eq:concepts:ISS:property:general} implies that $V(x)$ is an \emph{ISS-Lyapunov function} 
+% for $x^+=f(x,\kappa(x),w)$ (see~\cite{Jiang:2001}), since
+% %
+% \begin{equation}
+% 	\eqref{eq:concepts:ISS:property:general}\leq -(\alpha_1(\norm{x})+\alpha_2(\norm{\kappa(x)})) + \alpha_6(\norm{w})
+% \end{equation}
+% %
+% and in particular
+% %
+% \begin{equation}
+% 	V(f(x,\kappa(x),w))-V(x) \leq -\alpha_1(\norm{x}) + \alpha_6(\norm{w}).
+% \end{equation}
+
+
+% Like in nominal MPC algorithms the controller that is applied to the system is given by~$u=u_0^\ast$, so that
+% the subsequent problem is then to solve~\eqref{eq:concepts:general:objective:no:term:cost} for the current 
+% state~$f(x_0,u_0^\ast,\hat w_0)$ for the actual realisation $\hat w_0\in\mathcal W$.
+
+
+
 \chapter{Concepts of Robust Model Predictive Control}\label{chap:concepts}
-In this chapter we cover the main concepts which make up the foundation of
-the robust model predictive control schemes we will discuss later on.
 %
-\begin{defn}[Maximal Robust Positive Invariant Set]
+In this chapter we cover the main concepts which make up the foundation of
+the robust model predictive control (RMPC) schemes we will discuss later on.
+%
+We present the concepts as general as possible and will only exploit special 
+structures if necessary.
+%
+
+%
+First we examine the unconstrained infinite horizon problem for a given discrete time system 
+%
+\begin{equation}\label{eq:concepts:general:system}
+ 	x_{i+1} = f(x_i,u_i,w_i)
+\end{equation} 
+%
+with the state $x\in\mathbb R^n$, the control input $u\in\mathbb R^{n_u}$ and the disturbance 
+input $w\in\mathbb R^{n_w}$ we seek to optimally steer the system state~$x$ from the initial state $x_0$ to the the 
+equilibrium $0 = f(0,0,0)$ with respect to the performance criterion
+%
+\begin{equation}\label{eq:concepts:infinite:horizon:problem}\begin{split}
+	V(x) = &\lim_{N\rightarrow\infty} \min_{u_0}\max_{w_0}\dots\min_{u_N}\max_{w_N} \sum_{i=0}^N l(x_i,u_i)-\gamma(w_i)\\
+	&\text{s.t.}\quad\begin{array}{rcl}
+	x_{i+1} &=& f(x_i,u_i,w_i)\\
+	x_0 &=& x.
+	\end{array}
+\end{split}\end{equation}
+%
+We assume that the stage-cost terms can be bounded by the $\mathcal K^\infty$ functions $\alpha_i, i\in\{1,\dots,6\}$
+%
+\begin{subequations}
+\begin{equation}
+	\alpha_1(\norm{x}) + \alpha_2(\norm{u}) \leq l(x,u) \leq \alpha_3(\norm{x}) + \alpha_4(\norm{u})
+\end{equation}
+and
+\begin{equation}
+	\alpha_5(\norm{w})\leq\gamma(w)\leq\alpha_6(\norm{w}).
+\end{equation}
+\end{subequations}
+%
+and by~$u^\ast = \kappa(x)$ and $w^\ast = \nu(x,u)$ we denote the optimal solution to the unconstrained problem
+%
+Notice that we have
+%
+\begin{equation}\begin{split}
+	V(x) &= \lim_{N\rightarrow\infty} \min_{u_0}\max_{w_0}\dots\min_{u_N}\max_{w_N} \sum_{i=0}^N l(x_i,u_i)-\gamma(w_i)\\
+	&\geq \min_{u_0} l(x_0,u_0)-\gamma(w_0^\prime) + \lim_{N\rightarrow\infty}\min_{u_1}\dots\max_{w_N}\sum_{i=1}^N l(x_i,u_i)-\gamma(w_i)\\
+	&\vdots\\
+	&\geq\lim_{N\rightarrow\infty}\min_{u_0,\dots,u_N}\sum_{k=0}^N l(x_k,u_k)-\gamma(w_k^\prime)
+\end{split}\end{equation}
+%
+where the sequence of $\{w_k^\prime\}$ is chosen arbitrarily, notice further that $\gamma(0)=0$ and $0\geq-\sum_{k=0}^N\gamma(w_k)$.
+%
+Hence, we have
+%
+\begin{equation}\begin{split}
+	V(x)\geq \tilde V(x) &= \lim_{N\rightarrow\infty}\min_{u_0,\dots,u_N}\sum_{k=0}^N l(x_k,u_k)\\
+	&\text{s.t.}\quad\begin{array}{rcl}
+	x_{k+1} &=& f(x_k,u_k,0)\\
+	x_0 &=& x
+	\end{array}
+\end{split}\end{equation}
+%
+which corresponds with the nominal unconstrained optimal control problem, for which we know that we have
+%
+\begin{equation}\label{eq:concepts:lower:bound:on:inf:cost}
+	\beta_1(\norm{x})\leq\tilde{V}(x)\leq V(x)
+\end{equation}
+%
+for some~$\beta_1\in\mathcal K^\infty$. 
+%
+We assume that there exists an upper bound $V(x)\leq\beta_2(\norm{x})$ with $\beta_2\in\mathcal K$.
+%
+It follows that~$V$ is an ISS-Lyapunov function for $x^+ = f(x,u^\ast,w) =: F(x,w)$ with $w\neq w^\ast$ (see~\cite{Jiang:2001}):
+%
+\begin{equation}\begin{split}
+	V(x) = l(x,u^\ast)-\gamma(w^\ast) + V(f(x,u^\ast,w^\ast)) \overset{w\neq w^\ast}{\geq} 
+	l(x,u^\ast)-\gamma(w) + V(f(x,u^\ast,w))
+\end{split}\end{equation}
+%
+or equivalently
+%
+\begin{equation}\label{eq:concepts:ISS:condition:cost:to:go}
+	V(f(x,u^\ast,w)) - V(x) \leq -l(x,u^\ast) + \gamma(w) \leq - \alpha_1(\norm{x}) + \alpha_5(\norm{w}).
+\end{equation}
+%
+It is known that the existence of a ISS Lyapunov function~$V$ implies that the unconstrained controlled 
+uncertain system $x^+ = F(x,w)$ is input-to-state stable (see~\cite{Jiang:2001}).
+
+The robust model predictive control problem we intend to solve is a finite horizon, constrained min-max
+optimal control problem.
+%
+We denote the state constraints~$x\in\mathcal X\subseteq\mathbb R^n$, the input constraints~$u\in\mathcal U\subset\mathbb R^{n_u}$
+and the disturbance constraints~$w\in\mathcal W\subset\mathbb R^{n_w}$, we assume that all constraint sets~$\mathcal X,
+\mathcal U$ and $\mathcal W$ are convex and closed, furthermore we assume that $\mathcal U$ and $\mathcal W$ are bounded and
+hence compact.
+%
+The RMPC problem is then given by the recursive min-max problems
+%
+\begin{subequations}
+\begin{equation}
+	J_m(x_{N-m}) = \min_{u_{N-m}\in\mathcal U}\max_{w_{N-m}\in\mathcal W} l(x_{N-m},u_{N-m})-\gamma(w_{N-m}) + J_{m-1}(x_{N-m+1})
+\end{equation}
+subject to
+\begin{equation}
+	x_{i+1} = f(x_i,u_i,w_i)
+\end{equation}
+\begin{equation}
+	x_{N-m},x_{N-m+1}\in\mathcal X
+\end{equation}
+\end{subequations}
+%
+which is initialised with the unconstrained solution $J_0(x) = V(x)$, and the system state at the $N$-th stage~$x_N=x$.
+%
+The robust model predictive control input is then given by~$u_N^\ast$, i.e. the optimal control law at the~$N$-th stage, 
+so that the successor state is then given by~$x^+ = f(x,u_N^\ast,\tilde w)$ for some realisation $\tilde w\in\mathcal W$.
+
+
+In order to guarantee the feasibility of the optimisation problem for all possible realisations of the 
+uncertainty~$w\in\mathcal W$ we design state constraints for each stage such that the satisfaction 
+of state constraints is guaranteed for all realisations of the uncertainty.
+%
+Similar to nominal MPC we use a terminal set approach, i.e. the terminal state is constrained to a set
+in which~$\kappa(x)\in\mathcal U$ is feasible and renders the set invariant, see e.g.~\citet{Mayne:2000}.
+%
+However, in the robust setup we require the terminal set to be invariant for all possible realisations of the 
+uncertainty, i.e. a set which is invariant under all possible realisations of the closed-loop 
+system~$f(x,\kappa(x),w), w\in\mathcal W$, these sets are called \emph{robust positive invariant} (RPI) sets.
+%
+In particular we use the \emph{largest} RPI set, i.e. the RPI set that contains all \emph{smaller} RPI sets, the
+so called \emph{maximal robust positive invariant} (MRPI) set, see~\cite{blanchini:2007} for an elaborate discussion.
+%
+\begin{defn}[Maximal Robust Positive Invariant Set]\label{def:concepts:MRPI:sets:general}
+For an uncertain constrained system $x^+ = F(x,w)$ with $x\in\mathscr X$ and $w\in\mathscr W$
+the maximal robust positive invariant set~$\mathcal X^\infty$ is defined as the largest set satisfying
+%
+\begin{equation}
+	\mathcal X^\infty = \left\{x\in\mathcal X : F(x,w)\in\mathcal X^\infty\;\forall\;w\in\mathscr W \right\}
+\end{equation}
+%
 \end{defn}
+%
+In the case of a terminal set for a RMPC problem we would use~$F(x,w) = f(x,\kappa(x),w)$ and 
+$\mathscr X = \{x\in\mathcal X:\kappa(x)\in\mathcal U\wedge \nu(x,\kappa(x))\in\mathcal W\}$.
+%
+However, simply adding the constraint $x_N\in\mathcal X^\infty$ to the min-max 
+recursion~\eqref{eq:concepts:general:objective:no:term:cost} is not enough to guarantee the feasibility of 
+the problem, since there might be realisations ${\bf{w}}^\prime\neq{\bf{w}}^\ast$ such that the terminal
+state~$x^{\bf{u}^\ast,\bf{w}^\prime}_N(x_0)\not\in\mathcal X^\infty$.
+%
+For this purpose we constrain the state to the $m$-step \emph{robust controllable sets} $x_m\in\mathcal Z_m$ at 
+the $m$-th stage, which is a recursively defined sequence of sets leading towards the MRPI set~$\mathcal X^\infty$,
+i.e.
+%
+\begin{subequations}\label{eq:concepts:def:stage:constraints}
+\begin{equation}
+	\mathcal Z_m = \{(x,u)\in\mathcal X\times\mathcal U: f(x,u,w)\in\mathcal X_{m-1}\forall\,w\in\mathcal W\}
+\end{equation}
+%
+and its projection
+%
+\begin{equation}
+	\mathcal X_m = \{x\in\mathcal X:\exists\;u\in\mathcal U\;(x,u)\in\mathcal Z_m\}
+\end{equation}
+initialised with the MRPI set $\mathcal X_0=\mathcal X^\infty$.
+\end{subequations}
+%
+So that the state constrained MRPC problem is given by
+%
+\begin{subequations}\label{seq:concepts:general:RMPC:problem:with:state:constraints}
+\begin{equation}
+	J_m(x_{m}) = \min_{u_{m}}\max_{w_{m}} l(x_{m},u_{m}) - \gamma(w_{m}) + J_{m-1}(x_{m+1})
+\end{equation}
+%
+subject to 
+%
+\begin{equation}
+	x_{m+1} = f(x_m,u_m,w_m)
+\end{equation}
+%
+\begin{equation}
+	(x_m,u_m) \in\mathcal Z_m
+\end{equation}
+%
+\begin{equation}
+	w_m\in\mathcal W.
+\end{equation}
+\end{subequations}
+%
+We can formulate the stability result
+%
+\begin{thm}
+The RMPC controller obtained from~\eqref{seq:concepts:general:RMPC:problem:with:state:constraints} the MRPI 
+set~$\mathcal X^\infty$ asymptotically stable for the closed-loop system.
+\end{thm}
+%
+\begin{proof}
+For this we show that $J_N(x)$ is an ISS Lyapunov function for the closed-loop system denoted by~$F(x_0,w_0) 
+= f(x_0,u_0^\ast,w_0)$.
+%
+Notice that the objective can be rewritten as
+%
+\begin{equation}
+	J_N(x_0) = \min_{u_0}\max_{w_0}\dots\min_{u_{N-1}}\max_{w_{N-1}} \sum_{i=0}^{N-1}l(x_i,u_i)-\gamma(w_i) + V(x_N)
+\end{equation}
+%
+First we show that $J_N(F(x_0,w_0^\prime))-J_N(x_0)\leq-l(x_0,u_0^\ast)+\gamma(w_0^\prime)$, for this notice
+that
+% 
+\begin{equation}\begin{split}
+	J_N(x_0) &= \min_{u_0}\max_{w_0} l(x_0,u_0)-\gamma(w_0) + J_{N-1}(x_1)\\
+		&\overset{w_0^\prime\neq w_0^\ast}{\geq} \min_{u_0} l(x_0,u_0)-\gamma(w_0^\prime) + J_{N-1}(f(x_0,u_0,w_0^\prime))\\
+		&= l(x_0,u_0^\ast)-\gamma(w_0^\prime) + J_{N-1}(F(x_0,w_0^\prime))
+\end{split}\end{equation}
+%
+Hence we easily obtain $J_{N-1}(F(x_0,w_0^\prime))-J_N(x_0)\leq-l(x_0,u_0^\ast)+\gamma(w_0^\prime)$,
+we now exploit the terminal cost to construct the horizon~$N$ cost.
+%
+We know that~\eqref{eq:concepts:ISS:property:general} holds for all~$w$ and in particular for a maximising
+$w^\ast$.
+%
+Hence,
+%
+\begin{equation}\begin{split}
+	J_{N-1}(F(x_0,w_0^\prime)) = &\min_{u_1}\max_{u_1}\dots\min_{u_{N-1}}\max_{w_{N-1}} \sum_{i=1}^{N-1}l(x_i,u_i)-\gamma(w_i)+V(x_N)\\
+	\overset{\eqref{eq:concepts:ISS:property:general}}{\geq} &\min_{u_1}\max_{u_1}\dots\min_{u_{N-1}}\max_{w_{N-1}} 
+	\sum_{i=1}^{N-1}l(x_i,u_i)-\gamma(w_i)\\
+	&+ l(x_N,\kappa(x_N)) -\gamma(w_N^\ast) + V(f(x_N,\kappa(x_N),w_N^\ast))\\
+	= &\min_{u_1}\max_{u_1}\dots\min_{u_{N-1}}\max_{w_{N-1}} 
+	\sum_{i=1}^{N-1}l(x_i,u_i)-\gamma(w_i)\\
+	&+ \max_{w_N} l(x_N,\kappa(x_N)) -\gamma(w_N) + V(f(x_N,\kappa(x_N),w_N))\\
+	\geq &\min_{u_1}\max_{u_1}\dots\min_{u_{N-1}}\max_{w_{N-1}} 
+	\sum_{i=1}^{N-1}l(x_i,u_i)-\gamma(w_i)\\
+	&+ \min_{u_N}\max_{w_N} l(x_N,u_N) -\gamma(w_N) + V(x_{N+1})\\
+	= &J_{N}(F(x_0,w_0^\prime)).
+\end{split}\end{equation}
+%
+This leads to $J_N(F(x_0,w_0^\prime))-J_N(x_0)\leq-l(x_0,u_0^\ast)+\gamma(w_0^\prime)$, which leads to the 
+ISS decay condition due to the properties of the stage cost terms.
+%
+
+\end{proof}

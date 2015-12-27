@@ -1,0 +1,106 @@
+%!TEX root = main.tex
+
+\section{Problem Formulation}
+In this section we present the min-max optimisation problem we will solve in order to
+obtain a robust model predictive controller for a linear system subject to state and 
+input dependent disturbance.
+%
+The cost functions we consider are quadratic, i.e.
+%
+\begin{subequations}\label{ch:par:con:the:problem}
+\begin{equation}\label{ch:par:con:the:problem:cost}
+	J_m^\ast(x) = \min_u \max_{w,x^+} \frac{1}{2}\left(x^T Q x + u^T R u - \gamma^2 w^T w\right) +
+	J_{m-1}^\ast(x^+)
+\end{equation}
+%
+subject to the system dynamics
+%
+\begin{equation}\label{ch:par:con:the:problem:system}
+	x^+ = Ax + Bu + Dw,
+\end{equation}
+%
+the disturbance constraints
+%
+\begin{equation}\label{ch:par:con:the:problem:disturbance}
+	w\in\mathcal W(x,u) \mathrel{\mathop:}= \left\{w:Gw \leq \max_k\{H^x_k x + H^u_k u + h_k\}\right\}
+\end{equation}
+%
+and the stage constraints
+%
+\begin{equation}\label{ch:par:con:the:problem:stage:constraints}
+	(x,u)\in\mathcal Z_m =\left\{(x,u):\Xi_m^x x + \Xi_m^u u \leq \xi_m\right\}.
+\end{equation}
+\end{subequations}
+%
+Both the cost-to-go $J_{m-1}^\ast(x^+)$ in~\eqref{ch:par:con:the:problem:cost} as well as the
+stage constraint set~$\mathcal Z_m$ in~\eqref{ch:par:con:the:problem:stage:constraints} are 
+recursively defined.
+%
+The cost-to-go is initialised with $J_0^\ast(x) = \frac{1}{2}x^T P_0 x$ with~$P_0$ the unconstraint
+optimal solution to the min-max problem, i.e.~$P_0=P$ in appendix~\ref{app:terminal:controller}.
+%
+The sets of stage constraints are computed in advance to satisfy the recursive definition
+%
+\begin{subequations}\label{ch:par:con:def:stage:constraints}
+\begin{equation}
+	\mathcal Z_m:=\left\{(x,u):Ax+Bu+Dw\in\mathcal X_{m-1} \forall w\in\mathcal W(x,u)\right\},
+\end{equation}
+%
+where $\mathcal X_m$ denotes the projection of $\mathcal Z_m$, i.e. the constraints on the state alone
+%
+\begin{equation}
+	\mathcal X_m\mathrel{\mathop:}=\left\{x:\exists u : (x,u)\in\mathcal Z_m\right\}.
+\end{equation}
+%
+The state constraints $\mathcal X_m$ are initialised with the MRPI set~$\mathcal X^\infty$ 
+of the system~\eqref{ch:par:con:the:problem:system} subject to the unconstrained optimal
+feedback controller calculated in appendix~\ref{app:terminal:controller}, i.e.~
+%
+\begin{equation}
+	\mathcal X_0 =\mathcal X^\infty \mathrel{\mathop:}= \{x: (A+BK)x+Dw\in\mathcal X^\infty\;
+	\forall w\in\mathcal W(x,Kx)\},
+\end{equation}
+\end{subequations}
+%
+\par
+%
+In order to solve the min-max problem~\eqref{ch:par:con:the:problem} as a sequence of
+multi-parametric quadratic programs, as presented in chapter~\ref{app:chp:mpqp}, we 
+split~\eqref{ch:par:con:the:problem} into recursively defined maximisations and minimisations.
+%
+The maximisation is given by
+%
+\begin{subequations}\label{ch:par:con:the:maximisation}
+	\begin{equation}
+		\hat J_m^\ast(x,u) =\max_{w,x^+} -\frac{\gamma^2}{2} w^Tw + J_{m-1}^\ast(x^+)
+	\end{equation}
+	%
+	subject to
+	%
+	\begin{equation}
+		x^+ = Ax + Bu + Dw
+	\end{equation}
+	%
+	and
+	%
+	\begin{equation}\label{ch:par:con:affine:rhs}
+		Gw \leq \max_k\left\{H^x_k x + H^u_k u + h_k\right\}.
+	\end{equation}
+\end{subequations}
+%
+The minimisation is given by
+%
+\begin{subequations}\label{ch:par:con:the:minimisation}
+	\begin{equation}
+		J_m^\ast(x) = \min_u \frac{1}{2}\left( x^T Q x + u^T R u \right) + \hat J_m^\ast(x,u)
+	\end{equation}
+	subject to
+	\begin{equation}
+		\Xi_m^x x + \Xi_m^u u \leq \xi_m.
+	\end{equation}
+\end{subequations}
+%
+Now an active set solver as discussed in chapter~\ref{app:chp:mpqp} can be applied, with one additional
+line search to determine the right hand side of~\eqref{ch:par:con:affine:rhs}.
+%
+This can be done as described in appendix~\ref{app:determining:pwa}.

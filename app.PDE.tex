@@ -1,0 +1,297 @@
+%!TEX root = main.tex
+
+\chapter{The unconstrained min-max solution}
+
+\begin{equation}
+	V(x) = \min_u\max_w l(x,u) - \gamma(w) + V(f(x,u,w))
+\end{equation}
+%
+introducing
+%
+\begin{equation}
+	H(x,u) = \max_w -\gamma(w) + V(f(x,u,w))
+\end{equation}
+%
+leads to
+%
+\begin{gather}
+	V(x) = \min_u l(x,u) + H(x,u)\\
+	H(x,u) = \max_w -\gamma(w) + V(f(x,u,w))
+\end{gather}
+%
+and introducing the additional variable $z=f(x,u,w)$ yields
+%
+\begin{equation}
+	H(x,u) = \begin{array}{rl}\max_{w,z} &-\gamma(w) + V(z)\\
+	\text{s.t.}& z = f(x,u,w)\end{array}
+\end{equation}
+%
+which then gives the Lagrange function
+\begin{equation}
+	L = -\gamma(w) + V(z) -\lambda^T(z-f(x,u,w))
+\end{equation}
+%
+So that the first order conditions for the maximisation are given by
+%
+\begin{gather}
+-\nabla_w \gamma + f_w^T\lambda = 0\\
+\nabla_z V -\lambda = 0\\
+z-f(x,u,w) = 0
+\end{gather}
+%
+and for the minimisation we have
+%
+\begin{equation}
+	\nabla_u l + \nabla_u H = 0
+\end{equation}
+%
+The implicit function theorem implies that $w^\ast = w(x,u)$ and $z^\ast = z(x,u)$ and hence
+%
+\begin{equation}
+	H(x,u) = -\gamma(w(x,u)) + V(z(x,u))
+\end{equation}
+%
+so that 
+%
+\begin{equation}\left.\begin{split}
+	\nabla_u H &= - w_u^T\nabla_w\gamma + z_u \nabla_z V\\
+	z_u &= f_u + f_w w_u
+\end{split}\right\} \Rightarrow \nabla_u l -w_u^T \nabla_w\gamma + (f_u+f_w w_u)^T\nabla_z V = 0.
+\end{equation}
+%
+For convexity of the minimisation we require $l_{uu}+H_{uu}>0$, this is then given by
+%
+\begin{equation}\begin{split}
+	\frac{\partial H}{\partial u^2} = \frac{\partial}{\partial u} \left(- w_u^T\nabla_w\gamma + z_u \nabla_z V\right)
+	= -w_u^T \nabla_{ww}\gamma w_u - \left(\begin{array}{ccc}
+	w_{u{u_1}}^T\nabla_w\gamma & \dots & w_{u{u_{N_u}}}^T\nabla_w\gamma
+	\end{array}\right)+\\ z_u^T\nabla_{zz} V z_u + \left(\begin{array}{ccc}
+	z_{uu_1}^T\nabla_z V & \dots & z_{uu_{N_u}}^T\nabla_z V
+	\end{array}\right).
+\end{split}\end{equation}
+%
+To derive a condition independent of $w$ and $z$ we derive an identity for $w_u$:
+%
+\begin{equation}\begin{split}
+	\frac{\partial}{\partial u} (f_w^T\lambda-\nabla_w\gamma) &= 0
+\end{split}\end{equation}
+%
+using the optimal value $\lambda^\ast=\nabla_z V(z(x,u))$ and hence $\lambda_u = \nabla_{zz}V z_u$.
+%
+So that we have
+%
+\begin{equation}
+	\left(\begin{array}{ccc} f_{wu_1}^T \nabla_z V & \dots & f_{wu_{N_u}}^T\nabla_z V \end{array}\right) + f_w^T\nabla_{zz}V z_u
+	-\nabla_{ww}\gamma w_u=0
+\end{equation}
+%
+and with $z_u = f_u + f_w w_u$ we get
+%
+\begin{equation}
+	\underbrace{\left(\begin{array}{ccc} f_{wu_1}^T \nabla_z V & \dots & f_{wu_{N_u}}^T\nabla_z V \end{array}\right) + f_w^T\nabla_{zz}V f_u}_L =
+	\underbrace{(\nabla_{ww}\gamma-f_w^T\nabla_{zz}V f_w)}_R w_u.
+\end{equation}
+%
+We can now write $w_u = R^{-1}L$ where neither $R$ nor $L$ depends on $w$ or $z$.
+%
+In order to derive a condition to guarantee $l_{uu}+H_{uu}>0$ we need an identity for $z_{uu_i}$, this
+can be found straight forward using
+%
+\begin{equation}
+	z_{uu_i} = f_{uu_i} + \left(\begin{array}{ccc}
+	f_{u_1w}w_{u_i} & \dots & f_{u_{N_u}w} w_{u_i}
+	\end{array}\right) + f_{wu_i}w_u + \left(\begin{array}{ccc}
+	f_{w_1w} w_{u_i} & \dots & f_{w_{N_w}w}w_{u_i}
+	\end{array}\right)w_u + f_w w_{uu_i}.
+\end{equation}
+%
+We can easily derive an identity for $w_{u_i}$, namely
+%
+\begin{equation}
+	f_{wu_i}^T\nabla_z V + f_w^T \nabla_{zz}V f_{u_i} = R w_{u_i}.
+\end{equation}
+%
+We will abbreviate the left hand side by $L_i$, i.e. $w_{u_i} = R^{-1}L_i$.
+
+
+% Notice that 
+% %
+% \begin{equation}
+% 	z_u = \left(\begin{array}{cccc}
+% 	z_{1,u_1} & z_{1,u_2} & \dots & z_{1,u_{N_u}}\\
+% 	\vdots & & & \vdots \\
+% 	z_{n,u_1} & z_{n,u_2} & \dots & z_{n,u_{N_u}}
+% 	\end{array}\right)
+% \end{equation}
+% %
+% is a $n\times N_u$ Jacobian matrix and 
+% %
+% \begin{equation}
+% 	\partial_{u_1}z_u = 
+% 	\left(\begin{array}{cccc}
+% 	z_{1,u_1^2} & z_{1,u_2u_1} & \dots & z_{1,u_{N_u}u_1}\\
+% 	\vdots & & & \vdots \\
+% 	z_{n,u_1^2} & z_{n,u_2u_1} & \dots & z_{n,u_{N_u}u_1}
+% 	\end{array}\right)
+% \end{equation}
+% %
+% is again a $n\times N_u$ matrix so that 
+% %
+% \begin{equation}
+% 	V_z\partial_{u_1} z_u = \left(\begin{array}{cccc} 
+% 	V_z z_{u_1^2} & V_z z_{u_2u_1} & \dots& V_z z_{u_{N_u}u_1}
+% 	\end{array}\right)
+% \end{equation}
+% %
+% is a $1\times N_u$ and so 
+% %
+% \begin{equation}
+% 	\left(\begin{array}{c}
+% 	V_z \partial_{u_1} z_u \\ \vdots \\ V_z \partial_{u_{N_u}} z_u
+% 	\end{array}\right) = 
+% 	\left(\begin{array}{cccc}
+% 	V_z z_{u_1^2} & V_z z_{u_2u_1} & \dots &V_z z_{u_{N_u}u_1} \\
+% 	V_z z_{u_1u_2} & V_z z_{u_2^2} & \dots& V_z z_{u_{N_u}u_2} \\
+% 	\vdots & & & \vdots \\
+% 	V_z z_{u_1u_{N_u}} & V_z z_{u_2u_{N_u}} & \dots& V_z z_{u_{N_u}^2}
+% 	\end{array}\right).
+% \end{equation}
+% %
+% Since $V_z z_{u_iu_j}$ is a scalar we have
+% %
+% \begin{multline}
+% 	\left(\begin{array}{c}
+% 	V_z \partial_{u_1} z_u \\ \vdots \\ V_z \partial_{u_{N_u}} z_u
+% 	\end{array}\right)^T = 
+% 	\left(\begin{array}{cccc}
+% 	V_z z_{u_1^2} & V_z z_{u_2u_1} & \dots &V_z z_{u_{N_u}u_1} \\
+% 	V_z z_{u_1u_2} & V_z z_{u_2^2} & \dots& V_z z_{u_{N_u}u_2} \\
+% 	\vdots & & & \vdots \\
+% 	V_z z_{u_1u_{N_u}} & V_z z_{u_2u_{N_u}} & \dots& V_z z_{u_{N_u}^2}
+% 	\end{array}\right)^T
+% 	= \\
+% 	\left(\begin{array}{cccc}
+% 	V_z z_{u_1^2} & V_z z_{u_1u_2} & \dots &V_z z_{u_1u_{N_u}} \\
+% 	V_z z_{u_2u_1} & V_z z_{u_2^2} & \dots& V_z z_{u_2u_{N_u}} \\
+% 	\vdots & & & \vdots \\
+% 	V_z z_{u_{N_u}u_1} & V_z z_{u_{N_u}u_2} & \dots& V_z z_{u_{N_u}^2}
+% 	\end{array}\right)  = 
+% 	\left(\begin{array}{cccc}
+% 	V_z z_{u_1^2} & V_z z_{u_2u_1} & \dots &V_z z_{u_{N_u}u_1} \\
+% 	V_z z_{u_1u_2} & V_z z_{u_2^2} & \dots& V_z z_{u_{N_u}u_2} \\
+% 	\vdots & & & \vdots \\
+% 	V_z z_{u_1u_{N_u}} & V_z z_{u_2u_{N_u}} & \dots& V_z z_{u_{N_u}^2}
+% 	\end{array}\right) \\
+% 	= \left(\begin{array}{c}
+% 	V_z \partial_{u_1} z_u \\ \vdots \\ V_z \partial_{u_{N_u}} z_u
+% 	\end{array}\right).
+% \end{multline}
+% %
+% And so all terms of $H_{uu}$ are symmetric and none can be discarded in advance.
+
+%
+% or
+% %
+% \begin{multline}
+% 	\frac{\partial H}{\partial u^2} = -w_u^T \gamma_{ww} w_u + (f_u + f_w w_u)^T V_{zz}(f_u + f_w w_u) + (I_{N_u}\otimes V_z)
+% 	\left(\begin{array}{c}
+% 	\partial_{u_1}z_u \\ \vdots \\ \partial_{u_{N_u}} z_u
+% 	\end{array}\right)\\
+% 	-(I_{N_u}\otimes\gamma_w)\left(\begin{array}{c}
+% 	\partial_{u_1} w_u\\
+% 	\vdots \\
+% 	\partial_{u_{N_u}} w_u
+% 	\end{array}\right)\\
+% 	=\left(\begin{array}{c}I_{N_u} \\ w_u \end{array}\right)^T
+% 	\left(\begin{array}{cc}
+% 	f_u^TV_{zz}f_u & f_u^T V_{zz} \\
+% 	V_{zz}f_u & (f_w^T V_{zz}f_w - \gamma_w)
+% 	\end{array}\right)
+% 	\left(\begin{array}{c}I_{N_u} \\ w_u \end{array}\right)
+% 	+ (I_{N_u}\otimes V_z)
+% 	\left(\begin{array}{c}
+% 	\partial_{u_1}z_u \\ \vdots \\ \partial_{u_{N_u}} z_u
+% 	\end{array}\right)\\
+% 	-(I_{N_u}\otimes\gamma_w)\left(\begin{array}{c}
+% 	\partial_{u_1} w_u\\
+% 	\vdots \\
+% 	\partial_{u_{N_u}} w_u
+% 	\end{array}\right)
+% \end{multline}
+
+
+
+% %
+% \begin{equation}
+% 	\nabla_u \bigl( l(x,u) + H(x,u) \bigr) = 0 \wedge \nabla_w \bigl(-\gamma(w) + V(f(x,u,w))\bigr) = 0
+% \end{equation}
+% %
+% \begin{gather}
+% 	l_u(x,u) + H_u(x,u) = 0 \\
+% 	-\gamma_w(w) + V_x(f(x,u,w))f_w(x,u,w) = 0
+% \end{gather}
+% %
+% Which implies that $w^\ast = w(x,u)$ and~$u^\ast = u(x)$, so that 
+% %
+% \begin{gather}
+% 	V(x) = l(x,u(x)) + H(x,u(x))\\
+% 	H(x,u) = -\gamma(w(x,u)) + V(f(x,u,w(x,u)))
+% \end{gather}
+% %
+% And hence
+% %
+% \begin{multline}
+% 	H_u(x,u) = -\gamma_w(w(x,u))w_u(x,u) + V_x(f(x,u,w(x,u)))f_u(x,u,w(x,u))\\
+% 	 + V_x(f(x,u,w(x,u)))f_w(x,u,w(x,u))w_u(x,u),
+% \end{multline}
+% %
+% \begin{equation}
+% 	V_x(x) = l_x(x,u(x)) + l_u(x,u(x)) u_x(x) + H_x(x,u(x)) + H_u(x,u(x))u_x(x)
+% \end{equation}
+% %
+% \begin{multline}
+% 	H_x(x,u) = -\gamma_w(w(x,u))w_x(x,u) + V_x(f(x,u,w(x,u))f_u(x,u,w(x,u)) +\\
+% 	 V_x(f(x,u,w(x,u)))f_w(x,u,w(x,u))w_x(x,u)
+% \end{multline}
+% %
+% This leads to
+% %
+% \begin{equation}\begin{split}
+% 	V_x &= l_x + l_u u_x + -\gamma_w w_x + V_x f_u + V_x f_w w_x - \gamma_w w_u + V_x f_u + V_x f_w w_u\\
+% 	V_x(I - f_u - f_w (w_x + w_u)) &= l_x + l_u u_x - \gamma_w (w_x + w_u)\\
+% 	V_x &= (l_x + l_u u_x - \gamma_w (w_x + w_u)) (I - f_u - f_w (w_x + w_u))^{-1}.
+% \end{split}\end{equation}
+% %
+% So that $w(x,u)$ satisfies the partial differential equation
+% %
+% \begin{equation}
+% 	\gamma_w = (l_x + l_u u_x - \gamma_w (w_x + w_u)) (I - f_u - f_w (w_x + w_u))^{-1}f_w
+% \end{equation}
+% %
+% the optimal control strategy $u(x)$ satisfies
+% %
+% \begin{equation}
+% 	l_u - \gamma_w w_u + (l_x + l_u u_x - \gamma_w (w_x + w_u)) (I - f_u - f_w (w_x + w_u))^{-1}(f_u + f_w w_u) = 0
+% \end{equation}
+
+% We require $V_{xx}\geq0$, hence
+% %
+% \begin{equation}
+% 	V_{xx} = \left(\begin{array}{c} I \\ u_x \end{array}\right)^T
+% 	\left(\left(\begin{array}{cc}
+% 	l_{xx} & l_{xu}\\
+% 	l_{ux} & l_{uu}
+% 	\end{array}\right)
+% 	+
+% 	\left(\begin{array}{cc}
+% 	H_{xx} & H_{xu} \\
+% 	H_{ux} & H_{uu}
+% 	\end{array}\right)\right)
+% 	\left(\begin{array}{c} I \\ u_x \end{array}\right)
+% 	+
+% 	(l_u + H_u)u_{xx}
+% \end{equation}
+
+% \begin{multline}
+% H_{xu} = -\gamma_{w} w_{xu} - w_u^T \gamma_{ww} w_u + V_x( f_{xu}+f_{wu} w_x + w_u^T (f_{xw} + f_{ww} w_u) )
+% \end{multline}
