@@ -67,7 +67,13 @@ For convexity of the minimisation we require $l_{uu}+H_{uu}>0$, this is then giv
 	w_{u{u_1}}^T\nabla_w\gamma & \dots & w_{u{u_{N_u}}}^T\nabla_w\gamma
 	\end{array}\right)+\\ z_u^T\nabla_{zz} V z_u + \left(\begin{array}{ccc}
 	z_{uu_1}^T\nabla_z V & \dots & z_{uu_{N_u}}^T\nabla_z V
-	\end{array}\right).
+	\end{array}\right)\\
+	=w_u^T\left(f_w^T\nabla_{zz}Vf_w-\nabla_{ww}\gamma\right)w_u + f_u^T\nabla_{zz}Vf_w w_u + w_u^Tf_w^T\nabla_{zz}V f_u
+	+ f_u^T\nabla_{zz}Vf_u\\
+	+\underbrace{\left(\begin{array}{ccc}z_{uu_i}^T\nabla_z V &\dots & z_{uu_{N_u}}^T \nabla_z V
+	\end{array}\right)-\left(\begin{array}{ccc}
+	w_{uu_1}^T\nabla_w \gamma & \dots & w_{uu_{N_u}}^T\nabla_w \gamma
+	\end{array}\right)}_{\mathscr A}.
 \end{split}\end{equation}
 %
 To derive a condition independent of $w$ and $z$ we derive an identity for $w_u$:
@@ -92,8 +98,8 @@ and with $z_u = f_u + f_w w_u$ we get
 	\underbrace{(\nabla_{ww}\gamma-f_w^T\nabla_{zz}V f_w)}_R w_u.
 \end{equation}
 %
-We can now write $w_u = R^{-1}L$ where neither $R$ nor $L$ depends on $w$ or $z$.
-%
+% We can now write $w_u = R^{-1}L$ where neither $R$ nor $L$ depends on $w$ or $z$.
+% %
 In order to derive a condition to guarantee $l_{uu}+H_{uu}>0$ we need an identity for $z_{uu_i}$, this
 can be found straight forward using
 %
@@ -105,13 +111,31 @@ can be found straight forward using
 	\end{array}\right)w_u + f_w w_{uu_i}.
 \end{equation}
 %
-We can easily derive an identity for $w_{u_i}$, namely
+and therefore
 %
 \begin{equation}
-	f_{wu_i}^T\nabla_z V + f_w^T \nabla_{zz}V f_{u_i} = R w_{u_i}.
+	\nabla V^T z_{uu_i} = \nabla V^T f_{uu_i} + \left(\begin{array}{ccc}\nabla V^T f_{u_1w}w_{u_i}&\dots 
+	&\nabla V^T f_{u_{N_u}w}w_{u_i}\end{array}\right)
 \end{equation}
-%
-We will abbreviate the left hand side by $L_i$, i.e. $w_{u_i} = R^{-1}L_i$.
+% %
+% We can easily derive an identity for $w_{u_i}$, namely
+% %
+% \begin{equation}
+% 	f_{wu_i}^T\nabla_z V + f_w^T \nabla_{zz}V f_{u_i} = R w_{u_i}.
+% \end{equation}
+% %
+% We will abbreviate the left hand side by $L_i$, i.e. $w_{u_i} = R^{-1}L_i$.
+% %
+% So that $z_{uu_i}$ can be rewritten as
+% %
+% \begin{multline}
+% 	z_{uu_i} = f_{uu_i} + \left(\begin{array}{ccc}
+% 	f_{u_1w}R^{-1}L_i & \dots & f_{u_{N_u}w} R^{-1}L_i
+% 	\end{array}\right) + f_{wu_i}R^{-1}L\\ + \left(\begin{array}{ccc}
+% 	f_{w_1w} R^{-1}L_i & \dots & f_{w_{N_w}w}R^{-1}L_i
+% 	\end{array}\right)R^{-1}L + f_w w_{uu_i}
+% \end{multline}
+
 
 
 % Notice that 
