@@ -1,0 +1,1010 @@
+%!TEX root = main.tex
+\resetcounters
+\chapter{Robust Model Predictive Control with State- and Input Dependent Disturbances}\label{ch:MPC:sec:state:input:disturbances}
+%
+%
+%
+%
+In Chapters~\ref{ch:MPC:sec:quadratic:MPC} and~\ref{ch:MPC:sec:parametric:convextiy} we have derived a method to solve quadratic min-max programs subject to linear constraints as well as how to compute the sets required to guarantee the feasibility of the closed-loop system.
+%
+Furthermore we have discussed parametrised set, i.e. set-valued maps, and how to compute the parametrised Pontryagin difference for parametrically convex piecewise affine set-valued maps. 
+%
+We will now use these methods to extend the class of systems for which a quadratic min-max program can be solved to uncertain systems subject to state- and input-dependent uncertainties.
+%
+This allows us to guarantee invariance, stability, etc. for non-linear systems (see Example~\ref{example:most:complex:pontryagin:difference:ever}) as we will discuss later, as well as systems subject to multiplicative uncertainty.
+%
+The disturbances we consider are constrained to be in the parametrically convex set
+%
+\begin{equation}\label{eq:state:and:input:dependent:constraints}
+	\W(x,u) = \left\{w\in\RR^d:a_i w\leq \max_k\{b_{i,k}+c_{i,k}^x x+c_{i,k}^u u\},i\leq M_{\W}\right\},
+\end{equation}
+%
+i.e. the same parametric dependency as in~\eqref{eq:definition:PWA:polytopic:set:general} where the parameter is~$(x,u)$.
+%
+For this we have to extend the analysis of Section~\ref{ch:MPC:sec:qMPC:MRPI:set} to accommodate the state dependence of the disturbance set.
+%
+\\[1em]
+%
+Notice that the only difference we consider to the quadratic formulation~\eqref{ch:quad:MPC:unspecific:constraints} is that~$\W=\W(x,u)$ defined in~\eqref{eq:state:and:input:dependent:constraints}.
+%
+\section{The Maximal Robust Positive Invariant Set for State-Dependent Disturbances}\label{ch:MPC:sec:state:dist:MRPI}
+\resetforsection
+%
+%
+\mysplit As for fixed disturbance sets in Section~\ref{ch:MPC:sec:qMPC:MRPI:set} we have to compute a robust positive invariant set of states~$\X^\infty$
+%
+\begin{equation}\begin{aligned}
+	\X^\infty &= \left\{x\in\X:\begin{array}{rcl}x_0 &=& x\\
+	x_{k+1} &=& \Psi x_k + w_k, w_k\in\W(x_k,Kx_k)\\
+	x_k&\in&\X\wedge Kx_k\in\U\end{array}\right\}\\
+	 &= \left\{x\in\X:\Psi x+w\in\X^\infty\forall w\in\W(x,Kx)\right\}
+\end{aligned}\end{equation}
+%
+where we use $\Psi = (A+BK)$ to abbreviate notation.
+%
+Defining the sequence to obtain the maximal robust positive invariant set~$\X^\infty_{\max}$ is slightly more complicated than in the case of fixed disturbance sets in section~\ref{ch:MPC:sec:qMPC:MRPI:set}.
+%
+This is largely due to the fact that the Minkowski addition of a convex set and a parametrically convex set-valued map can be non-convex, and we therefore cannot define the sets $\E_k$ the way we defined them in~\eqref{eq:definition:Ek:sequence:for:set:iteration} as the \emph{inversion} of $\D_k(\E_k)\subseteq\X\cap K^{-1}\U$.
+%
+In words the definition of the set~$\E_k$ remains the same: \emph{$\E_k$ is the set of states such that all trajectories originating from states within $x_0\in\E_k$ satisfy $x_k\in\X\cap K^{-1}\U$ for all admissible disturbance sequences~$w_n\in\W(x_n)$, $n\in\{0,\dots,k-1\}$ and we use~$\W(x):=\W(x,Kx)$ for brevity}.
+%
+To avoid dealing with non-convex set operations we introduce the auxiliary set sequence
+%
+\begin{equation}\label{eq:definition:auxiliary:Rk}
+	\R_{k+1} = \R_k\ominus\Psi^{k}\W(\Psi^{-1-k}\R_k)
+\end{equation}
+%
+with $\R_0 = \X\cap K^{-1}\U$.
+%
+We can rewrite the definition~\eqref{eq:definition:auxiliary:Rk} using the definition of the parametric Pontryagin difference as given in Definition~\eqref{def:parametric:pontryagin:difference}:
+%
+\begin{equation}\label{eq:definition:Rk:dual:of:Ek}\begin{aligned}
+	\R_{k+1} &= \left\{r:r+w\in\R_k\forall w\in\Psi^{k}\W\left(\Psi^{-(k+1)}r\right)\right\} \\
+	&= \left\{\Psi^{k+1}x:\Psi^{k+1}x+w\in\R_k\forall \Psi^{-k} w\in\W(x)\right\}\\
+	&= \{\Psi^{k+1}x:\Psi^{k+1}x+\Psi^k v\in\R_k\forall v\in\W(x)\}\\
+	&= \Psi^{k+1}\left(\{x:\Psi^k(\Psi x+v)\in\R_k\forall v\in\W(x)\}\right).
+\end{aligned}\end{equation}
+%
+This means that the states in~$\Psi^{-k} \R_k$ are such that after being perturbed once their unperturbed trajectory is in $\R_{k-1}$ after $k-1$ time steps, although it is not obvious that this is a useful set we will now show its relevance for analytical purposes:
+%
+\begin{thm}\label{thm:making:sense:of:Rk}
+Let~$\R_k$ be defined by~\eqref{eq:definition:auxiliary:Rk} and let~$\E_k$ denote the set of states for which perturbed trajectories are contained in~$\X\cap K^{-1}\U$ after $k$~time steps, then it holds that $\E_k = \Psi^{-k}\R_k$.
+\end{thm}
+%
+\begin{proof}
+Here we use the recursive definition of~$\E_k$ we proved for fixed disturbance sets in Corollary~\ref{thm:recursive:definition:of:Ek}, which yields that $\E_k = \{x:\Psi x + w\in\E_{k-1}\forall w\in\W(x)\} = \Psi^{-1}(\E_{k-1}\ominus\W(\Psi^{-1}\E_{k-1}))$ in the parametric case, where we abbreviate~$\W(x) = \W(x,Kx)$.
+%
+By its definition~$\R_0 = \E_0 = \X\cap K^{-1}\U$ and we therefore use induction to prove the statement%
+%
+\begin{equation}\begin{aligned}
+	\Psi^k\E_k 
+	&= \{\Psi^k x:\Psi x+w\in\E_{k-1}\forall w\in\W(x)\}\\
+	&= \{x:\Psi^{1-k}x+w\in\E_{k-1}\forall w\in\W(\Psi^{-k}x)\}\\
+	&= \{x:x+ \Psi^{k-1}w\in\Psi^{k-1}\E_{k-1}\forall w\in\W(\Psi^{-k}x)\}\\
+	&= \{x:x+w\in\Psi^{k-1}\E_{k-1}\forall w\in\Psi^{k-1}\W(\Psi^{-k}x)\}\\
+	&= \{x:x+w\in\R_{k-1} \forall w\in\Psi^{k-1}\W(\Psi^{-k}x)\}\\
+	&= \R_{k-1}\ominus\Psi^{k-1}\W(\Psi^{-k}\R_{k-1})
+\end{aligned}\end{equation}
+%
+which proves the assertion.
+\end{proof}
+%
+\noindent We have to distinguish between the following alternative:
+%
+\begin{enumerate}
+\item There exists a finite integer~$n$ such that~$\R_n=\emptyset$, i.e.~$\E_n=\emptyset$ and hence~$X_n=\emptyset$.
+%	
+\item For all $k\geq 0$ a $P$-ball of radius~$r_k$ is contained in~$\R_k$, i.e.~$\ball_P(r_k)\subseteq \R_k$ such that there exists a positive number~$\bar r$ and~$\rho<\beta$ with $r_k\geq \bar r \beta^k$. \label{item:a:ball:always:contained}
+%
+Notice that this includes the case where~$\ball_P(\tilde r)\subseteq\R_k$ for some~$\tilde r$ for all~$k\geq0$.
+%
+\item For all $k\geq0$ a $P$-ball of radius~$r_k\geq0$ is contained, $\ball_P(r_k)\subseteq \R_k$, where $r_k$ can not satisfy $r_k\geq \bar r\rho^k$ for any positive $\bar r>0$, i.e. $r_k< \bar r \rho^k$.
+%
+\end{enumerate}
+%
+Which one of these cases applies for a specific problem formulation has to be determined explicitly and depends on~$\Psi$, $\W(x)$ and~$X_0=\X\cap K^{-1}\U$, to simplify the notation we refer to the individual cases by 'case 1', 'case 2' and 'case 3'.
+%
+\\[1em]
+%
+\noindent\mysplit The sequence we propose to obtain the maximal robust positive invariant set is of course given by
+%
+\begin{equation}\begin{aligned}
+	X_0 &= \X\cap K^{-1}\U\\
+	X_{k+1} &= X_k\cap \E_{k+1}
+\end{aligned}\end{equation}
+%
+and hence 
+%
+\[
+	X_k  = \bigcap_{n\leq k}\E_n
+\]
+%
+analogously to the earlier case.
+%
+For this sequence we have the following statement.
+%
+\begin{thm}\label{thm:finite:determinatbility:MRPI:state:dependent}
+Let $\Psi = A+BK$ be asymptotically stable with a spectral radius~$\rho<1$ with a positive definite matrix~$P$ such that $\Psi^T P \Psi \preceq \rho^2 P$ holds, let $X_0$ be band observable and let the set of disturbances~$\W(x) = \W(x,Kx)$ be a parametrically convex, piecewise polyhedral set-valued map given by~\eqref{eq:state:and:input:dependent:constraints} which contains the origin in its interior for all $x\in\X$ and let case 1 or case 2 apply, then there exists a finite number~$M\in\mathbb N$ such that $X_{k+1}=X_k$ for all $k\geq M$.
+\end{thm}
+%
+\begin{proof}
+%
+For case 1, i.e, $\R_n=\emptyset$ for some finite~$n$ we have~$\E_n=\emptyset$ and hence~$X_n=\emptyset$ which means the maximal robust positive invariant set~$\X_{\max}^\infty$ is determined after no more than~$n$ iterations.
+%
+% We omit the trivial case $X_M=\emptyset$ for some finite~$M$ and therefore we have that all~$k\geq0$ the sets~$\E_k\neq\emptyset$ or equivalently~$\R_k\neq\emptyset$.
+% %
+% From its definition it is clear that~$\R_{k+1}\subseteq\R_k$ since $0\in\W(x)$ and hence $\R_\infty = \lim_{k\rightarrow\infty}\R_k$ satisfies $\R_\infty\subseteq\R_k$ for all $k\geq0$.
+% %
+% We assume that $\R_\infty\neq\emptyset$ and we denote by $r_2$ the radius of the largest $P$-norm ball such that $\ball_P(r_2)\subseteq\R_\infty$,
+%
+In the non-trivial case 2, we have~$\ball_P(\bar r\beta^k)\subseteq\ball_P(r_k)\subseteq \R_k$ for some~$\rho<\beta$ and therefore~$\E_k\supseteq\Psi^{-k}\ball_P(r_k)\supseteq\Psi^{-k}\ball_P(\bar r\beta^k)\supseteq\ball_P((\frac{\beta}{\rho})^k\bar r)$ with the strict inequality~$\frac{\beta}{\rho}>1$.
+%
+So that $\E_k$ contains a $P$-norm ball with diverging radius.
+%
+Recall that by Corollary~\ref{thm:band:observability} we have that after no more than~$d$ iterations $X_k$ is compact, for this the state dependence of~$\W(x)$ is irrelevant, and we define $R$ as the smallest radius of a $P$-norm ball such that $X_d\subseteq\ball_P(R)$.
+%
+With this an upper bound on~$M$ is given by the smallest integer satisfying $(\frac{\beta}{\rho})^k\bar r\geq R$ or equivalently $k\geq\frac{\log(R)-\log(\bar r)}{\log(\beta)-\log(\rho)}$.
+\end{proof}%
+%
+\noindent In Lemma~\ref{thm:finite:determinatbility:MRPI:state:dependent} we exclude case 3, in this case the maximal robust positive invariant set may or may not be finitely determined as we will show in the following example.
+%
+\begin{example}{Non-linear behaviour of linear system with piecewise polyhedral uncertainty}\label{example:non:contracting:example:of:MRPI}
+Consider the non-linear system~$x^+ = (x+u)+\left(\frac{x+u}{c}\right)^3$ using the feedback $u=-\frac{1}{2}x$, i.e. the closed loop system~$x^+ = \frac{1}{2}x+\frac{x^3}{8c^3} = \frac{x}{2}\left(1+\frac{x^2}{4c^3}\right)$, for some~$c>0$.
+%
+The state and input are constrained to~$x\in[-10,10]$ and $u\in[-2,2]$ respectively so that again~$\X\cap K^{-1}\U=[-4,4]$.
+%
+Using classic analysis tools for the non-linear difference equation, see e.g.~\cite{Devaney:2003}, we find that the non-linear system has three stationary points in~$\X\cap K^{-1}\U$, namely $x_0=0$ and~$x_{1,2}=\pm2\sqrt{c^3}$, where $x_{1,2}$ are unstable.
+%
+It is then easy to see that the maximal positive invariant set (with respect to~$x_0=0$) of the non-linear system is the closure of its region of attraction, i.e.~$[-2,2]$, this follows from the fact that all trajectories initiating within~$[-2\sqrt{c^3},2\sqrt{c^3}]$ either converge to the origin or remain at their steady state and in either case do not escape the set~$[-2\sqrt{c^3},2\sqrt{c^3}]$.
+%
+By approximating the non-linearity by a piecewise affine function we would expect the maximal robust positive invariant set to approximate the positive invariant set of the non-linear system.
+%
+We approximate the non-linearity~$\frac{x^3}{8c^3}$ using $4$ and $6$ secants on each side (i.e. $8$ and $12$ secants in total for the interval $[-10,10]$), we denote the two approximations (for $c=1$)
+%
+\[\begin{aligned}
+	\bar w_4(x) &= \max\{w_{\min},\frac{25 x}{32},\frac{175 x}{32}-\frac{375}{32},\frac{475 x}{32}-\frac{1875}{32},\frac{925 x}{32}-\frac{2625}{16}\}\\
+	\bar w_6(x) &= \max\{w_{\min},\frac{25 x}{72},\frac{175 x}{72}-\frac{125}{36},\frac{475 x}{72}-\frac{625}{36},\frac{925 x}{72}-\frac{875}{18},\dots\}.
+\end{aligned}\]
+%
+as illustrated in Figure~\ref{fig:example:nonlinear:state:dependent:constraints:approximation}.
+%
+Each piecewise polyhedral set valued map is given by~$\W_i(x,c)=[-\frac{\bar w_i(x)}{c^3},\frac{\bar w_i(x)}{c^3}]$.
+%
+\\[1em]
+%
+Firstly we consider the case~$c=1$, i.e. the non-linearity we seek to approximate is~$f(x)=\frac{x^3}{8}$ and the set we would expect to obtain is an approximation to the interval~$[-2,2]$.
+%
+For both this choice the algorithm to determine the maximal robust positive invariant set does not terminate in a finite number of steps, although for different reasons for~$\W_4(x,1)$ and~$\W_6(x,1)$.
+%
+In the case of~$\bar w_4(x)$ the situation is simple, the first affine section of the piecewise affine upper bound is given by~$x^+ = \frac{x}{2}+\frac{25x}{32} = \frac{33}{32}x$, i.e. the uncertainty can destabilise the linear dynamics arbitrarily close to the origin (depending on~$w_{\min}$) and hence it is not surprising that the algorithm does not terminate in a finite number of iterations.
+%
+The other case is more interesting, for $\bar w_6(x)$ we have $x^+=\frac{61}{72}x$ for $-\frac{5}{3}\leq x\leq \frac{5}{3}$, i.e. the origin is asymptotically stable (assuming~$w_{\min}=0$).
+%
+However the system~$x^+=\frac{1}{2}x+\bar w_6(x)$ admits two more equilibria $\hat x_{\pm}=\pm\frac{250}{139}\approx\pm1.79856$ inside the considered set~$\X\cap K^{-1}\U=[-4,4]$, both of them unstable.
+%
+To obtain the first set iterate~$X_1(c=1)$ we have to compute the parametric Pontragin difference in some way, for this we use its definition do derive an expression for its boundary:
+%
+\[\begin{aligned}
+\E_1(c=1) &= \{x:\pm(\frac{1}{2}x+w)\leq4\;\forall w\in\W_6(x,1)\}\\
+&= \{x:\pm(\frac{1}{2}x + \underbrace{\max_{w\in\W_6(x,1)}w}_{\bar w_6(x)})\leq 4\}
+\end{aligned}\]
+%
+With this we can explicitly compute the set iterate~$\E_1(1) = X_1(1) = [-\bar x_1(c=1),\bar x_1(1)]$ where $\bar x_1(1)$ has to satisfy
+%
+\[\begin{aligned}
+\max_{\bar x_1(1)}\frac{\bar x_1(1)}{2}+\bar w_6(\bar x_1(1)) &\leq 4\\
+\Rightarrow \frac{\bar x_1(1)}{2}+\bar w_6(\bar x_1(1)) &= 4
+\end{aligned}
+\]
+%
+we find the solution to this equation~$\bar x_1(1)=\frac{538}{211}$.
+%
+Subsequent upper bounds have to satisfy
+%
+\[
+\max_{\bar x_k(1)}\frac{\bar x_k(1)}{2}+\bar w_6(\bar x_k(1)) \leq \bar x_{k-1}(1)
+\] 
+%
+or equivalently, they are given by the implicit difference equation $\frac{\bar x_k(1)}{2}+\bar w_6(x_k(1)) = \bar x_{k-1}(1)$.
+%
+Notice that by being implicitly stated we effectively 'reverse time' in the sense that although the slope of $g(x)=\frac{x}{2}+\bar w_6(x,1)$ at~$x=\frac{250}{139}$ is $g^\prime(\frac{250}{139}) = \frac{211}{72}>1$ we see stable behaviour of the sequence~$\bar x_k(1)$ for $x_k(1)\xrightarrow{k\rightarrow\infty}\frac{250}{139}$ since~$x_{k}(1)=g(x_{k+1}(1))$ rather than the explicit~$y_{k+1}=g(y_k)$.
+%
+We illustrate the behaviour of~$\bar x_k(1)$ in a cobweb diagram in Figure~\ref{figure:cobweb:diagram}.
+%
+On the other hand we can explicitly compute~$\R_1(c=1)$ using the definition of the parametric Pontryagin difference
+%
+\[\begin{aligned}
+\R_1(1) &= \{r:\pm(r+\frac{1}{2}w)\leq4\;\forall w\in\W_6(2^{2}r,1)\}\\
+&=\{r:\pm(r+\frac{1}{2}\max_{w\in\W_6(4r,1)}w)\leq 4\}\\
+&= [-\bar r_1(1),\bar r_1(1)]
+\end{aligned}\]
+%
+where~$\bar r_1(1)$ is the solution to~$r+\frac{1}{2}\bar w_6(4r)=4$, and then subsequent~$\R_{k}(1)=[-\bar r_k(1),\bar r_k(1)]$ with~$\bar r_k(1)$ the solution to~$r+\frac{1}{2^k}\bar w_6(2^{k+1}r)=\bar r_{k-1}(1)$.
+%
+Due to $r_0(1)=4$ we can see that in order for this example to fall under case~2 the sequence~$r_k(1)$ would have to satisfy~$r_k(1)>4\rho^k=\frac{4}{2^k}$ for all $k\geq0$.
+%
+Notice as well that for~$w_{\min}=0$ the set~$\W(x,1)=[-\bar w_6(x),\bar w_6(x)]$ shrinks to a point at the origin, i.e.~$\W(0,1)=\{0\}$, by choosing $w_{\min}>0$ we get~$\W(0,1)=[-w_{\min},w_{\min}]$.
+%
+This does not affect $g(x)$ close to $x=\frac{250}{139}$ and therefore computing~$\E_k(1)=X_k(1)$ directly will still yield this behaviour, however, for~$w_{\min}>0$ there exists no fixed point~$r^\ast$ satisfying~$r^\ast+\frac{1}{2^k}\bar w_6(2^{k+1}r^\ast)=r^\ast$ for all~$k\geq0$.
+%
+\\[1em]
+%
+Now consider the case for~$c=2$, i.e. the non-linearity becomes~$f(x)=\frac{x^3}{64}$ and the positive invariant set of the non-linear system is the interval~$[-4\sqrt{2},4\sqrt{2}]$.
+%
+The sequence of bounds~$\bar x_k(2)$ is governed by the difference equation~$\bar x_k(2)+\frac{1}{2^2}\bar w_6(x_k(2))=x_{k-1}(2)$ with $x_0(2)=4$, however this can be solved explicitly to find~$x_1(2)=\frac{3554}{763}\approx4.65793$ and in particular~$x_1(2)>4$.
+%
+So that~$\E_1(2)\cap X_0=[-\frac{3554}{763},\frac{3554}{763}]\cap[-4,4]=[-4,4]=X_0$ and the algorithm terminates after one iteration.
+%
+Again we determine~$\R_k(2)$ by solving~$\bar r_k(2)+\frac{1}{2^{k+3}}\bar w_6(2^{k+1}r_k(2))=\bar r_{k-1}(2)$ and find that again the sequence~$r_k(2)$ converges to the origin faster than~$r_k<\frac{4}{2^k}$, given that~$w_{\min}=0$.
+
+\begin{figure}\centering
+\begin{tikzpicture}[yscale=.5]
+\draw[step=1,gray,very thin] (0,0) grid (10,16);
+\draw[-latex'] (0,0) -- (10.2,0) node[right] {$x$};
+\draw[-latex'] (0,-.05) -- (0,16.1) node[above] {$\textcolor{blue}{\frac{\bar w_6(x)}{8}},\textcolor{red}{\frac{\bar w_4(x)}{8}}$};
+\foreach \x in {1,2,...,10} \draw (\x,.05) -- (\x,-.05) node[below] {$\x$};
+\foreach \y in {0,2,...,14} \draw (.05,\y) -- (-.05,\y) node[left] {$\y$};
+\draw (0,0) plot[domain=0:10] ({\x},{pow(\x,3)/64}) (60/7,3375/343);
+\draw[blue] (0,0) -- (5/3,125/1728) -- (10/3,125/216) -- (5,125/64) -- (20/3,125/27) -- (25/3,15625/1728) -- (10,125/8);
+\draw[red] (0,0) -- (5/2,125/512) -- (5,125/64) -- (15/2,3375/512) -- (10,125/8);
+\end{tikzpicture}
+\caption[Piecewise affine approximation of non-linear term.]{The piecewise affine approximations~$\frac{\bar w_4(x)}{2^3}$ and~$\frac{\bar w_6(x)}{2^3}$ for~$0\leq x\leq 10$ where~$w_{\min}=0$.}
+\label{fig:example:nonlinear:state:dependent:constraints:approximation}
+\end{figure}
+%
+\begin{figure}\centering
+\begin{tikzpicture}[xscale=2.5,yscale=.5]
+\draw[-latex'] (0,0) -- (4.1,0) node[below right] {$x$};
+\draw[-latex'] (0,0) -- (0,11) node[above left] {$y$};
+\foreach \x in {1,2,...,4} \draw (\x,.04) -- (\x,-.04) node[below] {$\x$};
+\foreach \y in {2,4,...,10} \draw (.008,\y) -- (-.008,\y) node[left] {$\y$};
+
+\draw (0, 0) -- (5/3, 305/216) -- (10/3, 170/27) -- (4, 397/36) node[right] {$y=g(x)$};
+\draw (0, 0) plot[domain=0:4] ({\x},{\x/2+pow(\x,3)/8}) node[right] {$y=\frac{x}{2}+\frac{x^3}{8}$};
+\draw (0,0) -- (4.1,4.1) node[right] {$y=x$};
+
+\draw[blue]  (  4.0000,   0.0000) -- (  4.0000,   4.0000) -- (  2.5498,   4.0000) -- (  2.5498,   2.5498) -- (  2.0549,   2.5498) -- (  2.0549,   2.0549) -- (  1.8860,   2.0549) -- (  1.8860,   1.8860) -- (  1.8284,   1.8860) -- (  1.8284,   1.8284) -- (  1.8087,   1.8284) -- (  1.8087,   1.8087) -- (  1.8020,   1.8087) -- (  1.8020,   1.8020) -- (  1.7997,   1.8020) -- (  1.7997,   1.7997) -- (  1.7990,   1.7997) -- (  1.7990,   1.7990) -- (  1.7987,   1.7990) -- (  1.7987,   1.7987) -- (  1.7986,   1.7987) -- (  1.7986,   1.7986);
+\end{tikzpicture}
+\caption[Cobweb diagram for degenerate maximal robust positive invariant set computation]{The cobweb diagram illustrating the behaviour of the set iterates~$X_k(1)=[-\bar x_k(1),\bar x_k(1)]$ for the system~$x^+=\frac{x}{2}+w$ where $\abs{w}\leq\bar w_6(x)$.
+%
+The upper boundary points of~$X_k(1)$ experience dynamic behaviour as they are given by the implicit piecewise affine difference equation~$x_k(1)=g(x_{k+1}(1))$.
+}
+\label{figure:cobweb:diagram}
+\end{figure}
+%
+%
+\begin{figure}\centering
+\begin{tikzpicture}
+\draw[-latex'] (-.02,0) -- (10.2,0) node[below right] {$k$};
+\draw[-latex'] (0,0) -- (0,7.2) node[above] {$\substack{\textcolor{blue}{\bar x_k(1)},\textcolor{red}{\bar r_k(1)},\\\textcolor{cyan}{\bar x_k(2)},\textcolor{magenta}{\bar r_k(2)},\textcolor{green!60!black}{4\cdot2^{-k}}}$};
+
+\foreach \x in {0,1,...,10} \draw (\x,.02) -- (\x,-.02) node[below] {$\x$};
+\foreach \y in {1,2,...,7} \draw (.02,\y) -- (-.02,\y) node[left] {$\y$};
+
+\draw[green!60!black] (0,0) plot[domain=0:10,smooth] ({\x},{4/pow(2,\x)});
+
+\foreach \x/\y in {0/4., 1/0.893346, 2/0.300524, 3/0.125326, 4/0.0584088, 5/0.0284785, 6/0.0141154, 7/0.00703657, 8/0.00351468, 9/0.00175673, 10/0.000878258} \fill[red] (\x,\y) circle (.25ex);
+
+\foreach \x/\y in {0/4.,1/3.57339,2/2.40419,3/2.00522,4/1.86908,5/1.82262,6/1.80677,7/1.80136,8/1.79952,9/1.79889, 10/1.79867} \fill[blue] (\x,\y) circle (.25ex);
+
+\foreach \x/\y in {0/4.,1/1.66961,2/0.757088,3/0.360092,4/0.175665,5/0.0867922,6/0.0431491,7/0.0215159,8/0.010744,9/0.00536872,10/0.00268357} \fill[magenta] (\x,\y) circle (.25ex);
+
+\foreach \x/\y in {0/4.,1/6.67843,2/6.0567,3/5.76147,4/5.62127,5/5.5547,6/5.52309,7/5.50808,8/5.50095,9/5.49757,10/5.49596} \fill[cyan] (\x,\y) circle (.25ex);
+
+\draw[thin,dash dot] (0,500/91) -- (10, 500/91) node[right] {$\frac{500}{91}$};
+\draw[thin,dash dot] (0,250/139) -- (10, 250/139) node[right] {$\frac{250}{139}$};
+
+
+\end{tikzpicture}
+\caption[Convergence of the auxiliary set~$\R_k$]{The boundaries of~$X_k(1)$ in \textcolor{blue}{blue},~$\R_k(1)$ in~\textcolor{red}{red},~$X_k(2)$ in~\textcolor{cyan}{cyan} and~$\R_k(2)$ in \textcolor{magenta}{purple}. the two boundaries are connected by~$\bar x_k(c)=2^k\bar r_k(c)$.
+%
+In both cases~$c=1$ and~$c=2$ the set sequence~$\R_k$ is faster than the linear system, i.e. case 3 applies. 
+%
+However, for~$c=2$ the maximal robust positive invariant set~$\X^\infty_{\max}(2)=X_0$ is determined in a single iteration, whereas for~$c=2$ the algorithm would iterate without finite termination.}
+\end{figure}
+
+\end{example}
+%
+%
+% \noindent In a similar example we will see that the fact that~$\R_k$ is of case~3 does not imply that~$\X^\infty_{\max}$ is not finitely determined.
+% %
+% \begin{example}{Obtaining a piecewise affine approximation of a non-linear one dimensional system}\label{example:one:dimensional:nonlinear:state:dependent:constraints}
+% Consider the non-linear system~$x^+ = (x+u)+\frac{(x+u)^3}{8}$ subject to the constraints $x\in\X = [-10,10],u\in\U=[-2,2]$.
+% %
+% We want to compute the positive invariant set for the closed-loop system using~$u=-\frac{1}{2}x$, i.e. we study the system~$x^+ = \frac{x}{2}+\frac{x^3}{64}$.
+% %
+% Preliminary analysis similar to the one discussed in Example~\ref{example:non:contracting:example:of:MRPI} we find that the positive invariant set of the non-linear system with respect to $x=0$ is the interval~$[-4\sqrt{2},4\sqrt{2}]$.
+% %
+% % In this case the positive invariant set of the linearised system (with respect to the equilibrium~$x=0$) is contained in the maximal positive invariant set of the unconstrained nonlinear system containing to the origin which can be found to be~$-4\sqrt{2}\leq x\leq4\sqrt{2}$ using standard analysis tools\footnote{Where the upper and lower bound are given by unstable equilibria, see e.g.~\cite{Devaney:2003}.}, however due to constraints on the input~$u=-\frac{1}{2}x$ the invariant set of the system is~$-4\leq x\leq 4$.
+% %
+% For the non-linearity~$f(x) = \frac{x^3}{64}$ we can find a piecewise affine upper bound using secants, the approximation with 6 secants is shown in Figure~\ref{fig:example:nonlinear:state:dependent:constraints:approximation}.
+% %
+% %
+% By exploiting symmetry we can compute the maximal robust positive invariant set~$\X^\infty_{\max} = \{x:-x_{\max}\leq x\leq x_{\max}\}$ for the perturbed approximation~$x^+ = \frac{1}{2}x+w$ with $w\in\W(x) = \{w: \pm w\leq \bar w_6(x)\}$.
+% %
+% Again we explicitly compute~$\E_1=X_1=[-\bar x_1,\bar x_1]$, where $x_1$ is given by
+% %
+% \[
+% \max_{w\leq \bar w_6(x)} \frac{1}{2}x+w\overset{!}{\leq}4
+% \]
+% %
+% i.e. the solution to~$\frac{1}{2}x_1+\bar w_6(x_1)=4$, i.e.~$x_1=\frac{3554}{763}\approx4.65793$.
+% %
+% So that $X_1=[-4,4]\cap[-\frac{3554}{763},\frac{3554}{763}]=[-4,4]=X_0$ and the algorithm terminates.
+% %
+% For the set~$\R_1=[-\bar r_1,\bar r_1]$ we have, similar to Example~\ref{example:non:contracting:example:of:MRPI}
+% %
+% \[
+% r_1+\frac{1}{2}\bar w_6(4r_1)=4
+% \]
+% %
+% The maximal robust positive invariant set~$\X_{\max}^\infty$ for this system is non-empty and finitely determined, however, the set iterate~$\R_1$ is empty.
+% %
+% It is worth pointing out that a fixed bound on the linearisation error would be~$-\frac{125}{8}\leq w\leq \frac{125}{8}=15.625$ and would return an empty maximal robust positive invariant set.
+% %
+% %
+% %
+% \end{example}
+%
+\noindent In this example we have seen that for the excluded case~3 we cannot guarantee finite termination without additional information it raises the question how to determine whether the sequence~$\R_k$ is of the slow converging as in case~1 or~2 or whether case~3 applies, unfortunately there is no easy way to determine the case beforehand for non-constant set-valued maps~$\W(x)$.
+%
+\\[1em]
+%
+\noindent A set-valued map can be used to approximate multiplicative uncertainty by an additive uncertainty term as the following example shows.
+%
+%
+\begin{example}{Using a parametrically convex set-valued map to approximate multiplicative uncertainty}\label{example:multiplicative:uncertainty}
+%
+Consider the system~$x^+ = A(\theta)x$ subject to $x\in\X$ for the multiplicative uncertainty $\norm{A(\theta)-A_{nom}}_2\leq\kappa$.
+%
+Using $C(\theta) = A(\theta)-A_{nom}$ we can rewrite the system as $x^+ = A_{nom}x+C(\theta)x$.
+%
+In order to determine the maximal robust positive invariant set we introduce the additive uncertainty term~$x^+ = A_{nom}x+w$ with $w\in\W(x) = \{w: \norm{w}_2\leq\kappa\norm{x}_2 \}$.
+%
+With the analysis presented in Example~\ref{example:norm:bound:set} we can perform the parametric Pontryagin difference for a polyhedral approximation to the Euclidean norm~$\norm{\cdot}_2$.
+%
+\\[1em]
+%
+In order to illustrate the proposed method's potency we use a nominal system~$A_{nom}$ with the spectrum strictly inside the unit disk with $\norm{A_{nom}}_2>1$. 
+%
+Matrices for which the \emph{angle between their eigenspaces} is small produce such gaps between the spectral radius and the maximal singular value.
+%
+We use the following to construct $A_{nom}$:
+%
+\[
+	V = \begin{pmatrix}-10^{-5} & 10^{-7}\\1 & 1\end{pmatrix},\; D = \text{diag}\left(\frac{1}{10},\frac{4}{5}\right),\; A_{nom} = V^{-1}DV.
+\]
+%
+The spectral radius of $A_{nom}$ is therefore given by~$\rho = \frac{4}{5}$ and its maximal singular value~$\bar\sigma = \frac{\sqrt{63 \sqrt{80658065}+571657}}{1010}\approx1.05596$.
+%
+A necessary condition for a non-empty maximal robust positive invariant set~$\X^\infty_{\max}\neq\emptyset$ to exist is that the matrix~$A(\theta)$ has to be asymptotically stable, i.e. the spectral radius for all admissible~$\theta$ has to be strictly smaller than one~$\rho(A(\theta))<1$.
+%
+Using numerical pseudo-spectral analysis\footnote{The pseudo-spectrum~$\sigma_\epsilon(A)$ of a matrix~$A$ for a given~$\epsilon>0$ is the set of $z\in\mathbb C$ such that $z\in\sigma(A+E)$ for some $E$ with $\norm{E}_2\leq\epsilon$.
+%
+See~\cite{Trefethen:2005} for details.}
+%
+it can be shown that $\kappa = \frac{1}{10}$ is admissible.
+%
+We approximate the Euclidean norm~$\norm{\cdot}_2$ using the same polytopic approximation as in Example~\ref{example:norm:bound:set}, again with~$n=35$.
+%
+The resulting maximal robust positive invariant set of the approximated system is shown in Figure~\ref{fig:example:multiplicative:uncertainty}.
+%
+\begin{figure}\centering
+\begin{tikzpicture}[scale=3]
+\draw[step=.5,gray,very thin] ( -1.000,  -1.000) grid (  1.000,   1.000);
+\draw[-latex'] (-1.02,-1) -- (1.1,-1) node[below] {$x_1$};
+\draw[-latex'] (-1,-1) -- (-1,1.1) node[left] {$x_2$};
+\foreach \x in {-1,-0.5,...,1} \draw (\x,-0.98) -- (\x,-1.02) node[below] {$\x$};
+\foreach \y in {-0.5,0,...,1} \draw (-0.98,\y) --(-1.02,\y) node[left] {$\y$};
+\draw ( -0.2602,  -0.9146) -- ( -0.1533,  -1.0000) -- (  1.0000,  -1.0000) -- (  1.0000,   0.2574) -- (  0.9036,   0.3501) -- (  0.7688,   0.4760) -- (  0.6451,   0.5881) -- (  0.5242,   0.6941) -- (  0.3987,   0.8007) -- (  0.2602,   0.9146) -- (  0.1533,   1.0000) -- ( -1.0000,   1.0000) -- ( -1.0000,  -0.2574) -- ( -0.9036,  -0.3501) -- ( -0.7688,  -0.4760) -- ( -0.6451,  -0.5881) -- ( -0.5242,  -0.6941) -- ( -0.3987,  -0.8007) -- ( -0.2602,  -0.9146) -- cycle;
+\end{tikzpicture}
+\caption[MRPI set for linear system with multiplicative uncertainty]{The maximal robust positive invariant set~$\X_{\max}^\infty$ for the system~$x^+=A_{nom}x+w$ presented in Example~\ref{example:multiplicative:uncertainty}, approximating the maximal robust positive invariant set of~$x^+=A(\theta)x$.}
+\label{fig:example:multiplicative:uncertainty}
+\end{figure}
+\end{example}
+%
+%
+%
+%
+%
+In Example~\ref{example:multiplicative:uncertainty} the disturbance set depends only on the norm of the state, in order to extend the scope of existing methods further we want to bound non-linear terms along the lines of Example~\ref{example:most:complex:pontryagin:difference:ever}.
+%
+\\[1em]
+%
+%
+%
+%
+%
+%
+\noindent\mysplit In Example~\ref{example:multiplicative:uncertainty} and~\ref{example:non:contracting:example:of:MRPI} we use parametrically convex piecewise polyhedral sets to approximate the system of interest, however in both cases it was fairly obvious how to approximate the systems.
+%
+In general we cannot reduce the problem to be one-dimensional and we will now develop a framework to approximate general nonlinear systems~$x^+ = f(x,u)+v$ with $x_e=f(x_e,u_e)$ and $v\in\V$.
+%
+Recall that our overall goal is to design the least conservative model predictive control scheme allowing us to give guarantees on robustness while still being able to solve the robust model predictive control problem online.
+%
+To be able to use the methods described in Section~\ref{ch:MPC:sec:quadratic:MPC} we need to linearise the system and handle the linearisation error with the methods described in Section~\ref{ch:MPC:sec:parametric:convextiy}, that is we have
+%
+\begin{equation}
+	x^+ = \underbrace{\frac{\partial f}{\partial x}(x_e,u_e)}_A (x-x_e) + \underbrace{\frac{\partial f}{\partial u}(x_e,u_e)}_B (u-u_e) + R(x,u)
+\end{equation}
+%
+without loss of generality we can assume that the unperturbed equilibrium is in the origin $x_e,u_e=0$.
+%
+That allows us to study the system~$x^+ = Ax+Bu+R(x,u)$ with $R$ being of order larger than one.
+%
+While it is usually simple to determine the matrices~$A$ and~$B$, the remainder term $R$ is of second and higher order, therefore obtaining a piecewise affine bound on~$R$ is less trivial.
+%
+The basic idea remains the same as in Example~\ref{example:most:complex:pontryagin:difference:ever} and~\ref{example:non:contracting:example:of:MRPI}, that is that we want to chose several linear functions bounding the term~$R(x,u)$.
+%
+We use the Mean-Value Theorem\footnote{
+	There are several formulations of the Mean-Value Theorem in $d$ dimensions, the one presented here can be found for example in~\cite{Forster:2008}.
+} to determine such an approximation.
+%
+\begin{thm}\label{thm:mean:value:theorem}
+Let $U\subset\RR^n$ be open, and let $g: U\rightarrow\RR^m$ be a continuously differentiable map.
+%
+Let $x\in U$ and $\xi\in\RR^n$ such that the entire line $x+t\xi\in U$ for all $0\leq t\leq 1$, then
+%
+\begin{equation}
+	g(x+\xi) = g(x) + \left(\int_0^1\frac{\partial g}{\partial x}(x+t\xi)dt\right)\xi
+\end{equation}
+%
+holds.
+\end{thm}
+%
+\noindent In our context we use
+%
+\begin{equation}
+	\begin{aligned}
+	R(x,u) =& f(x,u) - Ax-Bu\\
+	\overset{\substack{\tilde x = x-x_e\\ \tilde u = u-u_e}}{=}& f(\tilde x + x_e,\tilde u+u_e) - A(\tilde x+x_e) - B(\tilde u+u_e)\\
+	=& \underbrace{(f(x_e,u_e)-Ax_e-Bu_e)}_{=0} + \left(\int_0^1 \frac{\partial f}{\partial x}(x_e+t\tilde x,u_e+t\tilde u)dt\right)\tilde x -A\tilde x \\
+	&+ \left(\int_0^1 \frac{\partial f}{\partial u}(x_e+t\tilde x,u_e+t\tilde u)dt\right)\tilde u-B\tilde u\\
+	= & \underbrace{\left(\int_0^1 \frac{\partial f}{\partial x}(x_e+t\tilde x,u_e+t\tilde u)-A dt\right)}_{c^x}\tilde x + 
+	\underbrace{\left(\int_0^1 \frac{\partial f}{\partial u}(x_e+t\tilde x,u_e+t\tilde u)-B dt\right)}_{c^u}\tilde u.
+	\end{aligned}
+\end{equation}
+%
+By sampling the space~$(x_k,u_k)\in\X\times\U$ we get a pointwise linear representation~$R(x_k,u_k) = H_k^x x_k+ H_k^u u_k$ of the rest term~$R(x,u)$, locally this linear representation is valid within an error bound which we can easily specify.
+%
+Introducing
+%
+\begin{equation}\begin{aligned}
+	M_A :=&\max_{k\neq l}\left\{\sup_{0\leq t\leq 1} \norm{\frac{\partial f}{\partial x}(x_k+tx_l,u_k+t u_l)-A}_\infty\right\}\\
+	M_B :=&\max_{k\neq l}\left\{\sup_{0\leq t\leq 1} \norm{\frac{\partial f}{\partial u}(x_k+tx_l,u_k+t u_l)-B}_\infty\right\}
+	\end{aligned}
+\end{equation}
+%
+we have
+%
+\begin{equation}\label{eq:bound:on:linearisation:error:without:maximisation}
+\begin{aligned}
+	\norm{R(\hat x,\hat u)-c_k^x \hat x-c_k^u \hat u}_1&\leq\norm{\left(\int_0^1 \frac{\partial f}{\partial x}(x_k+t x,u_k+t u)-Adt\right)\hat x}_1 + \\
+	&\quad \norm{\left(\int_0^1 \frac{\partial f}{\partial u}(x_k+t x,u_k+t u)-Bdt\right)\hat u}_1\\
+	&\leq \int_0^1\norm{\frac{\partial f}{\partial u}(x_k+t x,u_k+t u)-A}_\infty dt\norm{\hat x}_1 + \\
+	&\quad \int_0^1\norm{\frac{\partial f}{\partial u}(x_k+t x,u_k+t u)-B}_\infty dt \norm{\hat u}_1\\
+	&\leq M_A\norm{\hat x}_1+M_B\norm{\hat u}_1,
+\end{aligned}\end{equation}
+%
+where~$\hat x = x-x_k$ and $\hat u = u-u_k$.
+%
+In order to obtain an uncertainty description of the type~\eqref{eq:definition:PWA:polytopic:set:general} we bound $R(x,u)$ element-wise, i.e.
+$\min_{k}\{c_{k,i}^x x + c_{k,i}^u u\} \leq R_i(x,u)\leq\max_k\{c_{k,i}^x x + c_{k,i}^u u\}$.
+%
+We therefore approximate the non-linear behaviour of $x^+=f(x,u)+v$ using the linear system~$x^+=Ax+Bu+w+v$ where $w\in\W(x,u) = \left\{w\in\RR^d:\min_{k}\{c_{k,i}^x x + c_{k,i}^u u\} \leq w_i \leq\max_k\{c_{k,i}^x x + c_{k,i}^u u\}\right\}$ and $v\in\V$.
+%
+Recall that for general polytopic sets~$\V$ the Minkowski sum 
+%
+$$
+	\V\oplus\W(\V) = \bigcup_{\substack{v\in\V\\ w\in\W(v)}}\{v+w\}
+$$
+%
+cannot be determined in a computationally efficient way and may itself not be a convex polytope, so that unless~$\V$ is a polytope of low complexity~(e.g. a norm $1/\infty$-box) we can not avoid introducing two sets describing the sum of the uncertainty.
+%
+However, the set~$\tilde\W(x,u) = \{\tilde w\in\RR^d:\exists(v,w)\;\tilde w = v+w\wedge A_\V v\leq\bfa{1}\wedge\min_{k}\{c_{k,i}^x x + c_{k,i}^u u\} \leq w_i\allowbreak \leq\max_k\{c_{k,i}^x x + c_{k,i}^u u\}\}$ can be used instead and does not change the statements made above, notice however that $\tilde\W(x,u)$ cannot be determined as a closed form piecewise affine description due to the non-polytopic dependence on~$(x,u)$.
+%
+Although it seems inviting to compute the projection of
+%
+\[
+	\tilde\W^\prime = \left\{(x,u,\tilde w,v,w,\tau):\begin{aligned}\tilde w&=v+w\\
+	A_\V v&\leq\bfa{1}\\
+	w_i&\leq\tau_i\\
+	-w_i&\leq\tau_{d+i}\\
+	c_{k,i}^x x + c_{k,i}^u u&\leq \tau_i\\
+	-c_{k,i}^x x - c_{k,i}^u u&\leq \tau_{d+i}
+	\end{aligned}\right\}
+\]
+%
+onto~$\RR^{2d+q_\U}$, this would yield a polytope in $(x,u,\tilde w)$ which is only a convex approximation of $\V\oplus\W(\V)$.
+%
+\\[2em]
+%
+\mysplit We have now elaborated on how to obtain the maximal robust positive invariant set~$\X^\infty_{\max}$ for piecewise polyhedral, parametrically convex disturbance set~$\W(x,u)$.
+%
+To be able to formulate a robust model predictive control problem similar to~\eqref{ch:quad:MPC:unspecific:constraints} we need to determine the n-step controllable sets~$\C_n(\X^\infty_{\max})$ such that for all state and input dependent disturbances there exists a feasible control action that takes the successor state to $\C_{n-1}(\X^\infty_{\max})$.
+%
+We illustrate the procedure for this in the following example.
+%
+\begin{example}{A one-step controllable set for a one dimensional system subject to state- and input-dependent uncertainties}\label{example:one:dimensional:one:step:controllable:set:PWA:disturbances}
+Consider the system~$x^+ = x+u + \frac{(x+u)^3}{8}$ and with $-10\leq x\leq 10$ and $-2\leq u\leq 2$ and the piecewise affine approximation presented in Example~\ref{example:non:contracting:example:of:MRPI}, i.e. approximating~$f(y)=\frac{y^3}{8}$ for $y=x+u$ using~$n$ affine functions for $0\leq x\leq 4$ and $n$ for~$-4\leq x\leq 0$.
+%
+Using the maximal robust positive invariant set $\X^\infty_{\max}=[-x_{\max},x_{\max}]$ we can determine the one step controllable set by computing the projection of:
+%
+\[
+	\mathcal M(\X^\infty_{\max}) = \pi_2\left(\left\{
+	(x,u,v):\begin{aligned}
+	\pm u&\leq 2\\
+	\pm x&\leq 10\\
+	x+u+v&\leq x_{\max}\\
+	-x-u+v&\leq x_{\max}\\
+	c_k(x+u)-v&\leq -b_k\\
+	-c_k(x+u)-v&\leq -b_k
+	\end{aligned}
+	\right\}\right)
+\]
+%
+where $\max_{k}\{c_k y+b_k\}$ is the approximation of~$f(y)=y^3$ for $0\leq y\leq4$.
+%
+In this symmetric case we can use a single auxiliary variable~$v$ which represents both the value of the piecewise affine function, as well as the corresponding worst-case disturbance, which allows for three dimensional illustrations.
+%
+The set~$\mathcal M(\X^\infty_{\max})$ is shown in Figure~\ref{fig:example:one:step:controllable:set:PWA:disturbances}, both before and after the projection step.
+%
+The set~$\mathcal M(\X^\infty_{\max})$ is given by
+%
+\[
+\mathcal M(\X^\infty_{\max}) = \left\{(x,u):    \begin{array}{cccc} &\pm0.5u& \leq& 1\\
+    \pm0.4244x&  \pm0.4244u&\leq&1\end{array} \right\}
+\]
+%
+we have to compute its projection onto the real axis to obtain~$\C_1(\X^\infty_{\max})$, this is given by the interval~$\C_1(\X^\infty_{\max})=[-4.3563,4.3563]$.
+%
+With this we calculate~$\mathcal M(\C_1(\X^\infty_{\max})$ and $\C_2(\X^\infty_{\max})$ and so on.
+%
+The sequence of the first five $\mathcal M(\C_i(\X^\infty_{\max}))$ is shown in Figure~\ref{fig:example:first:five:controllable:Sets}.
+
+
+\begin{figure}\centering
+\tdplotsetmaincoords{80}{30}
+\begin{tikzpicture}[tdplot_main_coords]
+\draw[-latex'] (-5,-2,0) -- (-5,-2,4.2) node[above] {$v$};
+\draw[-latex'] (-5,-2,0) -- (5.2,-2,0) node[right] {$x$};
+\draw[-latex'] (-5,-2,0) -- (-5,2.2,0) node[above] {$u$};
+\foreach \x in {-4,-3,...,4} \draw (\x,-2,.05) -- (\x,-2,-.05) node[below] {$\x$};
+\foreach \u in {-2,-1,...,2} \draw (-5,\u,.05) -- (-5,\u,-.05) node[below] {$\u$};
+\foreach \v in {1,2,...,4} \draw (-4.95,-2,\v) -- (-5.05,-2,\v) node[left] {$\v$};
+
+\draw (  2.0000,  -2.0000,   4.0000) -- ( -0.3563,  -2.0000,   1.6437) -- ( -4.3563,   2.0000,   1.6437) -- ( -2.0000,   2.0000,   4.0000) -- (  2.0000,  -2.0000,   4.0000) -- cycle;
+
+\draw ( -2.0000,   2.0000,   0.0000) -- ( -2.2667,   2.0000,   0.0024) -- ( -2.5333,   2.0000,   0.0190) -- ( -2.8000,   2.0000,   0.0640) -- ( -3.0667,   2.0000,   0.1517) -- ( -3.3333,   2.0000,   0.2963) -- ( -3.6000,   2.0000,   0.5120) -- ( -3.8667,   2.0000,   0.8130) -- ( -4.1333,   2.0000,   1.2136) -- ( -4.3563,   2.0000,   1.6437) -- ( -2.0000,   2.0000,   4.0000) -- (  0.3563,   2.0000,   1.6437) -- (  0.1333,   2.0000,   1.2136) -- ( -0.1333,   2.0000,   0.8130) -- ( -0.4000,   2.0000,   0.5120) -- ( -0.6667,   2.0000,   0.2963) -- ( -0.9333,   2.0000,   0.1517) -- ( -1.2000,   2.0000,   0.0640) -- ( -1.4667,   2.0000,   0.0190) -- ( -1.7333,   2.0000,   0.0024) -- ( -2.0000,   2.0000,   0.0000) -- cycle;
+
+\draw (  2.0000,  -2.0000,   0.0000) -- (  2.2667,  -2.0000,   0.0024) -- (  2.5333,  -2.0000,   0.0190) -- (  2.8000,  -2.0000,   0.0640) -- (  3.0667,  -2.0000,   0.1517) -- (  3.3333,  -2.0000,   0.2963) -- (  3.6000,  -2.0000,   0.5120) -- (  3.8667,  -2.0000,   0.8130) -- (  4.1333,  -2.0000,   1.2136) -- (  4.3563,  -2.0000,   1.6437) -- (  2.0000,  -2.0000,   4.0000) -- ( -0.3563,  -2.0000,   1.6437) -- ( -0.1333,  -2.0000,   1.2136) -- (  0.1333,  -2.0000,   0.8130) -- (  0.4000,  -2.0000,   0.5120) -- (  0.6667,  -2.0000,   0.2963) -- (  0.9333,  -2.0000,   0.1517) -- (  1.2000,  -2.0000,   0.0640) -- (  1.4667,  -2.0000,   0.0190) -- (  1.7333,  -2.0000,   0.0024) -- (  2.0000,  -2.0000,   0.0000) -- cycle;
+
+\draw ( -2.0000,   2.0000,   0.0000) -- ( -1.7333,   2.0000,   0.0024) -- (  2.2667,  -2.0000,   0.0024) -- (  2.0000,  -2.0000,   0.0000) -- ( -2.0000,   2.0000,   0.0000) -- cycle;
+
+\draw (  2.2667,  -2.0000,   0.0024) -- ( -1.7333,   2.0000,   0.0024) -- ( -1.4667,   2.0000,   0.0190) -- (  2.5333,  -2.0000,   0.0190) -- (  2.2667,  -2.0000,   0.0024) -- cycle;
+
+\draw (  2.5333,  -2.0000,   0.0190) -- ( -1.4667,   2.0000,   0.0190) -- ( -1.2000,   2.0000,   0.0640) -- (  2.8000,  -2.0000,   0.0640) -- (  2.5333,  -2.0000,   0.0190) -- cycle;
+
+\draw (  2.8000,  -2.0000,   0.0640) -- ( -1.2000,   2.0000,   0.0640) -- ( -0.9333,   2.0000,   0.1517) -- (  3.0667,  -2.0000,   0.1517) -- (  2.8000,  -2.0000,   0.0640) -- cycle;
+
+\draw (  3.0667,  -2.0000,   0.1517) -- ( -0.9333,   2.0000,   0.1517) -- ( -0.6667,   2.0000,   0.2963) -- (  3.3333,  -2.0000,   0.2963) -- (  3.0667,  -2.0000,   0.1517) -- cycle;
+
+\draw (  3.3333,  -2.0000,   0.2963) -- ( -0.6667,   2.0000,   0.2963) -- ( -0.4000,   2.0000,   0.5120) -- (  3.6000,  -2.0000,   0.5120) -- (  3.3333,  -2.0000,   0.2963) -- cycle;
+
+\draw (  3.6000,  -2.0000,   0.5120) -- ( -0.4000,   2.0000,   0.5120) -- ( -0.1333,   2.0000,   0.8130) -- (  3.8667,  -2.0000,   0.8130) -- (  3.6000,  -2.0000,   0.5120) -- cycle;
+
+\draw (  3.8667,  -2.0000,   0.8130) -- ( -0.1333,   2.0000,   0.8130) -- (  0.1333,   2.0000,   1.2136) -- (  4.1333,  -2.0000,   1.2136) -- (  3.8667,  -2.0000,   0.8130) -- cycle;
+
+\draw (  4.1333,  -2.0000,   1.2136) -- (  0.1333,   2.0000,   1.2136) -- (  0.3563,   2.0000,   1.6437) -- (  4.3563,  -2.0000,   1.6437) -- (  4.1333,  -2.0000,   1.2136) -- cycle;
+
+\draw (  4.3563,  -2.0000,   1.6437) -- (  0.3563,   2.0000,   1.6437) -- ( -2.0000,   2.0000,   4.0000) -- (  2.0000,  -2.0000,   4.0000) -- (  4.3563,  -2.0000,   1.6437) -- cycle;
+
+\draw (  2.0000,  -2.0000,   0.0000) -- (  2.2667,  -2.0000,   0.0024) -- (  2.5333,  -2.0000,   0.0190) -- (  2.8000,  -2.0000,   0.0640) -- (  3.0667,  -2.0000,   0.1517) -- (  3.3333,  -2.0000,   0.2963) -- (  3.6000,  -2.0000,   0.5120) -- (  3.8667,  -2.0000,   0.8130) -- (  4.1333,  -2.0000,   1.2136) -- (  4.3563,  -2.0000,   1.6437) -- (  2.0000,  -2.0000,   4.0000) -- ( -0.3563,  -2.0000,   1.6437) -- ( -0.1333,  -2.0000,   1.2136) -- (  0.1333,  -2.0000,   0.8130) -- (  0.4000,  -2.0000,   0.5120) -- (  0.6667,  -2.0000,   0.2963) -- (  0.9333,  -2.0000,   0.1517) -- (  1.2000,  -2.0000,   0.0640) -- (  1.4667,  -2.0000,   0.0190) -- (  1.7333,  -2.0000,   0.0024) -- (  2.0000,  -2.0000,   0.0000) -- cycle;
+
+\draw ( -2.0000,   2.0000,   0.0000) -- ( -2.2667,   2.0000,   0.0024) -- ( -2.5333,   2.0000,   0.0190) -- ( -2.8000,   2.0000,   0.0640) -- ( -3.0667,   2.0000,   0.1517) -- ( -3.3333,   2.0000,   0.2963) -- ( -3.6000,   2.0000,   0.5120) -- ( -3.8667,   2.0000,   0.8130) -- ( -4.1333,   2.0000,   1.2136) -- ( -4.3563,   2.0000,   1.6437) -- ( -2.0000,   2.0000,   4.0000) -- (  0.3563,   2.0000,   1.6437) -- (  0.1333,   2.0000,   1.2136) -- ( -0.1333,   2.0000,   0.8130) -- ( -0.4000,   2.0000,   0.5120) -- ( -0.6667,   2.0000,   0.2963) -- ( -0.9333,   2.0000,   0.1517) -- ( -1.2000,   2.0000,   0.0640) -- ( -1.4667,   2.0000,   0.0190) -- ( -1.7333,   2.0000,   0.0024) -- ( -2.0000,   2.0000,   0.0000) -- cycle;
+
+\draw ( -2.0000,   2.0000,   0.0000) -- ( -2.2667,   2.0000,   0.0024) -- (  1.7333,  -2.0000,   0.0024) -- (  2.0000,  -2.0000,   0.0000) -- ( -2.0000,   2.0000,   0.0000) -- cycle;
+
+\draw ( -2.2667,   2.0000,   0.0024) -- ( -2.5333,   2.0000,   0.0190) -- (  1.4667,  -2.0000,   0.0190) -- (  1.7333,  -2.0000,   0.0024) -- ( -2.2667,   2.0000,   0.0024) -- cycle;
+
+\draw ( -2.5333,   2.0000,   0.0190) -- ( -2.8000,   2.0000,   0.0640) -- (  1.2000,  -2.0000,   0.0640) -- (  1.4667,  -2.0000,   0.0190) -- ( -2.5333,   2.0000,   0.0190) -- cycle;
+
+\draw ( -2.8000,   2.0000,   0.0640) -- ( -3.0667,   2.0000,   0.1517) -- (  0.9333,  -2.0000,   0.1517) -- (  1.2000,  -2.0000,   0.0640) -- ( -2.8000,   2.0000,   0.0640) -- cycle;
+
+\draw ( -3.0667,   2.0000,   0.1517) -- ( -3.3333,   2.0000,   0.2963) -- (  0.6667,  -2.0000,   0.2963) -- (  0.9333,  -2.0000,   0.1517) -- ( -3.0667,   2.0000,   0.1517) -- cycle;
+
+\draw ( -3.3333,   2.0000,   0.2963) -- ( -3.6000,   2.0000,   0.5120) -- (  0.4000,  -2.0000,   0.5120) -- (  0.6667,  -2.0000,   0.2963) -- ( -3.3333,   2.0000,   0.2963) -- cycle;
+
+\draw ( -3.6000,   2.0000,   0.5120) -- ( -3.8667,   2.0000,   0.8130) -- (  0.1333,  -2.0000,   0.8130) -- (  0.4000,  -2.0000,   0.5120) -- ( -3.6000,   2.0000,   0.5120) -- cycle;
+
+\draw ( -3.8667,   2.0000,   0.8130) -- ( -4.1333,   2.0000,   1.2136) -- ( -0.1333,  -2.0000,   1.2136) -- (  0.1333,  -2.0000,   0.8130) -- ( -3.8667,   2.0000,   0.8130) -- cycle;
+
+\draw ( -4.1333,   2.0000,   1.2136) -- ( -4.3563,   2.0000,   1.6437) -- ( -0.3563,  -2.0000,   1.6437) -- ( -0.1333,  -2.0000,   1.2136) -- ( -4.1333,   2.0000,   1.2136) -- cycle;
+
+\draw (  4.3563,  -2.0000,0) -- (  0.3563,   2.0000,0) -- ( -4.3563,   2.0000,0) -- ( -0.3563,  -2.0000,0) -- (  4.3563,  -2.0000,0) -- cycle;
+\fill[opacity=.3,gray!80] (  4.3563,  -2.0000,0) -- (  0.3563,   2.0000,0) -- ( -4.3563,   2.0000,0) -- ( -0.3563,  -2.0000,0) -- (  4.3563,  -2.0000,0) -- cycle;
+\end{tikzpicture}
+\caption[Parametric Pontryagin difference before projection]{The set~$\mathcal M(\X^\infty_{\max})$ for Example~\ref{example:one:dimensional:one:step:controllable:set:PWA:disturbances} in \textcolor{gray!80}{grey} and its preimage for a piecewise affine approximation of $f(y)=\frac{y^3}{64}$ using $n=14$ segments.}
+\label{fig:example:one:step:controllable:set:PWA:disturbances}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[xscale = .7]
+\draw[step=1cm,gray,very thin] ( -5,  -2.0200) grid (  5,   2.0200);
+\draw[-latex'] (-5.02,-2.02) -- (5.1,-2.02) node[right] {$x$};
+\draw[-latex'] (-5,-2.02) -- (-5,2.1) node[above] {$u$};
+\foreach \x in {-5,-4,...,5} \draw (\x,-1.98) -- (\x,-2.02) node[below] {$\x$};
+\foreach \u in {-2,-1,...,2} \draw (-4.98,\u) -- (-5.02,\u) node[left] {$\u$};
+\draw (  4.3563,  -2.0000) -- (  0.3563,   2.0000) -- ( -4.3563,   2.0000) -- ( -0.3563,  -2.0000) -- (  4.3563,  -2.0000) -- cycle;
+\draw (  4.4670,  -2.0000) -- (  0.4670,   2.0000) -- ( -4.4670,   2.0000) -- ( -0.4670,  -2.0000) -- (  4.4670,  -2.0000) -- cycle;
+\draw (  4.4994,  -2.0000) -- (  0.4994,   2.0000) -- ( -4.4994,   2.0000) -- ( -0.4994,  -2.0000) -- (  4.4994,  -2.0000) -- cycle;
+\draw (  4.5090,  -2.0000) -- (  0.5090,   2.0000) -- ( -4.5090,   2.0000) -- ( -0.5090,  -2.0000) -- (  4.5090,  -2.0000) -- cycle;
+\draw (  4.5118,  -2.0000) -- (  0.5118,   2.0000) -- ( -4.5118,   2.0000) -- ( -0.5118,  -2.0000) -- (  4.5118,  -2.0000) -- cycle;
+\end{tikzpicture}
+\caption[Controllable Sets~$\mathcal M(\C_i(\X^\infty_{\max}))$ for PWA disturbance]{The first five controllable sets~$\mathcal M(\C_i(\X^\infty_{\max}))$ for the system described in Example~\ref{example:one:dimensional:one:step:controllable:set:PWA:disturbances}.}
+\label{fig:example:first:five:controllable:Sets}
+\end{figure}
+
+\end{example}
+%
+The general case is defined similarly to the one-step controllable set for fixed disturbance sets~\eqref{eq:definition:one:step:controllable:set}:
+%
+\begin{equation}\begin{aligned}
+	\C_1(\X_{\max}^\infty) &= \pi_d(\mathcal M(\X^\infty_{\max}))\\
+	\mathcal M(\X^\infty_{\max})&=\{(x,u)\in\X\times\U:Ax+Bu+w\in\mathcal \X_{\max}^\infty\forall w\in\W(x,u)\}
+\end{aligned}\end{equation}
+%
+We introduce the auxiliary set~$\mathcal M(\X^\infty_{\max})$ as it allows us to combine the state and input constraints without redundancy,
+the subsequent controllable sets are given by $\C_n(\X_{\max}^\infty) = \pi_d(\mathcal M(\C_{n-1}(\X^\infty_{\max})))$.
+%
+Notice that it is not possible to write the set~$\mathcal M(\X_{\max}^\infty)$ as a single parametric Pontryagin difference as we were able to do in~\eqref{eq:definition:one:step:controllable:set} with~$\mathcal L_1(\X^\infty_{\max})$, however this poses no major problem as all sets necessary are well defined and polytopic.
+%
+With this we can formulate the general robust model predictive control problem for state- and input-dependent disturbances:
+%
+\begin{subequations}\label{seq:PWA:min:max:general:problem}
+\begin{equation}
+	J_m^\ast(x) = \min_u\max_{w} \frac{1}{2}\left(x^T Qx+ u^TRu -\gamma^2w^Tw\right) + J_{m-1}^\ast(x^+)
+\end{equation}
+subject to
+\begin{equation}
+	x^+=Ax+Bu+w
+\end{equation}
+\begin{equation}
+	a_i w\leq \max_{k}\{c_{i,k}^x x+c_{i,k}^u u + b_{i,k}\}\; \forall i\leq M_{\W}
+\end{equation}
+and
+\begin{equation}\label{seq:eq:stage:constraints:mixed}
+	E_{i,m}^x x+ E_{i,m}^u u \leq 1\;\forall i\leq M_{\mathcal M_m}
+\end{equation}
+or
+\begin{equation}\begin{aligned}
+	F_i u&\leq 1\;\forall i\leq M_{\U}\\
+	E_{i,m} x&\leq 1\;\forall i\leq M_{\X_m}.\label{seq:eq:stage:constraints:separated}
+\end{aligned}\end{equation}
+\end{subequations}
+%
+It is important to point out that there are two equivalent formulations here: in~\eqref{seq:eq:stage:constraints:mixed} we constrain the pair $(x,u)\in\mathcal M(C_{m-1})$ and in~\eqref{seq:eq:stage:constraints:separated} we use $x\in\X_m=\C_m(\X^\infty_{\max})$ and $u\in\U$.
+%
+Example~\ref{example:mixed:and:separated:constraints} will illustrate the two alternatives and reveal some reasons for using one or another.
+%
+\\[1em]
+%
+We are now at the point where we have developed all the necessary offline procedure to formulate a robust model predictive control problem involving a state- and input dependent disturbance set, in the next section we discuss how~\eqref{seq:PWA:min:max:general:problem} can be solved using the methods discussed in Section~\ref{ch:MPC:sec:quadratic:MPC}.
+
+\section{The Solution of Min-Max Programs with State-\-Dependent Disturbances}\label{ch:MPC:sec:state:dist:solution}
+% \resetforsection
+% Adapting line search
+%
+%
+%
+\mysplit In Sections~\ref{ch:MPC:sec:qMPC:equality:constraints} and~\ref{ch:MPC:sec:qMPC:line:search} we discussed how an active-set solver can be used to determine the solution of a linearly constrained min-max program.
+%
+We have formulated a similar problem description in~\eqref{seq:PWA:min:max:general:problem} to accommodate state- and input-dependent disturbances.
+%
+In order to solve~\eqref{seq:PWA:min:max:general:problem} we use the same principles as before of separating each stage into two multi parametric quadratic programs:
+%
+\begin{equation}
+	J_m^\ast(x) = \left\{\begin{aligned}\min_u&\quad \frac{1}{2} (x^TQx + u^TRu) + \hat J_m^\ast(x,u)\\
+	\text{s.t.}& \quad E_{i,m}^x x+ E_{i,m}^u u \leq 1\;\forall i\leq M_{\mathcal M_m}\end{aligned}\right.
+\end{equation}
+%
+and
+%
+\begin{equation}
+	\hat J_m^\ast(x,u) = \left\{\begin{aligned}\max_w&\quad -\frac{\gamma^2}{2}w^Tw + J_{m-1}^\ast(x^+)\\
+	\text{s.t.}&\quad x^+=Ax+Bu+w \\
+	&\quad a_i w\leq \max_{k}\{c_{i,k}^x x+c_{i,k}^u u + b_{i,k}\}\; \forall i\leq M_{\W},\end{aligned}\right.
+\end{equation}
+%
+and assuming we have a state~$\mathfrak{x}_0$ for which the set of active constraints is known. 
+%
+That means we solve equality constrained problems
+%
+\begin{equation}
+	J_m^\ast(x) = \left\{\begin{aligned}\min_u&\quad \frac{1}{2} (x^TQx + u^TRu) + \hat J_m^\ast(x,u)\\
+	\text{s.t.}& \quad E_{i,m}^x x+ E_{i,m}^u u = 1\;\forall i\in\A_{\mathcal M_m}\end{aligned}\right.
+\end{equation}
+%
+and
+%
+\begin{equation}
+	\hat J_m^\ast(x,u) = \left\{\begin{aligned}\max_w&\quad -\frac{\gamma^2}{2}w^Tw + J_{m-1}^\ast(x^+)\\
+	\text{s.t.}&\quad x^+=Ax+Bu+w \\
+	&\quad a_i w= \max_{k}\{c_{i,k}^x x+c_{i,k}^u u + b_{i,k}\}\; \forall i\in\A_{\W_m}\end{aligned}\right.
+\end{equation}
+%
+For our convenience we state the general Lagrangians of both problems at stage~$m$:
+%
+\begin{equation}
+	\begin{aligned}
+	L_m &= \frac{1}{2} (x_k^TQx_k + u_k^TRu_k) + \hat J_m^\ast(x_k,u_k)+ \sum_{i\in\A_{\mathcal M_m}}\eta_{k,i}(E_{i,m}^x x_k+ E_{i,m}^u u_k - 1)\\&\quad + \xi_k^T(C_m^x x_k+ C_m^u u_k -\bfa{1})\\
+	\hat L_m &= -\frac{\gamma^2}{2}w_k^Tw_k + J_{m-1}^\ast(x_{k+1}) + \sum_{i\in\A_{\W_m}}\zeta_{k,i}(a_i w_k - c_{i,k^m_i}^x x_k- c_{i,k^m_i}^u u_k - b_{i,k^m_i})\\&\quad + \hat\xi_k^T(\hat C_m x_k - \bfa{1}) + \lambda_{k}^T(x_{k+1}-Ax_k-Bu_k-w_k)
+	\end{aligned}
+\end{equation}
+%
+where~$k=N-m$ and $C_m,\hat C_m^{(\cdot)}$ denote the potential compatibility constraints.
+%
+\\[1em]
+%
+\mysplit The main difference between the procedure in Section~\ref{ch:MPC:sec:quadratic:MPC} and here is that knowing the active set of constraints for a state~$\mathfrak{x}_0$ includes knowing the active piecewise affine function defining the set~$\W(x,u)$, i.e. knowing~$\mathfrak{k} = \{k^m_i\}_{i\leq M_\W}$ such that 
+%
+\begin{equation}
+	a_i w\leq \max_{k}\{c_{i,k}^x x+c_{i,k}^u u + b_{i,k}\} = c_{i,k^m_i}^x x+ c_{i,k^m_i}^u u + b_{i,k^m_i} \forall i\leq M_\W
+\end{equation}
+%
+Notice, that here it is not sufficient to only keep track of the active constraints, i.e. $i\in\A_{\W_m}$, but instead all right hand sides must be known for the optimal trajectory.
+%
+With this however, the maximisation problem at each stage becomes an equality constrained multiparametric quadratic program
+%
+\begin{equation}
+	\hat J_m^\ast(x,u) = \left\{\begin{aligned}\max_w&\quad -\frac{\gamma^2}{2}w^Tw + J_{m-1}^\ast(x^+)\\
+	\text{s.t.}&\quad x^+=Ax+Bu+w \\
+	&\quad a_iw = c_{i,k^m_i}^x x+ c_{i,k^m_i}^u u + b_{i,k^m_i} \forall i\in\A_{\W_m}
+	\end{aligned}\right.
+\end{equation}
+%
+for which the active set solver method described in Section~\ref{ch:MPC:sec:qMPC:equality:constraints} applies.
+%
+This implies that the solution to~\eqref{seq:PWA:min:max:general:problem} can be parametrised with respect to the initial state~$x_0=\mathfrak{x}_0$ and potentially a degeneracy variable~$\hat\beta_0$:
+%
+\begin{equation}\label{eq:PWA:full:parametrised:solution}
+	\begin{aligned}
+	u_k &= V_{u_k}\mathfrak{x}_0+v_{u_k}\\
+	x_k &= V_{x_k}\mathfrak{x}_0+v_{x_k}\\
+	w_k &= V_{w_k}\mathfrak{x}_0+v_{w_k}\\
+	\eta_k &= V_{\eta_k}\mathfrak{x}_0 + T_{\eta_k}\hat\beta_0+v_{\eta_k}\\
+	\zeta_k &= V_{\zeta_k}\mathfrak{x}_0 + T_{\zeta_k}\hat\beta_0 + v_{\zeta_k}\\
+	\lambda_k &= V_{\lambda_k}\mathfrak{x}_0 + T_{\lambda_k}\hat\beta_0 + v_{\lambda_k}
+	\end{aligned}
+\end{equation}
+%
+With~\eqref{eq:PWA:full:parametrised:solution} we design the line search over $x_0(t) = \mathfrak{x}_0+t(\mathfrak{x}_e-\mathfrak{x}_0)$ to be the maximiser of the linear program:
+%
+\begin{subequations}
+\begin{equation}
+	\max t
+\end{equation}
+subject to
+\begin{equation}\begin{aligned}
+	(E_{i,m}^x V_{x_k}+E_{i,m}^u V_{u_k})x_0(t) \leq 1 - E_{i,m}^x v_{x_k}-E_{i,m}^u v_{u_k} \quad i\not\in\A_{\mathcal M_m}\\
+	(a_i V_{w_k} - c_{i,k^m_i}^x V_{x_k}- c_{i,k^m_i}^u V_{u_k})x_0(t) \leq c_{i,k^m_i}^x v_{x_k} + c_{i,k^m_i}^u v_{u_k} + b_{i,k^m_i} -a_iv_{w_k}\quad i\not\in\A_{\W_m}\\
+\end{aligned}\end{equation}
+and 
+\begin{equation}\label{eq:PWA:update:condition}
+	((c_{i,j}^x-c_{i,k^m_i}^x)V_{x_k} + (c_{i,j}^u-c_{i,k^m_i}^u)V_{u_k})x_0(t)\leq  (c_{i,k^m_i}^x-c_{i,j}^x)v_{x_k}+ (c_{i,k^m_i}^u-c_{i,j}^u)v_{u_k} + (b_{i,k^m_i}-b_{i,j})
+\end{equation}
+for all $j\neq k_i^m, i\leq M_\W$, in addition to the dual conditions:
+\begin{equation}\begin{aligned}
+	V_{\eta_k}x_0(t)+ v_{\eta_k}\geq0\\
+	V_{\zeta_k}x_0(t) + v_{\zeta_k}\leq 0
+\end{aligned}\end{equation}
+\end{subequations}
+%
+The constraint~\eqref{eq:PWA:update:condition} is to update~$\mathfrak{k}$ and is the only modification of the line search, notice that the degenerate case is unaffected by the choice of disturbance constraints and therefore remains as in Section~\ref{ch:MPC:sec:qMPC:line:search}.
+%
+\begin{example}{The solution to a one dimensional min-max control problem for a system with state- and input dependent perturbation}\label{example:state:input:dependent:min:max}
+Consider the min-max program
+\[ 
+(\exmp\ref{example:state:input:dependent:min:max}) = \left\{\begin{aligned}
+\min_{u_0}\max{w_0}&\quad x_0^2+u_0^2 - 40000w_0^2 + 2x_1^2\\
+\text{s.t.}&\quad x_1 = x_0+u_0 + w_0\\
+&\quad (x_0,u_0)\in\mathcal M([-4,4])\\
+&\quad \pm x_1\leq 4\\
+&\quad \pm w_0 \leq \max_{k\leq n}\{c_k(x+u)+b_k\}\\
+&\quad x_0 = 4.22074
+\end{aligned}\right.
+\]
+%
+where $\mathcal M([-4,4])$ denotes the set obtained in Example~\ref{example:one:dimensional:one:step:controllable:set:PWA:disturbances} and $\max_{k}\{c_k y+b_k\}$ denotes the piecewise approximation to $f(y)=\frac{y^3}{8}$ shown in Figure~\ref{fig:example:nonlinear:state:dependent:constraints:approximation}.
+%
+We do not discuss the arithmetic involved in the solution of~$\exmp$\ref{example:state:input:dependent:min:max}, but illustrate the solution in the Figures~\ref{fig:example:min:max:state:dep:1}, \ref{fig:example:min:max:state:dep:2} and \ref{fig:example:min:max:state:dep:3}.
+%
+\\[1em]
+%
+In Figure~\ref{fig:example:min:max:state:dep:3} we illustrate the closed loop solution of the the underlying non-linear system, notice that our goal of controlling the non-linear system with a linear robust model predictive control scheme is successful and the system converges asymptotically, the linear counterpart does not since it is subject to perturbation yet it remains bounded.
+%
+\begin{figure}\centering
+\begin{tikzpicture}[scale=1.3]
+\draw[step=.5cm,gray,very thin] ( -5,  -2.5) grid (  5,   2.5);
+\draw (  0.2208,   2.0000) -- ( -4.2208,   2.0000) -- ( -0.2208,  -2.0000) -- (  4.2208,  -2.0000) -- (  0.2208,   2.0000) -- cycle;
+\foreach \x/\y in {0/0, 1.17604/-0.784039, 2.99995/-2.0000, 3.42857/-2, 4.22074/-2} {
+  \draw[cyan] (\x-.05,\y-.05) -- (\x+.05,\y+.05); 
+  \draw[cyan] (\x-.05,\y+.05) -- (\x+.05,\y-.05);
+}
+\draw[-latex'] (-5,-2.5) -- (5.2,-2.5) node[below] {$x_0$};
+\draw[-latex'] (-5,-2.5) -- (-5,2.7) node[left] {$u_0$};
+\foreach \x in {-4,-3,...,4} \draw (\x,-2.5) -- (\x,-2.52) node[below] {$\x$};
+\foreach \y in {-2,-1,...,2} \draw (-5,\y) -- (-5.02,\y) node[left] {$\y$};
+\draw[red] (0,0) -- (1.17604,-0.784039) -- (2.99995,-2.0000) -- (3.42857,-2) -- (4.22074,-2);
+\draw[blue] (0,0) -- (0.39202,0) -- (1.,0) --  (1.42864,0) --  (2.22085,0);
+\foreach \x in {0.39202, 1., 1.42864, 2.22085} {
+  \draw[cyan] (\x-.05,-.05) -- (\x+.05,+.05); 
+  \draw[cyan] (\x-.05,+.05) -- (\x+.05,-.05);
+}
+\end{tikzpicture}
+
+\begin{tikzpicture}[xscale=1.3,yscale=14]
+\draw[very thin,gray] (-5,-.201) grid[xstep=1,ystep=.05] (5,.2);
+\draw (-4.22074,    -0.111043) -- (-2.99995,    -0.05) -- (0,0) -- (2.99995,    0.05) -- (4.22074,    0.111043);
+\draw[-latex'] (-5,-.2) -- (5.1,-.2) node[below] {$x_0$};
+\draw[-latex'] (-5,-.2) -- (-5,.21) node[left] {$w_0$};
+\foreach \w in {-0.1,0,0.1} \draw (-4.98,\w) -- (-5.02,\w) node[left] {$\w$};
+\foreach \x in {-5,-4,...,4} \draw (\x,-.195) -- (\x,-.205) node[below] {$\x$};
+\end{tikzpicture}
+\caption[The solution for Example~\ref{example:state:input:dependent:min:max}]{In the top figure we illustrate the solution of $(x_0,u_0)$ as the line search progresses towards $\mathfrak{x}=4.22074$ in \textcolor{red}{red} and $x_1$ in~\textcolor{blue}{blue}. Only one constraint is activated before the end of the feasible set is reached, the \textcolor{cyan}{cyan} crosses mark the points at which the active right hand side of the disturbance constraint changes, at these points the min-max sequence does not need to be re-solved as the disturbance constraint is not active, in fact the disturbance constraint does not become active for the worst case disturbance (illustrated in the bottom figure) due to the large penalty on the disturbance term.}
+\label{fig:example:min:max:state:dep:1}
+\end{figure}
+
+\begin{figure}\centering
+\begin{tikzpicture}[scale=1.3]
+\draw (0,0) plot[domain=-2.99995:2.99995] ({\x},{1.66668/10*\x*\x});
+\draw (0,0) plot[domain=2.99995:4.22074] ({\x},{12.0004/10 -8.0004/10*\x+3.0001/10*\x*\x});
+\draw (0,0) plot[domain=-4.22074:-2.99995] ({\x},{12.0004/10 +8.0004/10*\x+3.0001/10*\x*\x});
+\draw[very thin,gray] (-5,0) grid[xstep=1,ystep=.5] (5,3.5);
+\foreach \x in {1.17604,3.42857} {
+	\draw[blue] (\x,0) -- (\x,3.5);
+	\draw[blue] (-\x,0) -- (-\x,3.5);
+}
+\foreach \x in {2.99995,4.22074} {
+	\draw[red] (\x,0) -- (\x,3.5);
+	\draw[red] (-\x,0) -- (-\x,3.5);
+}
+\draw[-latex'] (-5,0) -- (5.2,0) node[below right] {$x_0$};
+\draw[-latex'] (-5,0) -- (-5,3.7) node[left] {$\exmp$\ref{example:state:input:dependent:min:max}};
+\foreach \y in {0,10,...,30} \draw (-4.98,\y/10) -- (-5.02,\y/10) node[left] {$\y$};
+\foreach \x in {-5,-4,...,5} \draw (\x,.02) -- (\x,-.02) node[below] {$\x$};
+\end{tikzpicture}
+\caption[Value function of state/input dependent scheme]{The objective value of~$\exmp$\ref{example:state:input:dependent:min:max} is a piecewise quadratic function in~$x_0$. The vertical \textcolor{red}{red} lines mark the change of the active right hand side of the disturbance constraint while the vertical \textcolor{blue}{blue} lines mark the boundaries of the active sets of constraints.}
+\label{fig:example:min:max:state:dep:2}
+\end{figure}
+%
+%
+\begin{figure}\centering
+\begin{tikzpicture}[scale=1.3]
+\draw[very thin,gray] (0,-.5) grid[xstep=1,ystep=.25] (10,4.5);
+\draw[-latex'] (0,-.5) -- (0,4.7) node[left] {$x$};
+\draw[-latex'] (0,-.5) -- (10.2,-.5) node[below] {$k$};
+\foreach \n in {10,20,...,90} \draw (\n/10,-.48) -- (\n/10,-.52) node[below] {$\n$};
+\foreach \x in {0,1,2,3,4} \draw (.02,\x) -- (-.02,\x) node[left] {$\x$};
+\draw[red] (0,4.2) -- (0.1,0.611696) -- (0.2,0.201725) -- (0.3,-0.0224549) -- (0.4,-0.0538045) -- (0.5,0.0683182) -- (0.6,-0.0179345) -- (0.7,0.0523462) -- (0.8,-0.040904) -- (0.9,0.0369593) -- (1.,0.0212516) -- (1.1,0.0607621) -- (1.2,0.115158) -- (1.3,0.0677145) -- (1.4,-0.0154817) -- (1.5,0.060322) -- (1.6,-0.0165792) -- (1.7,0.0577596) -- (1.8,0.0547133) -- (1.9,0.0442027) -- (2.,-0.0638695) -- (2.1,-0.0295331) -- (2.2,0.0134604) -- (2.3,0.0499815) -- (2.4,0.0112491) -- (2.5,0.0916444) -- (2.6,0.122653) -- (2.7,0.108049) -- (2.8,0.107838) -- (2.9,0.0659026) -- (3.,-0.0621232) -- (3.1,0.0365532) -- (3.2,0.0805005) -- (3.3,0.0643762) -- (3.4,-0.0113283) -- (3.5,0.0339882) -- (3.6,-0.00553036) -- (3.7,-0.0937906) -- (3.8,-0.0189617) -- (3.9,0.0930324) -- (4.,0.034724) -- (4.1,-0.0818518) -- (4.2,-0.025477) -- (4.3,-0.0605463) -- (4.4,-0.0116957) -- (4.5,-0.0263157) -- (4.6,0.0475993) -- (4.7,0.0318214) -- (4.8,0.100054) -- (4.9,-0.0390857) -- (5.,-0.0944074) -- (5.1,-0.126082) -- (5.2,-0.0922253) -- (5.3,-0.100506) -- (5.4,-0.0146233) -- (5.5,-0.0806858) -- (5.6,-0.0670992) -- (5.7,0.0418488) -- (5.8,0.107684) -- (5.9,-0.00361572) -- (6.,0.097478) -- (6.1,-0.0413226) -- (6.2,-0.0954656) -- (6.3,-0.0610257) -- (6.4,-0.00977164) -- (6.5,-0.0125253) -- (6.6,-0.0531657) -- (6.7,0.0574828) -- (6.8,0.0111643) -- (6.9,-0.0663291) -- (7.,0.0307304) -- (7.1,-0.0887321) -- (7.2,0.067941) -- (7.3,-0.0209259) -- (7.4,0.045047) -- (7.5,-0.0500308) -- (7.6,-0.0903576) -- (7.7,0.00635686) -- (7.8,-0.0108657) -- (7.9,-0.0674823) -- (8.,-0.0889324) -- (8.1,0.0128762) -- (8.2,-0.068372) -- (8.3,0.0576075) -- (8.4,-0.0568041) -- (8.5,0.0536076) -- (8.6,-0.0618816) -- (8.7,-0.0629572) -- (8.8,0.0304637) -- (8.9,0.0405311) -- (9.,0.0525182) -- (9.1,0.105073) -- (9.2,0.0683361) -- (9.3,-0.0322447) -- (9.4,0.0377548) -- (9.5,0.0410841) -- (9.6,0.0604465) -- (9.7,-0.054183) -- (9.8,-0.0443578) -- (9.9,0.0449799);
+\draw[blue] (0,4.2) -- (0.1,3.531) -- (0.2,1.97958) -- (0.3,0.69575) -- (0.4,0.23347) -- (0.5,0.07788) -- (0.6,0.02596) -- (0.7,0.00865) -- (0.8,0.00288) -- (0.9,0.00096) -- (1.,0.00032) -- (1.1,0.00011) -- (1.2,0.00004) -- (1.3,0.00001) -- (1.4,0.) -- (1.5,0.) -- (1.6,0.) -- (1.7,0.) -- (1.8,0.) -- (1.9,0.) -- (2.,0.) -- (2.1,0.) -- (2.2,0.) -- (2.3,0.) -- (2.4,0.) -- (2.5,0.) -- (2.6,0.) -- (2.7,0.) -- (2.8,0.) -- (2.9,0.) -- (3.,0.) -- (3.1,0.) -- (3.2,0.) -- (3.3,0.) -- (3.4,0.) -- (3.5,0.) -- (3.6,0.) -- (3.7,0.) -- (3.8,0.) -- (3.9,0.) -- (4.,0.) -- (4.1,0.) -- (4.2,0.) -- (4.3,0.) -- (4.4,0.) -- (4.5,0.) -- (4.6,0.) -- (4.7,0.) -- (4.8,0.) -- (4.9,0.) -- (5.,0.) -- (5.1,0.) -- (5.2,0.) -- (5.3,0.) -- (5.4,0.) -- (5.5,0.) -- (5.6,0.) -- (5.7,0.) -- (5.8,0.) -- (5.9,0.) -- (6.,0.) -- (6.1,0.) -- (6.2,0.) -- (6.3,0.) -- (6.4,0.) -- (6.5,0.) -- (6.6,0.) -- (6.7,0.) -- (6.8,0.) -- (6.9,0.) -- (7.,0.) -- (7.1,0.) -- (7.2,0.) -- (7.3,0.) -- (7.4,0.) -- (7.5,0.) -- (7.6,0.) -- (7.7,0.) -- (7.8,0.) -- (7.9,0.) -- (8.,0.) -- (8.1,0.) -- (8.2,0.) -- (8.3,0.) -- (8.4,0.) -- (8.5,0.) -- (8.6,0.) -- (8.7,0.) -- (8.8,0.) -- (8.9,0.) -- (9.,0.) -- (9.1,0.) -- (9.2,0.) -- (9.3,0.) -- (9.4,0.) -- (9.5,0.) -- (9.6,0.) -- (9.7,0.) -- (9.8,0.) -- (9.9,0.);
+\end{tikzpicture}
+\caption[Closed loop trajectories for Example~\ref{example:state:input:dependent:min:max}]{Closed loop trajectory for Example~\ref{example:state:input:dependent:min:max}, here the \textcolor{red}{red} trajectory is that of the linear system~$x^+=x+u+w$, while the~\textcolor{blue}{blue} trajectory is the closed-loop trajectory of~$x^+=x+u+\frac{(x+u)^3}{8}$ for $u$ given as the solution of~$\exmp$\ref{example:state:input:dependent:min:max}.}
+\label{fig:example:min:max:state:dep:3}
+\end{figure}
+\end{example}
+%
+%
+%
+%
+In this chapter we have discussed how parametrically convex descriptions of the disturbance can be used in a robust model predictive setup.
+%
+We discussed the amendments to the situation described in Section~\ref{ch:MPC:sec:quadratic:MPC} which are necessary to handle this scenario.
+%
+\\[1em]
+%
+Throughout this chapter we have assumed that the dynamics of the perturbed systems are dominantly linear, i.e. the linear behaviour dominates the overall system dynamics and the effect of the uncertainty is small in comparison to the linear dynamics and in particular there is no non-linear behaviour hidden in the uncertainty.
+%
+This means there is no solution to $x=\Psi x+w_\kappa(x)$ for any vertex of~$\conv_\kappa\{w_\kappa(x)\}=\W(x)$, in the following example we will see what can happen if this assumption is violated.
+%
+%
+%
+%
+%
+In the following example we outline a source of degeneracy in robust model predictive control formulations.
+%
+\begin{example}{Mixed and separated state and input constraints}\label{example:mixed:and:separated:constraints}
+In this example we illustrate the two different stage-constraint formulations ($x\in\X_m,u\in\U$ and $(x,u)\in\Z_m$), to obtain visually presentable results we do not design it as a robust model predictive control problem with terminal conditions, stability guarantees and so forth.
+%
+Instead we consider the two dimensional system
+%
+\[
+x^+ = \underbrace{\begin{pmatrix}\frac{9}{10}&\frac{1}{5}\\-\frac{1}{5}&\frac{9}{10}\end{pmatrix}}_A x + \underbrace{\begin{pmatrix}0\\1\end{pmatrix}}_B u + \underbrace{\begin{pmatrix}1\\0\end{pmatrix}}_D w
+\]
+%
+for~$u\in\U=[-5,5]$ and $w\in\W(x)$ with
+%
+\begin{multline*}
+	\W(x)=\left\{w\in\RR:\pm w\leq \max_{k,l}\left\{\left(\cos(\frac{2k\pi}{N})\sin(\frac{2l\pi}{N}) \sin(\frac{2k\pi}{N})\cos(\frac{2l\pi}{N})\right)x\right.\right.\\
+	\left.\left.+\cos(\frac{2l\pi}{N})u\right\}\right\}.
+\end{multline*}
+%
+To amplify the effect of using different stage constraints we use the simplest thinkable problem: steer the system to the target set~$\mathcal T=\{x\in\RR^2:-5\leq x_i\leq 5\}$, i.e. solve
+%
+\[
+\min_u\max_w x_1^2+u^2-21 w^2 + J_0(x^+,w)
+\]
+%
+subject to
+\[\begin{aligned}
+x^+& =Ax+Bu+Dw\\
+x^+&\in\mathcal T\\
+w&\in\W(x)
+\end{aligned}
+\]
+%
+and \textbf{either}
+%
+\[
+(x,u)\in\mathcal M(\mathcal T)
+\]
+%
+\textbf{or}
+%
+\[\begin{aligned}
+x&\in\mathcal C_1(\mathcal T)\\
+u&\in\U
+\end{aligned}
+\]
+%
+both formulations can be solved using the presented active set solver, and we show the solutions in Figure~\ref{fig:example:comparison:between:mixed:and:sep:constraints}.
+%
+\begin{figure}
+\centering
+\tdplotsetmaincoords{65}{40}
+\input{nontrivial.linesearch}
+%
+\begin{tikzpicture}[scale=.9]
+\draw[-latex'] (-5,-5) -- (5.2,-5) node[below right] {$x_1$};
+\draw[-latex'] (-5,-5) -- (-5,5.2) node[above left] {$x_2$};
+
+\draw ( -1.1137,   5.0117) -- ( -2.9452,   2.9452) -- ( -2.3836,  -2.3836) -- (  1.1137,  -5.0117) -- (  2.9452,  -2.9452) -- (  2.3836,   2.3836) -- ( -1.1137,   5.0117) -- cycle;
+\draw ( -5.0000,  -5.0000) -- (  5.0000,  -5.0000) -- (  5.0000,   5.0000) -- ( -5.0000,   5.0000) -- ( -5.0000,  -5.0000) -- cycle;
+
+\draw (  2.0193,   0.0000) -- (  4.7640,   2.0562);
+\draw (  2.1171,   0.0000) -- (  4.8806,   1.8435);
+\draw (  2.1171,   0.0000) -- (  4.8806,   1.8435);
+\draw (  2.2043,   0.0000) -- (  4.9712,   1.6178);
+\draw (  2.2320,   0.0000) -- (  5.0000,   1.5460);
+\draw (  2.2871,   0.0000) -- (  5.0000,   1.4033);
+\draw (  2.2871,   0.0000) -- (  5.0000,   1.4033);
+\draw (  2.3540,   0.0000) -- (  4.9732,   1.1908);
+\draw (  2.4182,   0.0000) -- (  5.0000,   0.9869);
+\draw (  2.4182,   0.0000) -- (  5.0000,   0.9869);
+\draw (  2.4676,   0.0000) -- (  5.0000,   0.7851);
+\draw (  2.5154,   0.0000) -- (  5.0000,   0.5895);
+\draw (  2.5154,   0.0000) -- (  5.0000,   0.5895);
+\draw (  2.5494,   0.0000) -- (  4.9748,   0.3962);
+\draw (  2.5825,   0.0000) -- (  5.0000,   0.2071);
+\draw (  2.5825,   0.0000) -- (  5.0000,   0.2071);
+\draw (  2.6023,   0.0000) -- (  5.0000,   0.0203);
+\draw (  2.6219,   0.0000) -- (  5.0000,  -0.1640);
+\draw (  2.6219,   0.0000) -- (  5.0000,  -0.1640);
+\draw (  2.6283,   0.0000) -- (  4.9755,  -0.3459);
+\draw (  2.6348,   0.0000) -- (  5.0000,  -0.5270);
+\draw (  2.6348,   0.0000) -- (  5.0000,  -0.5270);
+\draw (  2.6348,   0.0000) -- (  5.0000,  -0.5270);
+\end{tikzpicture}
+\caption[Comparison between mixed and separated stage constraints]{A comparison between mixed and separated stage constraints for a line search from~$\mathfrak{x}_0=0$ to~$\mathfrak{x}_e=(5,0)^T$.
+%
+The solution of both coincides, however, where in the formulation with mixed constraints an active constraint changes the separated constraint has a redundancy in its initial stage, i.e.~$T_{\{\cdot\}}\neq0$.
+%
+I.e. a change in an active set in~$\mathcal M(\mathcal T)$ corresponds to degeneracy of the projected constraint set.}
+\label{fig:example:comparison:between:mixed:and:sep:constraints}
+\end{figure}
+%
+In this case we have that the change of an active set of the constraints~$(x,u)\in\mathcal M(\mathcal T)$ corresponds to the problem with separated constraints becoming degenerate at that point.
+%
+For general min-max robust model predictive control problems we cannot verify this phenomenon as this would require us to keep maintain adding dimensions at each stage which is usually not possible.
+\end{example}

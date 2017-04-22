@@ -1,7 +1,152 @@
 %!TEX root = main.tex
 
 \chapter{Introduction}
-
-\section{Notation}
 %
-By $A\vert_B$ we denote $A$ evaluated on $B$.
+%
+%
+%
+%
+The focus of this thesis is on min-max robust model predictive control of linear systems subject to additive uncertainty, in particular on the control theoretic framework which allows us\footnote{%
+%
+Throughout this work the author uses the~\emph{pluralis majestatis} to refer to himself as a narrator of the presented work.
+%
+Mentions of 'we' can be understood as 'the author and other experts in the field agree'.
+}
+to give guarantees on robust feasibility for the underlying min-max program.
+%
+Although the idea of using a min-max approach in a robust model predictive control context arose around the same time as the ideas for deterministic model predictive control, the complexity of min-max programs in comparison to a single optimisation program in the deterministic case caused a decade long latency for the efficient computational implementation of robust model predictive controllers.
+%
+While analytically the min-max formulation was studied, its numerical computation remained a major challenge.
+%
+Significant simplifications were necessary to obtain solutions for robust model predictive control problems, either decision tree like structures which grew intractably with dimension and horizon length or approximations in the frequency domain were used and made robust model predictive control impractical for industrial use.
+%
+\\[1em]
+%
+In recent years active-set solvers emerged as a useful tool for the computation of model predictive controllers.
+%
+At first the predominant method for solving min-max formulations was to use an explicit controller (see e.g.~\cite{Bemporad:2003}) which is solved off-line and shifts the computational workload of solving optimisation programs to a preliminary stage, the deployed controller then has to determine which control policy to apply.
+%
+However, the number of control policies for systems of higher dimensions and or longer prediction horizons can grow prohibitively large, so that the an exact min-max approach to robust model predictive control remained applicable only to simple problem formulations.
+%
+\\[1em]
+%
+Using the concept of multi-parametric programming, which underlies the explicit approach, recent advances were made to allow an exact online implementation of min-max controllers\footnote{%
+%
+Several similar methods based on multi-parametric quadratic programming~\cite{Best:1996} were adopted for deterministic model predictive control, e.g.~\cite{Wirsching:2007,Ferreau:2008,Cannon:2008,Ferreau:2006}.
+%
+The first adaptation for min-max programming was presented in~\cite{Buerger:2011}.
+%
+}.
+%
+The main idea behind this approach is one of localism of the state of a perturbed linear system: two successive measurements of an uncertain control system will be \emph{close to each other}.
+%
+Since the state of the system remains in proximity to its predecessor knowledge of all control policies for all admissible states is usually unnecessary but rather local updates are appropriate.
+%
+This online active set solver approach to the min-max control problem allows us to solve any robust model predictive control problem for which its explicit min-max problem formulation is quadratic in its cost and linear in its constraints exactly.
+%
+The central drive of this thesis is to widen the scope of the active set solver approach, i.e. formulate robust control problems in such a way that their explicit optimisation program is a linearly constrained quadratic min-max program.
+%
+\\[1em]
+%
+A crucial component of robust model predictive control problems is that of guaranteeing feasibility in presence of uncertainty, this is done by designing constraint sets that cater for the modelled uncertainty.
+%
+It is mainly through the design of such constraints that we extend the range of systems for which the robust model predictive control problem can be solved exactly.
+%
+\\[1em]
+%
+The main ideas presented in this work are:
+%
+\begin{enumerate}
+	\item How to solve quadratic min-max control problems subject to linear constraints as they arise in robust model predictive control.
+	\item How to design quadratic min-max control problems for linear systems in such a way that we can guarantee their robust feasibility.
+\end{enumerate}
+%
+In our course to present these two points in a self-contained and comprehensible manner this thesis is structured in two parts.
+%
+The first part sets up a preliminary framework and presents central concepts which we develop further later on.
+%
+To keep the presentation focused on the robust model predictive control problem the first chapter (Section~\ref{ch:concepts:sec:RMPC}) of the conceptual part presents the min-max formulation in a non-linear formulation.
+%
+For this non-linear formulation we state our nomenclature and key concepts such as \emph{robust positive invariant sets} which are elaborated in more specific scenarios later in the thesis.
+%
+Due to their central importance in this work we devote Chapter~\ref{ch:concepts:sec:polytopes} to a summary of statements on polytopes and related objects, such as polytopic complexes.
+%
+As part of the polytope discussion we deal with the combinatorial structure of polytopes.
+%
+Although they are relatively simple to understand, the combinatorial structure of the polytopes involved in the robust model predictive control formulation allows us to develop new statements in later sections of this thesis.
+%
+\\[1em]
+%
+It is in the second part of this thesis that we present novel contributions to the field of robust model predictive control.
+%
+We begin the evolution of the second part by presenting existing methods to design and solve quadratic min-max programs for linear systems subject to linear constraints in Chapter~\ref{ch:MPC:sec:quadratic:MPC}, we only present the methods we will later build upon later.
+%
+Section~\ref{ch:MPC:sec:qMPC:MRPI:set} elaborates on robust positive invariant sets for linear systems with linear constraints on the state, input and uncertainty; although the algorithm we discuss is an established one the way we present it and its analysis is not.
+%
+The methods described in this section are presented in a way that facilitates later generalisation of the algorithm.
+%
+After Section~\ref{ch:MPC:sec:qMPC:MRPI:set}, a quadratic min-max control problem could be formulated in a way that admits a robust feasibility guarantee of the optimisation program, however since there is no 'out of the box' solver for quadratic min-max programs we discuss an active set solver to compute the solution of a quadratic min-max program in Sections~\ref{ch:MPC:sec:qMPC:equality:constraints} and~\ref{ch:MPC:sec:qMPC:line:search}.
+%
+While Section~\ref{ch:MPC:sec:qMPC:equality:constraints} deals with a min-max sequence for a given set of active constraints, Section~\ref{ch:MPC:sec:qMPC:line:search} discusses a line search method to update the set of active constraints exploring active sets along a line towards the desired state.
+%
+In Section~\ref{ch:MPC:sec:qMPC:stability} we will provide proofs that the obtained controller yields a stable closed-loop system, here we present two different statements of the robust asymptotic behaviour.
+%
+\\[1em]
+%
+A key concept for extending the scope of systems for which a min-max controller can be efficiently applied is that of using set-valued maps depending on the state and or the input of the system to constrain the uncertainty.
+%
+To cope with such set-valued maps in a way that allows us to use the solver described in Chapter~\ref{ch:MPC:sec:quadratic:MPC} the class of set-valued maps we can admit is one we call parametrically convex set-valued maps.
+%
+They are introduced and analysed in Chapter~\ref{ch:MPC:sec:parametric:convextiy}.
+%
+We provide relevant statements for arbitrary parametrically convex set-valued maps in Section~\ref{ch:MPC:sec:PC:general:PC}, the computational concepts for parametrically convex set-valued maps are then elaborated in Section~\ref{ch:MPC:sec:PC:PWA:PC}.
+%
+The main contribution of this thesis, building on the theory presented in Chapter~\ref{ch:MPC:sec:parametric:convextiy}, is then presented in Chapter~\ref{ch:MPC:sec:state:input:disturbances}.
+%
+Here we develop necessary extensions to the methods presented in Chapter~\ref{ch:MPC:sec:quadratic:MPC}, first we present the algorithm to determine the maximal robust positive invariant set as well as the $k$-step controllable sets for a system subject to additive state-dependent uncertainties in Section~\ref{ch:MPC:sec:state:dist:MRPI}.
+%
+In order to derive a problem formulation that can be solved with the active set solver presented in Chapter~\ref{ch:MPC:sec:quadratic:MPC}, extensions to the line search are derived in~\ref{ch:MPC:sec:state:dist:solution}.
+%
+\\[1em]
+%
+Chapter~\ref{ch:MPC:sec:parametric:convextiy} deals with different type of parametrised disturbances, we study the behaviour of scaled disturbances.
+%
+\\[1em]
+%
+The study of polytopes and their combinatorial properties allows us to design an optimisation of a quite different nature. 
+%
+Chapter~\ref{ch:MPC:sec:SMPC} deals with an uncertain system which is subject to probabilistic constraints on an auxiliary output.
+%
+The predominant method to solve such stochastic model predictive control problems is by sampling the random model parameters sufficiently often to satisfy confidence bounds, the method we propose here is to replace the probabilistic condition by a deterministic one using a polytope with sufficiently large probability measure.
+%
+Using this approach the control problem that has to be solved is again a linearly constrained quadratic min-max program which can be solved using the methods discussed in Chapter~\ref{ch:MPC:sec:quadratic:MPC}.
+%
+The key problem is to minimise the amount of conservatism that is introduced by replacing the probabilistic constraint, to address this problem we propose three methods to optimise over polytopes of a given combinatorial structure.
+%
+The constraint of being of sufficient size translates to the volume of the decision polytope, this is based on the assumption that the random variable is distributed in a uniform manner, this assumption is generalised in Chapter~\ref{ch:MPC:sec:SMPC2}.
+%
+Here we assume that the density function of the random variable is known and the probability measure of the decision polytope is approximated.
+%
+\\[1em]
+%
+In the appendix we summarise statements on set operations and computational methods that are used extensively in the main part of this thesis.
+%
+\\[2em]
+%
+Throughout this work we illustrate crucial concepts by simple examples which are meant to provide a guideline for the general procedures.
+%
+In order to logically separate and structure the presented material we choose to subdivide sections into numbered paragraphs.
+%
+\\[1em]
+%
+A note on 'sensibleness': To present the material in this thesis in a comprehensible manner we choose to make sensible trade-offs.
+%
+This means that we choose to make simplifications where the alternative would take considerable technical efforts without significant improvement of the overall performance.
+%
+For example, we choose to discuss only such min-max programs for which the sub-problem of the minimisation is strictly convex and the sub-problem of the maximisation is strictly concave, these assumptions can be relaxed to the case of non-strict convexity and or concavity.
+%
+However, the technical framework necessary to make statements on the solution of such a non-strict convex-concave problem significantly outweighs the benefits of having the most general statements possible.
+%
+The author believes this is sensible because the parameters involved in the strictly convex-concave problems can be chosen arbitrarily close to the ones of the non-strictly convex-concave formulation.
+%
+We do refer to literature dealing with such singular cases where appropriate.

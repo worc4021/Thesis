@@ -1,0 +1,323 @@
+%!TEX root = main.tex
+\resetcounters
+\chapter{The Minkowski Sum and the Pontryagin Difference}\label{app:minkowski:pontryagin:identities}
+%
+%
+%
+%
+%
+\mysplit In this section we summarise known properties of the Minkowski sum of two sets~$\X\oplus\Y=\{z:z=x+y,x\in\X,y\in\Y\}$ and the Pontryagin difference between two sets~$\X\ominus\Y=\{z:z+y\in\X\forall y\in\Y\}$.
+%
+The Minkowski sum was introduced by Minkowski himself in~\cite{Minkowski:1903} by means of the support function of a set~$\X$:
+%
+\begin{equation}
+	h_\X(z) = \sup_{x\in\X}z^Tx
+\end{equation}
+%
+to be $h_{\X\oplus\Y}(z) = h_\X(z)+h_\Y(z)$.
+%
+It is trivial to see that the two definitions are equivalent:
+%
+\begin{equation}
+	h_\X(z)+h_\Y(z) = \sup_{x\in\X}z^Tx+\sup_{y\in\Y}z^Ty = \sup_{\substack{x\in\X\\ y\in\Y}}z^T(x+y) = h_{\X\oplus\Y}(z).
+\end{equation}
+%
+A third equivalent definition is given in~\cite{Hadwiger:1957} as
+%
+\begin{equation}
+	\X\oplus\Y = \bigcup_{\substack{x\in\X\\y\in\Y}}\{x+y\} = \bigcup_{x\in\X}\{x\}\oplus\Y = \bigcup_{y\in\Y}\{y\}\oplus\X.
+\end{equation}
+%
+Some sensible conventions are made to create a pseudo-group\footnote{There is no inverse element for the operation of the Minkowski addition.} character over the set of compact sets with the operation of the Minkowski addition.
+%
+\begin{align}
+\X\oplus\emptyset = \emptyset\oplus\X=\emptyset\\
+\X\oplus\mathcal K = \mathcal K\oplus\X=\mathcal K
+\end{align}
+%
+Where $\mathcal K$ denotes the body in which the sets reside~$\X\subseteq\mathcal K$, i.e. for all purposes outside this appendix~$\mathcal K=\RR^d$.
+%
+The Minkowski addition has a few properties that are often useful:
+%
+\begin{enumerate}
+\item The Minkowski addition is \emph{commutative}, i.e.~$\X\oplus\Y = \Y\oplus\X$.
+\item The Minkowski addition is \emph{associative}, i.e.~$(\X\oplus\Y)\oplus\Z=\X\oplus(\Y\oplus\Z)$.
+\end{enumerate}
+%
+\begin{proof}
+Associativity and commutativity follow directly from the respective property of the regular addition of vectors.
+\end{proof}
+%
+\mysplit In addition to the Minkowski addition a set subtraction is proposed:
+%
+\begin{equation}
+	\X\ominus\Y = \{z:z+y\in\X\;\forall y\in\Y\}.
+\end{equation}
+%
+The set difference~$\X\ominus\Y$ was introduced in this form by Hadwiger in~\cite{Hadwiger:1950} as the Minkowski subtraction, however we traditionally refer to the operation as Pontryagin difference, Pontryagin defines a set of initial conditions for which a game can be completed for all adversary actions~\cite{Pontryagin:1966}, which resonates better with what the operation is usually used for.
+%
+However, Pontryagin did not characterise the properties of the set~$\X\ominus\Y$ we present here, which we accredit to~\cite{Hadwiger:1957} and~\cite{Kolmanovsky:1998}.
+%
+\\[1em]
+%
+The Pontryagin difference also has different equivalent representations:
+%
+\begin{align}
+\X\ominus\Y &= \bigcap_{y\in\Y} \{-y\}\oplus\X\label{eq:pontryagin:difference:obscure}\\
+&=\bigcap_{\substack{z+y\in\X\\ y\in\Y}}\{z\}\label{eq:pontryagin:difference:intersection}\\
+&=\{z:z+y\in\X\;\forall y\in\Y\}\label{eq:pontryagin:difference:standard}
+\end{align}
+%
+It is obvious that \eqref{eq:pontryagin:difference:intersection} and~\eqref{eq:pontryagin:difference:standard} are two different versions of each other, \eqref{eq:pontryagin:difference:obscure} is slightly less obvious
+%
+\begin{equation}\begin{aligned}
+\bigcap_{y\in\Y} \{-y\}\oplus\X \ni z &\Leftrightarrow \forall y\in\Y\;\exists x\in\X: z=-y+x\\
+ &\Leftrightarrow \forall y\in\Y: z+y\in\X\\
+ &\Leftrightarrow z\in\{z:z+y\in\X\;\forall y\in\Y\}
+ \end{aligned}
+\end{equation}
+%
+\mysplit Using the complementary set~$\X^\ast = \mathcal K\setminus\X$ and the mirrored set~$\tilde\X=-\X$ we can show that the Minkowski addition and the Pontryagin subtraction are complementary to each other:
+%
+\begin{equation}\begin{aligned}
+	\X\ominus\Y &= (\X^\ast\oplus\tilde\Y)^\ast\\
+	\X\oplus\Y &=(\X^\ast\ominus\tilde\Y)^\ast
+\end{aligned}
+\end{equation}
+%
+\begin{proof}
+The membership $z\in\X\ominus\Y$ is equivalent to the fact that for all $y\in\Y$ there exists a $x\in\X$ such that $z=x-y$ or $z+y=x$.
+%
+However there exists no $x^\ast\in\X^\ast$ such that $z=x^\ast-y$ as a consequence of~\eqref{eq:pontryagin:difference:obscure}, but that is equivalent to $z\not\in\X^\ast\oplus\tilde\Y$ or $z\in(\X^\ast\oplus\tilde\Y)^\ast$, since all the steps were equivalences this proves the first identity. 
+%
+The second identity follows by replacing~$\X$ by~$\X^\ast$, $\Y$~by~$\tilde\Y$ and the fact that the bi-complement of a set is the set itself~$\X^{\ast\ast}=\X$.
+\end{proof}
+%
+\mysplit The most important properties of the Minkowski addition and the Pontryagin subtraction for us are the following
+%
+\begin{equation}\label{eq:identity:for:pontryagin:minkowski:connection}
+	\begin{aligned}
+	\left(\X\ominus\Y\right)\oplus\Y&\subseteq\X\\
+	\left(\X\oplus\Y\right)\ominus\Y&\supseteq\X
+	\end{aligned}
+\end{equation}
+%
+\begin{proof}
+For both statements the key is that logic statements do not commute in general.
+%
+Let~~$z\in\left(\X\oplus\Y\right)\ominus\Y$ then for all $y\in\Y$ there exists a $x\in\X$ and a $\bar y\in\Y$ such that $z=(x+\bar y)-y$, therefore if $x\in\partial\X$ lies on the boundary the constellation of~$y$ and $\bar y$ is important, since $\bar y$ can not be chosen individually it is not guaranteed that~$z\in\X$.
+%
+On the other hand, let~$z\in\left(\X\ominus\Y\right)\oplus\Y$, that is there is a $y\in\Y$ and a $q\in\X\ominus\Y$ such that $z=q+y$, furthermore for all $\bar y\in\Y$ there exists a $x\in\X$ such that $q=x-\bar y$.
+%
+Since for any $\bar y$ there exists $x$ and $y$ such that $z=x-\bar y+y$ holds, the choice~$\bar y=y$ yields $z=x\in\X$ and for $x\in\partial\X$ on the boundary and $y-\bar y$ pointing out of $\X$ then $z\not\in\X$ and therefore the second inclusion holds.
+\end{proof}
+%
+%
+\mysplit Furthermore we have the following identities, assume that $\X,\Y,\Z$ and $\mathcal R$ are closed sets, then:
+%
+\begin{align}
+\X,\Y\text{ convex } &\Rightarrow \X\oplus\Y\wedge\X\ominus\Y \text{convex}\label{eq:convexity:of:minkowski:sum}\\
+\X\ominus\Y\ominus\Z &= \X\ominus(\Y\oplus\Z)\label{eq:zusammenfassung:pontryagin:difference}\\
+(\X\ominus\Y)\oplus(\Z\ominus\mathcal R)&\subseteq(\X\oplus\Z)\ominus(\Y\oplus\mathcal R)\label{eq:Hadwiger:identity:26}\\
+\X\subseteq\Y\wedge\Z\subseteq\mathcal R&\Rightarrow \X\oplus\Z\subseteq\Y\oplus\mathcal R\label{eq:Hadwiger:monotonie}\\
+\X\subseteq\Y\wedge\mathcal R\subseteq\Z&\Rightarrow \X\ominus\Z\subseteq\Y\ominus\mathcal R\label{eq:Hadwiger:identity:28}\\
+(\X\cup\Y)\oplus\Z &= (\X\oplus\Z)\cup(\Y\oplus\Z)\label{eq:Hadwiger:identity:29}\\
+(\X\cap\Y)\oplus\Z &\subseteq (\X\oplus\Z)\cap(\Y\oplus\Z)\quad{\footnotesize{(\Z,\X\cup\Y\text{ convex }\Rightarrow\;=)}}\label{eq:Hadwiger:identity:30}\\
+(\X\cup\Y)\ominus\Z &\supseteq (\X\ominus\Z)\cup(\Y\ominus\Z)\quad{\footnotesize{(\X\cap\Y=\emptyset,\Z\text{ connected }\Rightarrow\;=)}}\label{eq:Hadwiger:identity:31}\\
+(\X\cap\Y)\ominus\Z &=(\X\ominus\Z)\cap(\Y\ominus\Z)\label{eq:Hadwiger:identity:32}\\
+\alpha\X\oplus\alpha\Y&=\alpha(\X\oplus\Y)\label{eq:Hadwiger:identity:35}\\
+\alpha\X\ominus\alpha\Y&= \alpha(\X\ominus\Y)\label{eq:Hadwiger:identity:36}\\
+\alpha\X\oplus\beta\X&\supseteq(\alpha+\beta)\X\quad{\footnotesize{(\X\text{ convex }\Rightarrow\; =)}} \label{eq:Hadwiger:identity:37}\\
+\alpha\X\ominus\beta\X&\subseteq(\alpha-\beta)\X\quad{\footnotesize{(\alpha>\beta>0)}}\label{eq:Hadwiger:identity:38}\\
+\end{align}
+%
+%
+\begin{proof}
+%
+Most of these results are trivial and follow directly from the definitions of the Minkowski addition and the Pontryagin subtraction.
+%
+We present the proof of
+%
+\begin{itemize}
+\item[\eqref{eq:convexity:of:minkowski:sum}]
+For $z_1,z_2\in\X\oplus\Y$
+%
+\begin{equation}\begin{aligned}
+	\lambda z_1+(1-\lambda)z_2 &= \lambda(x_1+y_1) + (1-\lambda)(x_2+y_2)\\
+	 &= \underbrace{(\lambda x_1+(1-\lambda)x_2)}_{\in\X} + \underbrace{(\lambda y_1+(1-\lambda)y_2)}_{\in\Y}.
+	 \end{aligned}
+\end{equation}
+%
+now assume $z_1,z_2\in\X\ominus\Y$, since $\Y$ convex we have that all $y=\lambda y_1+(1-\lambda)y_2$ for some $y_1,y_2\in\Y$ hence
+%
+\begin{equation}
+	\lambda z_1 + (1-\lambda)z_2 + y = \lambda\underbrace{(z_1+y_1)}_{\in\X} + (1-\lambda)\underbrace{(z_2+y_2)}_{\in\X}
+\end{equation}
+%
+and $\lambda z_1 + (1-\lambda)z_2 + y\in\X$ follows from convexity of $\X$ itself.
+%
+\item[\eqref{eq:zusammenfassung:pontryagin:difference}]
+%
+\begin{equation}\begin{aligned}
+	p\in\X\ominus\Y\ominus\Z &\Leftrightarrow \forall z\in\Z\wedge y\in\Y\exists x\in\X: p = x-y-z = x-(y+z)\\
+	&\Leftrightarrow \forall e\in\Y\oplus\Z\exists x\in\X: p = x-e\\
+	&\Leftrightarrow p\in\X\ominus(\Y\oplus\Z).
+\end{aligned}\end{equation}
+\item[\eqref{eq:Hadwiger:identity:26}]
+%
+\begin{equation}
+\begin{aligned}	
+z\in(\X\ominus\Y)\oplus(\Z\ominus\mathcal R)&\Leftrightarrow \exists p\in\X\ominus\Y\wedge q\in\Z\ominus\R: z=p+q\\
+&\Leftrightarrow p+y\in\X\wedge q+r\in\Z\; \forall y\in\Y\wedge r\in\R\\
+&\Rightarrow p+q+y+r\in\X\oplus\Z\\
+&\Leftrightarrow z + e \in\X\oplus\Y\; \forall e\in\Y\oplus\R\\
+&\Leftrightarrow z\in (\X\oplus\Y)\ominus(\Z\oplus\R).
+\end{aligned}
+\end{equation}
+%
+\item[\eqref{eq:Hadwiger:monotonie}]
+%
+\begin{equation}\begin{aligned}
+	\X\oplus\Z &= \bigcup_{\substack{x\in\X\\ z\in\Z}}\{x+z\}\subseteq\underbrace{\bigcup_{\substack{x\in\X\\ z\in\R}}\{x+y\}}_{\X\oplus\R}
+	\subseteq\bigcup_{\substack{x\in\Y\\ z\in\R}} \{x+y\} = \Y\oplus\R.
+\end{aligned}\end{equation}
+%
+\item[\eqref{eq:Hadwiger:identity:28}]
+%
+\begin{equation}
+\begin{aligned}	
+	p \in\X\ominus\Z &\Leftrightarrow \forall z\in\Z p+z\in\X\subseteq\Y\\
+	&\Rightarrow \forall z\in\R\subseteq\Z p+z\in\X\subseteq\Y.
+\end{aligned}
+\end{equation}
+%
+\item[\eqref{eq:Hadwiger:identity:29}]
+%
+\begin{equation}
+	\begin{aligned}
+	(\X\cup\Y)\oplus\Z = \bigcup_{\substack{\tilde x\in\X\cup\Y\\ z\in\Z}}\{\tilde x+\tilde z\}
+	=\bigcup_{\substack{\tilde x\in\X\wedge \tilde x\in\Y\\ z\in\Z}}\{\tilde x+\tilde z\}\\ = \underbrace{\left(\bigcup_{\substack{\tilde x\in\X\\ z\in\Z}}\{\tilde x+\tilde z\}\right)}_{\X\oplus\Z}\cup\underbrace{\left(\bigcup_{\substack{\tilde x\in\Y\\ z\in\Z}}\{\tilde x+\tilde z\}\right)}_{\Y\oplus\Z}
+	\end{aligned}
+\end{equation}
+%
+\item[\eqref{eq:Hadwiger:identity:32}]
+%
+\begin{equation}
+	\begin{aligned}
+	(\X\cap\Y)\ominus\Z = \bigcap_{\substack{z\in\Z\\\tilde x\in\X\cap\Y}} \{-z+\tilde x\} = \bigcap_{\substack{z\in\Z\\ \tilde x\in\X\wedge\tilde x\in\Y}}\{-z+\tilde x\}\\ = \bigcap_{\substack{z\in\Z\\x\in\X}}\{-z+x\}\cap\bigcap_{\substack{z\in\Z\\y\in\Y}}\{-z+y\}
+	\end{aligned}
+\end{equation}
+%
+\item[\eqref{eq:Hadwiger:identity:35}]
+For this we use the support function description of the Minkowski addition:
+%
+\begin{equation}\begin{aligned}
+	h_{\alpha\X}(z)+h_{\alpha\Y}(z) &= \sup_{\substack{x\in\alpha\X\\ y\in\alpha\Y}}z^T(x+y)\\
+	 &= \sup_{\substack{x\in\X\\ y\in\Y}} z^T(\alpha x+\alpha y)	 = \alpha h_{\X\oplus\Y(z)} \\
+	 &= \sup_{\substack{x\in\X\\ y\in\Y}} z^T\alpha(x+y) = h_{\alpha(\X\oplus\Y)}(z)
+\end{aligned}\end{equation}
+%
+\item[\eqref{eq:Hadwiger:identity:36}]
+%
+\begin{equation}\begin{aligned}
+	z\in\alpha\X\ominus\alpha\X&\Leftrightarrow \forall y\in\alpha\Y: z+y\in\alpha\X\\
+	&\Leftrightarrow \forall y\in\alpha\Y: \frac{z}{\alpha} + \underbrace{\frac{y}{\alpha}}_{\in\Y}\in\X\\
+	&\Leftrightarrow \forall \tilde y\in\Y: \frac{z}{\alpha} + \tilde y\in\X\\
+	& \frac{z}{\alpha}\in\X\ominus\Y \Leftrightarrow z\in\alpha(\X\ominus\Y).
+\end{aligned}\end{equation}
+\end{itemize}
+%
+\end{proof}
+%
+\mysplit For an injective linear operator $L:\mathcal K\rightarrow \mathcal K^\prime$ we have the 
+%
+\begin{equation}\begin{aligned}
+	L(\X\oplus\Y) &= L\X\oplus L\Y\\
+	L(\X\ominus\Y) &= L\X\ominus L\Y
+\end{aligned}\end{equation}
+%
+\begin{proof}
+\begin{equation}\begin{aligned}
+	z\in L\X\oplus L\Y &\Leftrightarrow \exists x\in L\Y\wedge y\in L\Y: z = x+y
+\end{aligned}\end{equation}
+%
+Since $L$ is injective, there exists a unique $x^\prime\in\X$ and $y^\prime\in\Y$ such that $L x^\prime = x$ and $Ly^\prime = y$, hence
+%
+\begin{equation}
+	z=Lx^\prime+Ly^\prime = L(x^\prime+y^\prime)
+\end{equation}
+%
+A $x^\prime\in\X$ and $y^\prime\in\Y$ exists for every~$z=x+y\in L\X\oplus L\Y$ hence $L\X\oplus L\Y= L(\X\oplus\Y)$.
+%
+For $z\in L\X\ominus L\Y$ we have that for every $y\in L\Y$ we have $z+y\in L\X$ and again there exist unique $x^\prime\in\X$ and $y^\prime\in\Y$ such that $L x^\prime = z+Ly^\prime$ or equivalently $L(x^\prime-y^\prime)=z$, due to injectivity every $z\in L\X\ominus L\Y$ admits a decomposition~$z=L(x^\prime-y^\prime)$ for $x^\prime\in\X$ and $y^\prime\in\Y$, therefore $L\X\ominus L\Y=L(\X\ominus\Y)$.
+\end{proof}
+%
+%
+\mysplit Notice that throughout this section we did not have to assume finite dimensionality of~$\mathcal K$.
+%
+Throughout this thesis we did however deal primarily with finite dimensional polyhedral sets, we therefore state the representations of $\X\oplus\Y$ and $\X\ominus\Y$ for 
+%
+\begin{equation}\begin{aligned}
+	\X = \{x\in\RR^d: a_ix\leq b_i,i\in\{1,\dots,M_\X\}\} = \conv\{v_i\}_{i\leq N_\X}\oplus\text{cone}\{r_i\}_{i\leq O_\X}\\
+	\Y = \{y\in\RR^d: c_jx\leq b_j,j\in\{1,\dots,M_\Y\}\}=\conv\{v_j^\prime\}_{j\leq N_\Y}\oplus\text{cone}\{r_j^\prime\}_{j\leq O_\Y}
+	\end{aligned}
+\end{equation}
+%
+The Minkowski addition of two polyhedra in vertex representation is trivial:
+%
+\begin{equation}
+	\X\oplus\Y = \conv\{v_i+v_j^\prime\}_{\substack{i\leq N_\X\\ j\leq N_\Y}} \oplus\text{cone}\{r_i+r_j^\prime\}_{\substack{i\leq O_\X\\ j\leq O_\Y}}
+\end{equation}
+%
+for the hyperplane representation we characterise the hyperplanes supporting~$\X\oplus\Y$ with those of $\X$ and $\Y$, i.e. $z=x+y$ hence there exists $x\in\X$ and $y\in\Y$ or if there exists a $x=z-y$ for any choice of $y$ then $z\in\X\oplus\Y$
+%
+\begin{equation}
+	\forall y\in\Y: a_i(z-y)\leq b_i \Leftrightarrow a_iz-\max_{y\in\Y}a_iy\leq b_i \Leftrightarrow a_iz \leq b_i+\max_{y\in\Y}a_iy
+\end{equation}
+%
+for all $i\in\{1,\dots,M_\X\}$ and analogously
+%
+\begin{equation}
+	c_j z\leq d_j + \max_{x\in\X}c_jx
+\end{equation}
+%
+for all $j\in\{1,\dots,M_\Y\}$. 
+%
+This involves solving $M_\X+M_\Y\;$ $d$-dimensional linear programs or a single~$(M_\X+M_\Y)d$-dimensional one.
+%
+\\[1em]
+%
+\mysplit For the Pontryagin difference we have a similar algorithm, $z\in\X\ominus\Y$ if $z+y\in\X$ for all $y\in\Y$, i.e.
+%
+\begin{equation}
+	a_i(z+y)\leq b_i\;\forall y\in\Y \Leftrightarrow a_iz\leq b_i-\max_{y\in\Y}a_iy
+\end{equation}
+%
+for all $i\in\{1,\dots, M_\X\}$, where again we have to solve either $M_\X\;$ $d$-dimensional linear programs or a single $M_\X d$-dimensional one.
+%
+The vertex description of the Pontryagin difference is less obvious, for this we have to assume that the sets are polytopes, i.e. $O_\X=O_\Y=\emptyset$.
+%
+Recall that a point $x\in\conv\{v_i\}$ is equivalent with the existence of some $\lambda_i\in[0,1]$ with $\sum_i\lambda_i=1$ such that $x=\sum_i\lambda_i v_i$.
+%
+Hence $z\in\X\ominus\Y$ if there exist~$\lambda_i^j\in[0,1]$ such that~$z+v_j^\prime = \sum_i\lambda_i^j v_i$ for all $j\leq N_\Y$.
+%
+These conditions can be reformulated in the following way
+%
+\begin{equation}
+\Pi = \left\{(\bar\lambda,x)\in\RR^{N_\X N_\Y+d}:\begin{aligned}
+I_{N_\Y}\otimes\begin{pmatrix}v_1&\dots&v_{N_\X}\end{pmatrix}\bar{\lambda} -\bfa{1}_{N_\Y}\otimes x &= \begin{pmatrix}v_1^\prime\\\vdots\\v_{N_\Y}^\prime\end{pmatrix}\\
+I_{N_\Y}\otimes\bfa{1}^T_{N_\X}\bar{\lambda} &= \bfa{1}_{N_\Y}\\
+I_{N_\Y}\otimes I_{N_\X}\bar\lambda&\leq\bfa{1}_{N_\Y N_\X}\\
+-I_{N_\Y}\otimes I_{N_\X}\bar\lambda&\leq\bfa{0}_{N_\Y N_\X}
+\end{aligned}\right\}
+\end{equation}
+%
+where
+%
+\[
+\bar\lambda=\begin{pmatrix}\lambda_1^1\\ \vdots \\ \lambda^1_{N_\X} \\ \vdots \\ \lambda^{N_\Y}_{N_\X}\end{pmatrix}
+\]
+%
+The extremal values of~$\Pi$ (i.e. its vertices)~$\text{vert}(\Pi)=\{(\bar\lambda_i,x_i)\}$ are such that $\X\ominus\Y=\conv\{-x_i\}$.
+%
+Besides being correct this method of computing the Pontryagin difference has no positive properties whatsoever, it involves a vertex enumeration of prohibitive dimension ($N_\X N_\Y+d$) of which the majority of the information is redundant, we present it here for completeness.

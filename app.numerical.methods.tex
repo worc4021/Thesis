@@ -1,0 +1,260 @@
+%!TEX root = main.tex
+
+\chapter{Computational Methods for Polytopes}\label{app:computational:methods:chapter}
+%
+%
+%
+%
+To prove the condition to verify the containment of a polyhedron in another polyhedron we first recite two formulations of the Farkas' Lemma from~\cite{Ziegler:1995}:
+%
+\begin{thm}[Farkas' Lemma I]\label{app:thm:farkas:1}
+Let $A\in\mathbb R^{m\times d}$ and $z\in\mathbb R^m$, then \textbf{either} there exists a point $x\in\mathbb R^d$ such that $Ax\leq z$ \textbf{or} there exists a non-negative vector $0\leq c\in\mathbb R^m$ such that $c^T A = 0$ and $c^T z<0$ but not both.
+\end{thm}
+%
+\noindent The more useful formulation is
+%
+\begin{thm}[Farkas' Lemma II]\label{app:thm:farkas:2}
+Let $A\in\mathbb R^{m\times d}$, $z\in\mathbb R^m$, $a_0\in\mathbb R^d$ and $z_0\in\mathbb R$, then $a_0^Tx\leq z_0$ is valid for all $x\in\mathbb R^d$ with $Ax\leq z$, iff
+\begin{enumerate}
+\item there exists a non-negative vector $c\geq0$ such that $c^TA = a_0$ and $c^Tz\leq z_0$ or
+\item there exists a non-negative vector $c\geq0$ such that $c^TA = 0$ and $c^Tz<0$
+\end{enumerate}
+or both.
+\end{thm}
+%
+\noindent Notice that the first formulation~\ref{app:thm:farkas:1} implies that the second option of Lemma~\ref{app:thm:farkas:2} only applies when the set $\{x:Ax\leq z\} = \emptyset$ is empty.
+%
+We use the Farkas' Lemma to prove the following statement:
+%
+\begin{thm}\label{app:thm:polytope:inclusion}
+Let $\mathcal A = \{x:Ax\leq a\}$ and $\mathcal B = \{x:B\leq b\}$ be polyhedra in $\mathbb R^d$, then $\mathcal A\subseteq \mathcal B$ iff there exists a matrix $H$ with non-negative entries such that $HA = B$ and $Ha\leq b$.
+\end{thm}
+%
+\begin{proof}
+The set $\mathcal A$ is contained in $\mathcal B$ if $x\in\mathcal A\Rightarrow x\in\mathcal B$.
+%
+The condition $x\in\mathcal B$ can be written as $x$ being in the intersection of all supporting half-spaces of $\mathcal B$, i.e. $B_1x\leq b_1\wedge\dots\wedge B_n x\leq b_n$.
+%
+Assuming that $\mathcal A\neq\emptyset$ Lemma~\ref{app:thm:farkas:2} states that there exist non-negative vectors $H_i$ such that $H_iA=B_i$ and $H_ia\leq b_i$ for all $i\in\{1,\dots,n\}$.
+%
+This proves the assertion.
+\end{proof}
+%
+\noindent Lemma~\ref{app:thm:polytope:inclusion} provides a convenient way computationally verify the inclusion $\mathcal A\subseteq\mathcal B$.
+%
+The existence of a non-negative $H$ reduces to a feasibility problem of a linear program which can be solved extremely fast.
+%
+We derive the linear program that can be solved with any applicable solver. 
+%
+The transposed problem can be vectorised trivially:
+%
+\begin{equation}
+	A^TH_i^T=B_i^T\; \forall i\in\{1,\dots,n\} \Leftrightarrow \left(I_n\otimes A^T\right) \text{vec}(H^T) = \text{vec}(B^T)
+\end{equation}
+%
+and 
+%
+\begin{equation}
+	a^TH_i^T\leq b_i\; \forall i\in\{1,\dots,n\} \Leftrightarrow \left(I_n\otimes a^T\right) \text{vec}(H^T) \leq b
+\end{equation}
+%
+So that we have the corollary
+%
+\begin{cor}\label{cor:containment:of:polytope:in:polytope}
+The set $\mathcal A = \{x:Ax\leq a\}$ is contained in $\mathcal B = \{x:B\leq b\}$ iff the linear program
+%
+\begin{equation}\begin{array}{rl}
+	\min_{y} & c^Ty \\
+	\text{s.t.} & \left(I_n\otimes A^T\right) y = \text{vec}(B^T)\\
+	& \left(I_n\otimes a^T\right) y \leq b\\
+	& 0\leq y
+\end{array}\end{equation}
+%
+is feasible for any $c\in\mathbb R^{nm}$.
+\end{cor}
+%
+\noindent This result can be used to determine redundant inequalities in polyhedra.
+%
+Let $\mathcal A = \{x\in\mathbb R^d: A_1 x \leq a_1\wedge\dots\wedge A_m x\leq a_m\}$ be a polyhedral set.
+%
+The inequality $A_j x\leq a_j$ is redundant iff $\mathcal A\subseteq \left\{x\in\mathbb R^d: A_i x\leq a_i, i\in\{1,\dots,m\}\setminus\{j\} \right\}$.
+%
+Since in this all rows of $H$ would be trivially defined by $e_i^T=(0,\dots,1,0\dots)$ the only relevant condition is given by $h\geq0$ such that $\sum_{i\neq j} h_i A_i = A_j$ and $\sum_{i\neq j} h_i a_i \leq a_j$ or in their transposed form $\bar A_j h =A_j^T$ and $\bar a_j^T h\leq a_j$  with the $\bar\cdot$ denoting the complement to the index.
+%
+Hence we have the result:
+%
+\begin{cor}
+The inequality $A_j x\leq a_j$ is redundant for the definition of $\mathcal A$ iff the linear program
+%
+\begin{equation}
+	\begin{array}{rl}
+	\min_y & c^Ty\\
+	\text{s.t.} & \bar A_j^T y = A_j^T \\
+	& \bar a_j^Ty\leq a_j\\
+	& 0\leq y
+	\end{array}
+\end{equation}
+%
+is feasible for any $c\in\mathbb R^{m-1}$
+\end{cor}
+%
+%
+%
+%
+% \section{Computation of Minkowski addition for constant polyhedra}\label{app:computation:Minkowski}
+
+% Suppose we want to compute the Minkowski sum of $X=\{x\in\mathbb R^n\;:\;Ax\leq b\}$
+% and $Y=\{y\in\mathbb R^n\;:\;Cy\leq d\}$. That means we want to have a closed 
+% representation of 
+% \begin{equation}
+% 	X\oplus Y = \{x+y\;:\;Ax\leq b\wedge Cy\leq d\}.
+% \end{equation}
+% For this we consider the supporting hyperplanes for both terms:
+% \begin{equation}
+% 	 A_i x\leq b_i + \max_{y\in Y} A_i y.
+% \end{equation}
+% That means that we allow the elements of the sum to be elements
+% of $X$ but adding the maximal value we could get in $Y$. We do the same thing
+% with $C_i$, so that the closed form of the Minkowski sum is given by:
+% \begin{equation}\label{app:general:closed:form:Minkowski}
+% 	X\oplus Y = \{x\in\mathbb R^n\;:\; A_i x\leq b_i+\max_{y\in Y}A_i y,\; 
+% 	C_i x\leq d_i+\max_{y\in X} C_i y\;\forall\,i\}
+% \end{equation}
+% %
+% The special case where $A=C$ is used in~\eqref{eq:proof:of:parametric:convexity}.
+
+
+% \section{Irreducibility of piecewise affine parametric sets}\label{app:irreducibility:PWA:sets}
+% %
+% We want to check whether the set $\mathcal V(p)$ described by
+% %
+% \begin{equation}\label{eq:PWA:set}
+% 	\mathcal V(p) = \left\{v: a_iv\leq\max_{k}\{b_{i,k}+c_{i,k}p\}, i\in\mathcal I\right\}
+% \end{equation}
+% %
+% is irreducible for all $p\in P$.
+% %
+% First we state what we mean by a redundant inequality:
+% %
+% \begin{defi}[Redundant inequality]
+% For a polyhedron described by $\{x:a_ix\leq b_i,i\in\mathcal I\}$ we say the the inequality $r$ is redundant, if there exists an $\eta\geq0$ such that $\sum_{i\neq r}\eta_i a_i = a_r$ and $\sum_{i\neq r} \eta_i b_i \leq b_r$.
+% \end{defi}
+% %
+% Note that in~\eqref{eq:PWA:set} only such inequalities can become redundant for which an $\eta\geq0$ exists.
+% %
+% % We can read the redundancy condition negated: If there exists an $\eta\geq0$ such that $\sum_{i\neq r}\eta_i a_i = a_r$ then $a_r$ is non-redundant if and only if $\sum_{i\neq r} \eta_i b_i \geq b_r$ or in terms of the piece-wise affine right hand side we have $\sum_{i\neq r} \eta_i\max_k\{b_{i,k}+c_{i,k}p\}\geq\max_k\{b_{r,k}+c_{r,k}p\}$ for all $p\in P$.
+% % %
+% % This condition can be reformulated in terms of the \emph{epigraph} for $f: D\mapsto \mathbb R$, $\epi(f) = \{(v,t)\in D\times \mathbb R:f(v)\leq t\}$.
+% % %
+% % We abbreviate~$d_i(p) = \max_k \{b_{i,k}+c_{i,k}p\}$ for notational convenience.
+% % %
+% % A piece-wise affine parametrised set~\eqref{eq:PWA:set} is irredundant if for all $\eta\geq0$ with $\sum_{i\neq r}\eta_i a_i = a_r$ the containment condition $\epi(\sum_{i\neq r}\eta_i d_i)\subseteq\epi(d_r)$ holds.
+% % %
+% % The condition that we have to verify is hence given as
+% % %
+% % \begin{quote}
+% % For all $r\in\mathcal I$ for which an $\eta$ exists with $\eta\geq0$ and $a_r = \sum_{i\neq r}\eta_ia_i$ we solve the max-min problem
+% % \begin{equation}\begin{split}
+% % 	\max_{\eta,p}& \sum_{i\neq r} \eta_i t_i - t_r\\
+% % 	\text{s.t.}& \eta\geq0\\
+% % 	& \sum_{i\neq r} \eta_i a_i = a_r\\
+% % 	& p\in P\\
+% % 	& t_i  = \begin{array}{rl} \min& t_i \\ \text{s.t.}& b_{i,k}+c_{i,k}p \leq t_i \forall k
+% % 	\end{array}
+% % \end{split}
+% % \end{equation}
+% % In theory this should yield the desired result that if the objective is negative then the representation is irreducible, in practice the problem did not yield any useful information in constructed degenerate cases, I assume due to non-convexity (we're maximising convex objectives here).
+% % \end{quote}
+% %
+% We abbreviate $d_i(x) = \max_{k}\{b_{i,k}+c_{i,k}p\}$ and infer that for $r$ to be redundant we need to have $\eta\geq0$ such that $\sum_{i\neq r}\eta_i a_i = a_r$ and $\sum_{i\neq r}\eta_i d_i(x)\leq d_r(x)$ for some $x$.
+% %
+% In quantifier notation we have that a row becomes redundant if and only if
+% %
+% \begin{equation}
+% 	\exists x\in\mathcal X\; \exists\eta\geq0: \sum_{i\neq r}\eta_i a_i = a_r\wedge\sum_{i\neq r}\eta_i d_i(x) \leq d_r(x)
+% \end{equation}
+% %
+% This can be negated as
+% %
+% \begin{equation}
+% 	\forall x\in\mathcal X\; \not\exists\eta\geq0: \sum_{i\neq r}\eta_i a_i = a_r\wedge\sum_{i\neq r}\eta_i d_i(x) \leq d_r(x)
+% \end{equation}
+% %
+% but this is the same as 
+% %
+% \begin{equation}
+% 	\forall\eta\geq0,x\in\mathcal X: \sum_{i\neq r}\eta_i a_i = a_r\wedge\sum_{i\neq r}\eta_i d_i(x) > d_r(x)
+% \end{equation}
+% %
+% Using the \emph{epigraph} defined for $f: D\mapsto \mathbb R$ as $\epi(f) = \{(v,t)\in D\times \mathbb R:f(v)\leq t\}$, we have
+% %
+% \begin{equation}\label{eq:cond:epi:first}
+% 	\forall\eta\geq0,x\in\mathcal X: \sum_{i\neq r}\eta_i a_i = a_r\wedge\text{epi}\left(\sum_{i\neq r}\eta_i d_i\right)\subset \text{epi}(d_r)
+% \end{equation}
+% %
+% Observe that for the piecewise affine functions $f(x) = \max_{i\leq k_f}\{a_i x+b_i\}$ and $g(x) = \max_{j\leq k_g}\{c_j x+d_j\}$ we have
+% %
+% \begin{equation}
+% 	f(x) + g(x) = \max_{i\leq k_f}\{a_i x+b_i\} + \max_{j\leq k_g}\{c_j x+d_j\} = \max_{i\leq k_f,j\leq k_g}\{(a_i+c_j)x+(b_i+d_j)\} = \max_{l\leq k_f\cdot k_g}\{e_l x + h_l\},
+% \end{equation}
+% %
+% we can therefore express the epigraph as 
+% %
+% \begin{equation}\begin{split}
+% 	\epi(f+g) &= \{(x,t):\max_{l\leq k_f\cdot k_g}\{e_l x + h_l\}\leq t\}\\
+% 	&=\{(x,t): E x+ H\leq t\}
+% \end{split}\end{equation}
+% %
+% with $E = {\bf{1}}_{k_g}\otimes A + C\otimes{\bf{1}}_{k_f}$ and $H = {\bf{1}}_{k_g}\otimes B + D\otimes{\bf{1}}_{k_f}$ which produces all possible combinations of $i,j$.
+% %
+% In particular this means that all $(x,t)\in\epi(f+g)$ have to be sums of $(x_1,t_1)\in\epi(f)$ and $(x_2,t_2)\in\epi(g)$:
+% %
+% \begin{equation}\begin{split}
+% 	Ex+H\leq t &\Leftrightarrow ({\bf{1}}_{k_g}\otimes A + C\otimes{\bf{1}}_{k_f})x + ({\bf{1}}_{k_g}\otimes B + D\otimes{\bf{1}}_{k_f})\leq t\\
+% 	&\Leftrightarrow \underbrace{({\bf{1}}_{k_g}\otimes A) x_1 + {\bf{1}}_{k_g}\otimes B}_{\leq t_1} + \underbrace{(C\otimes{\bf{1}}_{k_f}) x_2 + D\otimes{\bf{1}}_{k_f}}_{\leq t_2}\leq t
+% 	\end{split}
+% \end{equation}
+% %
+% but this is the definition of the Minkowski sum of $\epi(f)\oplus\epi(g)$:
+% %
+% \begin{equation}\begin{split}
+% 	\epi(f)\oplus \epi(g) &= \{(x_1,t_1)+(x_2,t_2):\max_i\{a_i x+b_i\}\leq t_1\wedge \max_i\{c_i x+d_i\}\leq t_2\}\\
+% 	&=\{(x_1,t_1)+(x_2,t_2):Ax_1+b\leq t_1 \wedge Cx_2+d\leq t_2\}
+% \end{split}\end{equation}
+% %
+% and we therefore have~$\epi(f+g)=\epi(f)\oplus\epi(g)$.
+% %
+% We can rewrite condition~\eqref{eq:cond:epi:first} as
+% %
+% \begin{equation}
+% 	\forall\eta\geq0,x\in\mathcal X: \sum_{i\neq r}\eta_i a_i = a_r\wedge \bigoplus_{i\neq r}\epi(\eta_i d_i)\subset\epi(d_r)
+% \end{equation}
+% %
+% And of course for $\epi(\eta f)$ we have $\epi(\eta f) = \left(\begin{array}{cc} I & \\ & \eta\end{array}\right)\epi(f)$ and therefore we have that a row $r$ can become redundant iff
+% %
+% \begin{equation}
+% 	\forall\eta\geq0,x\in\mathcal X: \sum_{i\neq r}\eta_i a_i = a_r\wedge \bigoplus_{i\neq r} \left(\begin{array}{cc} I & \\ & \eta_i\end{array}\right) \epi(d_i)\subset\epi(d_r)
+% \end{equation}
+
+% To check a condition like $\bigoplus_i\eta_i\epi(d_i)\subseteq\epi(d_r)$ we first look at two arbitrary polyhedral sets $X=\{x:Ax\leq b\}$ and $Y=\{x:Cx\leq d\}$ and derive an expression for $\eta_1 X \oplus \eta_2 Y$:
+% %
+% \begin{equation}\begin{split}
+% 	\eta_1 X \oplus \eta_2 Y &= \{z = x+y: Ax\leq \eta_1 b\wedge Cy\leq \eta_2 d\}\\
+% 	&=\{x: A_i x \leq \eta_1 b_i + \max_{y\in\eta_2 Y}A_i y \wedge C_j x\leq \eta_2 d_j + \max_{y\in\eta_1 X} C_j y \forall (i,j)\in\mathcal I_X\times\mathcal I_Y\}\\
+% 	&=\{x: A_i x \leq \eta_1 b_i + \eta_2\underbrace{\max_{y\in Y}A_i y}_{b_i^Y} \wedge C_j x\leq \eta_1 d_j^X + \eta_2 d_j \forall (i,j)\in\mathcal I_X\times\mathcal I_Y\}\\
+% 	&=\left\{x: \left(\begin{array}{c} A \\ C\end{array}\right) x \leq \left(\begin{array}{cc} b & b^Y \\ d^X & d\end{array}\right)\left(\begin{array}{c}\eta_1\\\eta_2\end{array}\right)\right\}
+% 	\end{split}
+% \end{equation}
+% %
+% That means that we can express the right hand side of $\eta_1 X \oplus \eta_2 Y$ as a linear map of $\eta$, by extension we have
+% %
+% \begin{equation}
+% 	\bigoplus_{i\neq r} \eta_i\epi(d_i) = \left\{(x,t): \left(\begin{array}{cc}C_i & -{\bf{1}}\end{array}\right)\left(\begin{array}{c}x\\ t\end{array}\right)\leq B_i\eta \forall i\neq r \right\}
+% \end{equation}
+% %
+% The inclusion $\bigoplus_i\eta_i\epi(d_i)\subseteq\epi(d_r)$ is then given by the Farkas Lemma to be equivalent to the existence of a non-negative matrix $H\geq0$ such that 
+% %
+% \begin{equation}
+% 	\sum_{i\neq r} H_i \left(\begin{array}{cc}C_i & -{\bf{1}}\end{array}\right) = \left(\begin{array}{cc}C_r & -{\bf{1}}\end{array}\right)
+% 	\wedge H B \eta \leq b_r
+% \end{equation}

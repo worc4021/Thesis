@@ -1,0 +1,302 @@
+%!TEX root = main.tex
+\resetcounters
+\chapter{Concepts of Robust Model Predictive Control}\label{ch:concepts:sec:RMPC}
+%
+%
+%
+%
+\glsaddall
+In this section we summarise the concepts of robust model predictive control in a general form, we will require in different particular instances in the sequel of this work.
+%
+Although historically nominal model predictive control and robust model predictive control have different origins, many ideas that were introduced for nominal model predictive control can be extended to the robust case.
+%
+We will therefore outline relevant ideas of nominal model predictive control and then extend to the robust case in the sequel.
+
+\section{Nominal model predictive control}\label{ch:concepts:sec:RMPC:nominal:MPC}
+\resetforsection
+%
+One major challenge in control is to not only stabilise a system~$x^+ = f(x,u)$, but to optimise some quantifiable performance criterion while being subject to physical limitations.
+%
+These constraints can originate in different phases of the system modelling process, typical such limitations include input constraints due to limited actuator action, state constraints in order to guarantee safe operation.
+%
+Accommodating physical limitations is done by restricting the input and states to lie in sets in the design process, i.e. $u\in\U$ and $x\in \X$ or more generally~$(x,u)\in\Z$.
+%
+\\[1em]
+%
+\noindent The problem is then formulated as an optimisation problem:
+%
+\begin{equation}\label{eq:infinite:horizon:problem:formulation}\begin{split}
+	\min_{\bfa{u}}\; &\sum_{k=0}^\infty l(x_k,u_k)\\
+	\text{s.t.}&\quad\left\{
+		\begin{array}{rcl}
+		x_0 & = & \mathfrak{x}_0\\
+		x_{k+1} & = & f(x_k,u_k)\\
+		x_k & \in & \X\;\forall\,k>0\\
+		u_k & \in & \U\;\forall\,k>0
+		\end{array}\right.
+	\end{split}
+\end{equation}
+%
+where $l(x,u)$ is a function penalising deviation from the desired behaviour, $u_k$ and $x_k$ are the input and the associated predicted system state at the time instance~$k$ respectively.  
+%
+If the system is zero-state detectable, i.e. if for some horizon~$N$, $l(x_{k+i},0)=0$ for~$i=0,\dots,N-1$ implies that $x_k=0$, then ,under some mild conditions on the cost function $l(x,u)$, $\X$ and $\U$, any solution of the considered problem will yield the system dynamics asymptotically stable. 
+%
+However, for general systems this open loop problem can not be solved explicitly and due to the infinite number of decision variables a numerical solution can not be obtained either.
+%
+To get around this problem a finite horizon problem is formulated and repeatedly solved, in particular the solution of the problem with horizon length~$N$ for the initial state~$\mathfrak{x}_0$ is the sequence~$(u_0(\mathfrak{x}_0),\dots,u_{N-1}(\mathfrak{x}_0))\in\U^N$ the control input~$u=u_0(\mathfrak{x}_0)$ is applied to the system to produce the successor state~$x_1=f(\mathfrak{x}_0,u_0(\mathfrak{x}_0))$ for which the problem is then solved again.
+%
+This is the basic idea of model predictive control (MPC) (also known as receding horizon control (RHC)), was introduced as a control problem for general systems in 1960 by~\cite{Kalman:1960} as the dual to the Kalman filter\footnote{While Kalman merely outlined the idea of using an optimisation based control scheme, economists had been using constrained optimisation formulations to minimise production costs for a few years already, see e.g.~\cite{Modigliani:1955,Johnson:1957,Wilde:1960}.}.
+%
+Although the problem was first stated as an unconstrained optimisation program, the receding horizon character of the algorithm was described.
+%
+Kalman's proposal of solving a finite horizon of the original stage cost
+%
+\begin{equation}
+	\min_u \sum_{k=0}^{N-1}l(x_k,u_k)
+\end{equation}
+%
+with the same constraints as~\eqref{eq:infinite:horizon:problem:formulation}, is insufficient to guarantee asymptotic stability, a finite value of the objective does no longer imply any asymptotic behaviour and the trajectory after the considered \emph{prediction horizon}~$N$ could diverge. 
+%
+To guarantee asymptotic stability \emph{terminal conditions} are imposed. 
+%
+For this a terminal auxiliary controller $k(x)$, a terminal region $\X^f\subseteq\X$ and a terminal cost $\alpha_1(x)\leq F(x)\leq\alpha_2(x)$, $\alpha_1,\alpha_2\in\mathscr K$, are designed in such a way that
+%
+\begin{equation}
+	F(f(x,k(x)))-F(x) \leq l(x,k(x))
+\end{equation}
+%
+holds for all $x\in\X^f$, see e.g.~\cite{Chen:1998}.
+%
+The terminal constraint set~$\X^f$ is such that it is positively invariant for the closed-loop system~$f(x,k(x))$, i.e. for all $x\in\X^f$ the successor state is again an element of the set~$f(x,k(x))\in\X^f$, furthermore the auxiliary controller is chosen to satisfy the input constraints, i.e. $k(x)\in\U$ for all $x\in \X^f$. 
+%
+With this feasible trajectories can be constructed from previous solutions, which allows the use of a Lyapunov argument to guarantee asymptotic stability for the closed-loop system:
+%
+Using the terminal cost as a Lyapunov function, asymptotic stability is derived form recursive feasibility.
+%
+\\[1em]
+%
+Since its introduction in 1960 several properties of model predictive control schemes were studied and the theoretical aspects are mostly understood, see~\cite{Mayne:2000,Scokaert:1999,Mayne:2014}.
+%
+The general formulation for nominal systems is given by:
+%
+\begin{equation}\label{ch:concepts:nominal:MPC:formulation}
+	\begin{split}
+	\min_{\bfa{u}}\; &\sum_{k=0}^{N-1} l(x_k,u_k)+F(x_N)\\
+	\text{s.t.}&\quad\left\{
+		\begin{array}{rcl}
+		x_0 & = & \mathfrak{x}_0\\
+		x_{k+1} & = & f(x_k,u_k)\\
+		x_k & \in & \X\\
+		u_k & \in & \U\\
+		x_N & \in & \X^f
+		\end{array}\right.
+	\end{split}
+\end{equation}
+%
+To be able to control systems online, computation times have to be minimal, therefore non-linear problems are rarely used. 
+%
+To produce solutions faster, structural properties have to be exploited. 
+%
+Linear systems in combination with weighted norms as objectives, i.e. $\|Qx\|_p$ with $p=1,2,\infty$, and convex polytopic constraints allow the reduction of the optimisation problems to convex linear or quadratic programs, these conditions can often only be met by approximating~\eqref{ch:concepts:nominal:MPC:formulation}.
+%
+Using
+%
+\begin{equation}
+	\left(\begin{array}{c}
+	x_1\\x_2\\x_3\\ \vdots
+	\end{array}\right) = \left(\begin{array}{c}A\\ A^2 \\ A^3\\ \vdots\end{array}\right)x_0 +  \left(
+	\begin{array}{cccc}
+	B & 0& &\dots \\
+	AB & B & 0 & \\
+	A^2B & AB & B & \\
+	\vdots & & & \ddots 
+	\end{array}\right)\left(\begin{array}{c}u_0\\u_1\\ \vdots\end{array}\right)
+\end{equation}
+%
+the whole prediction horizon can be explicitly parametrised in the initial state $x_0=\mathfrak{x}_0$ and the optimisation variable $\bfa{u}=(u_0,\dots,u_{N-1})$ allowing a condensation of the model predictive control problem.
+%
+Various algorithms to solve such linear model predictive control problems efficiently have been proposed, see e.g.~\cite{Mayne:1995,Rubagotti:2013,Wright:1997}.
+%
+\\[1em]
+%
+Even though classical linear model predictive controllers can be computed in real-time while satisfying input and state constraints, their robustness to model mismatches, uncertainties and noise is in general not assured. 
+%
+Only few results for the robustness of nominal model predictive control are available, see~\cite{Nicolao:1996,Nicolao:2000,Magni:1997} and even fewer results when state constraints are present~\cite{Michalska:1993}.
+%
+%
+\section{Concepts of Min-Max Model Predictive Control}\label{ch:concepts:sec:RMPC:general:setup}
+\resetforsection
+%
+In the framework of robust model predictive control we seek to optimise the performance of a perturbed control system~$x^+ = f(x,u,w)$, where $x\in\X\subseteq\RR^d$ denotes the state of the system, $u\in\U\subset\RR^{q_\U}$ the input and $w\in\W\subset\RR^{q_\W}$ the uncertainty, over a given prediction horizon~$N$.
+%
+Unlike conventional model predictive control we seek to be able to guarantee closed-loop performance for all possible realisations of the considered uncertainty, it is therefore important that the set of uncertainties is bounded.
+%
+The way this problem is formulated as an optimisation program is by designing a game where the adversary maximises the effect of the uncertainty on the performance objective and the controller is then designed to minimise the worst case performance.
+%
+This game theoretic approach to robust model predictive control was originally proposed in~\cite{Witsenhausen:1968} and is used synonymously for robust model predictive control throughout this thesis.
+%
+\\[1em]
+%
+For a given dynamical system~$x_{k+1} = f(x_k,u_k,w_k)$ the general robust model predictive control problem (in the sense of~\cite{Witsenhausen:1968}) with horizon length~$N$ is formulated as
+%
+\begin{subequations}\label{ch:concepts:general:rmpc:problem:formulation}
+\begin{equation}
+	J_m^\ast(x_k) = \min_{u_k}\max_{w_k}\; l(x_k,u_k,w_k) + J_{m-1}^\ast(x_{k+1})
+\end{equation}
+%
+subject to
+%
+\begin{align}
+	x_0&=\mathfrak{x}_0	\\
+	x_{k+1} &= f(x_k,u_k,w_k)\\
+	(x_k,u_k)&\in\mathcal M_m \quad m\in\{0,\dots,N-1\}\\
+	x_N&\in\X_0\\
+	w_k&\in\W\quad k\in\{0,\dots,N-1\}
+\end{align}
+%
+\end{subequations}
+%
+where $k = N-m$ and the meaning of respective sets is explained in the following sections.
+%
+We use dynamic programming terminology and call~$l(x,u,w)$ the \emph{stage cost} and $J_{m-1}^\ast(x_{k+1})$ the \emph{cost-to-go}, analogously we refer to the constraints~$\mathcal M_m$ as \emph{stage constraints} at \emph{stage}~$m$.
+%
+\\[1em]
+%
+Problem~\eqref{ch:concepts:general:rmpc:problem:formulation} is a \emph{closed-loop} formulation of the robust model predictive control program, see e.g.~\cite{Lee:1997}, its \emph{open-loop} counterpart is given by
+%
+\begin{subequations}
+\begin{equation}
+	\min_{u_0,\dots,u_{N-1}}\max_{w_0,\dots,w_{N-1}}\sum_{k=0}^{N-1}l(x_k,u_k,w_k) + F(x_N)
+\end{equation}
+subject to
+\begin{align}
+	x_0&=\mathfrak{x}_0\\
+	x_{k+1} &= f(x_k,u_k,w_k)\\
+	x_k&\in\X, \; k\in\{0,\dots,N\}\\
+	x_N&\in\X_0\\
+	u_k&\in\U, \; k\in\{0,\dots,N-1\}\\
+	w_k&\in\W, \; k\in\{0,\dots,N-1\}\\
+\end{align}
+\end{subequations}
+%
+which appears to be simpler as only one auxiliary constraint set~$\X_0$ has to be designed (as opposed to~$N$ such sets in the closed loop formulation).
+%
+However, the solution to an open-loop robust model predictive control formulation is inferior to the closed-loop one in two crucial points:
+%
+Firstly, the obtained controller is more conservative in general as the entire worst case horizon of length~$N$ has to be accounted for instead of repeatedly reacting to the worst case step-to-step system.
+%
+Secondly, the way model predictive control works is by repeatedly acting optimally for the current situation with respect to a model, this paradigm is not built into the open-loop but it is inherent in the closed-loop problem, i.e. in the open-loop scenario the adversary gets to execute his strategy for the entire horizon before the controller is allowed to make its move. 
+%
+This leads to a smaller set of state which can be steered into the terminal set for all possible disturbances due to the somewhat compounding effect of successive uncontrolled worst-case disturbances.
+%
+Throughout this work we will only discuss the closed-loop problem of the type~\eqref{ch:concepts:sec:RMPC:general:setup}.
+%
+In early presentations (e.g.~\cite{Campo:1987,Lee:1997}) the objective in~\eqref{ch:concepts:general:rmpc:problem:formulation} did not measure the disturbance explicitly, i.e.~$l=l(x,u)$, this generally leads to non-convex optimisation programs and hence to non-unique solutions, which in some cases can be reformulated as convex problems as in~\cite{Campo:1987}.
+%
+Throughout this work we assume that the solution to every optimisation program presented exists and is unique.
+%
+Usually the stage cost~$l(x,u,w)$ is separated into a state and input dependent term and a uncertainty dependent component~$l(x,u,w)=h(x,u)-\gamma(w)$.
+%
+This allows us to separate the recursive min-max sequence into parametric programs
+%
+\begin{equation}\label{eq:subproblem:abstract:minimisation}
+	J_m^\ast(x_k) = \min_{u_k} h(x_k,u_k)+\hat J_m^\ast(x_k,u_k)
+\end{equation}
+%
+and
+%
+\begin{equation}\label{eq:subproblem:abstract:maximisation}
+	\hat J_m^\ast(x_k,u_k) = \max_{w_k} -\gamma(w_k)+J_{m-1}^\ast(x_{k+1}).
+\end{equation}
+%
+Again a terminal cost and controller are designed such that~$J_0^\ast(f(x,k(x),w)-J_0^\ast(x)\leq -h(x,k(x))+\gamma(w)$ holds for all $x\in\X_0$.
+%
+The constraint sets used in the description are of central importance for the recursive feasibility of the optimisation program and we discuss them more elaborately in the subsequent sections.
+%
+%
+%
+%
+\section{Invariant Sets}\label{ch:concepts:sec:RMPC:invariant:sets}
+\resetforsection
+%
+The abstract idea of robust model predictive control is that we want to optimise the performance of a dynamical system subject to constraints and uncertainty.
+%
+If the state is subject to constraints~$x\in\X$ we have to guarantee that for all realisations of the uncertainty the constraints can be respected.
+%
+To guarantee constraint satisfaction for all uncertainties the way we design the terminal constraint set plays a crucial role.
+%
+Similar to the nominal model predictive control approach we design the terminal conditions together: 
+%
+A set which is invariant for an auxiliary controller~$u=k(x)$ is used, i.e.
+%
+\begin{equation}\label{eq:formal:definition:RPI:set}
+	\X^\infty = \left\{x\in\RR^d:\begin{aligned}
+	x_0&=x\\
+	x_{n+1}&=f(x_n,k(x_n),w_n)\\
+	x_n&\in\X\\
+	k(x_n)&\in\U\\
+	w_n&\in\W\\
+	n&\geq0
+	\end{aligned}\right\}.
+\end{equation}
+%
+The sets that are described by~\eqref{eq:formal:definition:RPI:set} are called~\emph{robust positive invariant} sets.
+%
+A verbose definition of a robust positive invariant set is: 
+%
+\emph{A set of feasible states for which all possible closed-loop trajectories remain inside the set.}
+%
+In the context of robust model predictive control the two extremal robust positive invariant sets are of particular interest, i.e. the minimal and maximal one.
+%
+The minimal robust positive invariant set~$\X^\infty_{\min}$ is such that it is contained within every robust positive invariant one, which on the other hand are all contained in the maximal robust positive invariant set~$\X_{\max}^\infty$, i.e. $\X_{\min}^\infty\subseteq\X^\infty\subseteq\X^\infty_{\max}$ for all $\X^\infty$ defined by~\eqref{eq:formal:definition:RPI:set}.
+%
+To produce the largest feasible set for the robust model predictive control scheme we use the maximal robust positive invariant set to be the terminal set~$\X_0=\X_{\max}^\infty$.
+%
+A more elaborate discussion on general robust positive invariant sets is beyond the scope of this work and we refer to~\cite{blanchini:2007} for details.
+%
+%
+%
+%
+\section{Controllable Sets}\label{ch:concepts:sec:RMPC:controllable:sets}
+\resetforsection
+%
+%
+In order to define a stage-wise problem formulation it is necessary to define sets which can be kept feasible for all uncertainties.
+%
+For this the robust positive invariant terminal set~$\X_0$ is used.
+%
+We define the one-step (robustly) controllable set for a target set~$\mathcal T$ by~$\C_1(\mathcal T)$ as~
+%
+\begin{equation}\label{eq:RMPC:target:tubes}
+	\begin{aligned}
+	\mathcal M_1(\mathcal T) :&= \{(x,u)\in\X\times\U: f(x,u,w)\in\T\;\forall w\in\W\}\\
+	\mathcal C_1(\mathcal T) :&= \{x\in\X:\exists u\in\U\; (x,u)\in\mathcal M_1(\mathcal T)\}\\
+	&=\{x\in\X: \exists u\in\U\; f(x,u,w)\in\mathcal T\;\forall w\in\W\}
+	\end{aligned}
+\end{equation}
+%
+in words \emph{the one-step controllable set~$\mathcal C_1(\T)$ is the set of all feasible states~$x\in\X$ for which an admissible input exists~$u\in\U$ such that for any disturbance~$w\in\W$ the successor state lies in the target set, i.e.~$f(x,u,w)\in\mathcal T$.}
+%
+For the n-step (robustly) controllable set~$\mathcal C_n(\T)$ we use a recursive definition~$\mathcal C_n(\mathcal T) := \mathcal C_1(\mathcal C_{n-1}(\mathcal T))$ with $\mathcal C_0(\T)=\T$.
+%
+The \emph{tubes} of n-step robustly controllable sets~$\{\mathcal C_n(\mathcal T),\mathcal C_{n-1}(\T),\dots,\mathcal C_1(\T),\T\}$ were introduced in~\cite{Bertsekas:1971} as target tubes, which concisely characterises their key property, they allow \emph{safe} transition to the target set in~$n+1$ steps.
+%
+In principle these target tubes can be defined for any target set~$\T$, however, as we discuss the robust model predictive control problem each stage of the target tube~$\mathcal C_m(\T)$ defines stage-wise state constraints at the stage~$m$, hence we require the target set to be invariant under some auxiliary feedback controller~$u=k(x)$ in the sense of Section~\ref{ch:concepts:sec:RMPC:invariant:sets}, i.e. $\T=\X^\infty$. 
+%
+It is easy to see, that~$\X_1^\infty\subseteq\X_2^\infty$ implies~$\mathcal C_n(\X_1^\infty)\subseteq\mathcal C_n(\X_2^\infty)$, hence we use the maximal robust positive invariant set~$\X^\infty_{\max}$ to produce the largest n-step controllable set.
+%
+To obtain the stage-constraints~$\mathcal M_m$ used in~\eqref{ch:concepts:general:rmpc:problem:formulation} we set $\mathcal M_m=\mathcal M_1(\C_{m-1}(\X^\infty_{\max}))$.
+%
+Using~$(x_k,u_k)\in\mathcal M_m$ as the stage constraints instead of~$x_k\in\mathcal C_m(\X^\infty_{\max})$ and $u_k\in\U$ not only abbreviates the notation but also reduces the redundancy in the problem formulation as well as allowing more general joint state and input constraints.
+%
+For general properties of the n-step controllable sets we refer to~\cite{Rakovic:2009}.
+%
+%
+%
+%
+%
+\begin{rem}
+In this section we summarised some concepts which we will revisit in different scenarios later in this thesis. 
+%
+Hence, the conceptual description of invariant sets and n-step controllable sets is more relevant than their respective mathematical definition given here as later on the meaning of~$\W$ will change fundamentally while the conceptual interpretation of~$\C_n(\cdot)$ and~$\X^\infty$ does not.
+\end{rem}

@@ -1,0 +1,135 @@
+%!TEX root = main.tex
+
+\chapter{Some Set Theoretic Statements}\label{chap:set:theo:statements}
+
+Throughout this thesis we put an emphasis on sets, as they arise in the context of robust model predictive control.
+%
+Therefore this chapter summarises necessary preliminaries we use in order to study, manipulate and understand such sets.
+%
+
+
+
+
+To study the effect of \emph{similar} transformations on the same sets it can be useful to study the \emph{Hausdorff}\footnote{Felix Hausdorff, 1868 - 1942, was a German mathematician and writer. On his father's insistence he pursued a career in mathematics rather than as a musical composer. Later he published literary work under the alter ego Paul Mongr\' e. Him, his wife and his wife's sister committed suicide when they were to be deported by the NS regime.} distance of the resulting sets. For this we have 
+%
+\begin{equation}
+	d(\mathcal X,\mathcal Y) = \sup\left\{\sup_{x\in\mathcal X}\inf_{y\in\mathcal Y} d(x,y), \sup_{y\in\mathcal Y}\inf_{x\in\mathcal X} d(x,y) \right\}
+\end{equation}
+%
+where $\mathcal X,\mathcal Y$ are elements of the metric space $(X,d)$, i.e. $\mathcal X\subset X$ and $\mathcal Y\subset X$ and the set $X$ is equipped with its metric $d(\cdot,\cdot)$.
+%
+The Hausdorff distance is a metric on the space of compact, non-empty sets.
+%
+\begin{thm}\label{thm:non:empty:intersection}
+Let $\mathcal X$ and $\mathcal Y$ be such that their intersection has a non-empty interior, then there exits a positive number $\delta>0$ such that all $\mathcal Z$ with $d(\mathcal Z,\mathcal X)\leq\delta$ have a non-empty the intersection with $\mathcal Y$, i.e. $\mathcal Z\cap\mathcal Y\neq\emptyset$.
+\end{thm}
+%
+\begin{proof}
+Let $p\in\mathcal X\cap\mathcal Y$ and let $\delta$ denote the radius of the largest ball centred at $p$ contained in $\mathcal X\cap\mathcal Y$.
+%
+Since $d(\mathcal X,\mathcal Z)\leq\delta$ there exists a point $\tilde p\in\mathcal Z$ such that $d(p,\tilde p)\leq \delta$, hence $\tilde p$ is contained in the $\delta$-ball around $p$, which is contained in $\mathcal X\cap\mathcal Y$ and therefore $\tilde p\in\mathcal Z\cap\mathcal Y\neq\emptyset$.
+\end{proof}
+%
+Furthermore we also can show:
+%
+\begin{thm}
+Let $\mathcal X,\mathcal Y$ and $\mathcal Z$ as in Lemma~\ref{thm:non:empty:intersection}, then we have $d(\mathcal X\cap\mathcal Y,\mathcal Z\cap\mathcal Y)\leq d(\mathcal X,\mathcal Z)$.
+\end{thm}
+%
+\begin{proof}
+Let $x_k\in\mathcal X,z_k\in\mathcal Z$ be sequences such that $d(x_k,z_k)\to d(\mathcal X,\mathcal Z)$.
+%
+Either $x_k$ and $z_k$ can be chosen in the intersection $x_k,z_k\in\mathcal X\cap\mathcal Z$ in which case the same sequences yield $d(x_k,z_k)\to d(\mathcal X\cap\mathcal Y,\mathcal Z\cap\mathcal Y) = d(\mathcal X,\mathcal Z)$, or at least one of the sequences has to be chosen in the complement.
+%
+This means the defining elements of the distance between $\mathcal X$ and $\mathcal Z$ do not lie in $\mathcal Y$ therefore the distance of $\mathcal X\cap\mathcal Y$ and $\mathcal Z\cap\mathcal Y$ is smaller, i.e. $d(\mathcal X\cap\mathcal Y,\mathcal Z\cap\mathcal Y)< d(\mathcal X,\mathcal Z)$.
+\end{proof}
+%
+With this we can prove the main result:
+%
+\begin{thm}
+Let $\mathcal X,\tilde{\mathcal X},\mathcal Y$ and $\tilde{\mathcal Y}$ be compact, non-empty such that $d(\mathcal X,\tilde{\mathcal X})\leq\delta_1$ and $d(\mathcal Y,\tilde{\mathcal Y})\leq\delta_2$, then the intersection $\mathcal X\cap \mathcal Y$ has a distance to $\tilde{\mathcal X}\cap\tilde{\mathcal Y}$ no larger than $\delta_1+\delta_2$, i.e. $d(\mathcal X\cap \mathcal Y,\tilde{\mathcal X}\cap\tilde{\mathcal Y})\leq\delta_1+\delta_2$.
+\end{thm}
+%
+\begin{proof}
+We exploit the fact that the Hausdorff distance is a metric on the set of compact, non-empty spaces, in particular it satisfies the triangle inequality $d(A,C)\leq d(A,B)+d(B,C)$.
+%
+By applying the previous lemma twice we have 
+%
+\begin{equation}
+	d(\mathcal X\cap \mathcal Y,\tilde{\mathcal X}\cap\tilde{\mathcal Y}) \leq d(\mathcal X\cap \mathcal Y,\mathcal X\cap\tilde{\mathcal Y}) + d(\mathcal X\cap\tilde{\mathcal Y},\tilde{\mathcal X}\cap\tilde{\mathcal Y}) \leq d(\mathcal Y,\tilde{\mathcal Y}) + d(\mathcal X,\tilde{\mathcal X}) \leq \delta_2 + \delta_1.
+\end{equation}
+\end{proof}
+
+
+Here we will only deal with convex sets $\mathcal X,\mathcal Y$, for convex sets we know that the distance $d(x,\mathcal Y) = \inf_{y\in\mathcal Y}d(x,y)$ is convex, i.e. $d(\lambda a + (1-\lambda)b,\mathcal Y)\leq\lambda d(a,\mathcal Y)+(1-\lambda) d(b,\mathcal Y)$.
+%
+Recall that for convex sets we have the set of extremal points $\ext(\mathcal X)$ which contains all points that can not be expressed as the convex combination of other elements in the set, i.e.
+%
+\begin{equation}
+	\ext(\mathcal X) = \{x\in\mathcal X: \not\exists a,b\in\mathcal X\setminus\{x\} ,\lambda\in(0,1)\quad x=\lambda a + (1-\lambda) b \}
+\end{equation}
+%
+One obvious fact about the set of extremal points with respect to the distance function can be summarised by:
+%
+\begin{thm}
+For a convex set $\mathcal Y\subset X$ the distance function $d(x,\mathcal Y)$ has the upper bound
+%
+\begin{equation}
+	d(x,\mathcal Y)\leq d(x,\ext(\mathcal Y)).
+\end{equation}
+\end{thm}
+%
+\begin{proof}
+%
+The trivial relationship
+%
+\begin{equation}
+	d(x,\mathcal Y) = \inf_{y\in\mathcal Y} d(x,y) \leq \inf_{y\in\ext(\mathcal Y)} d(x,y) = d(x,\ext(\mathcal Y)).
+\end{equation}
+%
+follows from $\ext(\mathcal Y)\subseteq \mathcal Y$.
+\end{proof}
+%
+Putting this all together we can prove the following statement:
+%
+\begin{thm}\label{thm:Hausdorff:convex:sets:extremal:points}
+Let $\mathcal X,\mathcal Y\subset X$ be convex sets, then $d(\mathcal X,\mathcal Y)\leq d(\ext(\mathcal X),\ext(\mathcal Y))$.
+%
+Furthermore $d(\mathcal X,\mathcal Y) = \sup\left\{d(\mathcal X,\text{ext}(\mathcal Y)),d(\text{ext}(\mathcal X),\mathcal Y)\right\}$.
+\end{thm}
+%
+\begin{proof}
+This now just follows the definition of the Hausdorff distance
+%
+\begin{multline}
+	d(\mathcal X,\mathcal Y) = \sup\left\{\sup_{x\in\mathcal X} \underbrace{d(x,\mathcal Y)}_{\leq d(x,\ext(\mathcal Y))}, \sup_{y\in\mathcal Y} \underbrace{d(\mathcal X,y)}_{\leq d(\ext(\mathcal X),y)} \right\}\\ \leq 
+	\sup\left\{\sup_{x\in\mathcal X} d(x,\ext(\mathcal Y)), \sup_{y\in\mathcal Y}  d(\ext(\mathcal X),y) \right\} = d(\ext(\mathcal X),\ext(\mathcal Y)).
+\end{multline}
+%
+The second statement follows directly from the convexity of the sets: The optimisers are attained on the boundary~$\partial \mathcal X\supseteq\text{ext}(\mathcal X)$ and~$\partial\mathcal Y\supseteq\text{ext}(\mathcal Y)$.
+%
+Any connected subset~$U \subset \partial\mathcal Y\setminus\text{ext}(\mathcal Y)$ can be expressed as a convex combination of extremal points, i.e. it is a hyperplane. 
+%
+If both optimisers $x,y$ with $d(x,y) = d(\mathcal X,\mathcal Y)$ lie on (parallel) hyperplanes, i.e. both points are boundary points but not extremal, then continuing along the hyperplane does not change the distance.
+%
+Therefore choosing any extremal point on the boundary of the hyperplane with the same distance yields the desired result.
+%
+\end{proof}
+%
+This relationship becomes computationally convenient when the sets of extremal points are collections of points, i.e. when $\mathcal X$ and $\mathcal Y$ are polytopic. 
+%
+In this case we have the relationship
+%
+\begin{thm}
+Let $\mathcal X = \conv\{v_i\}$ and $\mathcal Y = \conv\{w_i\}$ then
+%
+\begin{equation}\label{eq:maximal:distance:between:vertices}
+	d(\mathcal X,\mathcal Y) \leq \max\left\{\max_i\min_j d(v_i,w_j),\max_j\min_i d(v_i,w_j)\right\}.
+\end{equation}
+\end{thm}
+%
+\begin{proof}
+All sets are now finite dimensional and closed and bounded, therefore all optima are attained.
+%
+The rest follows from Lemma~\ref{thm:Hausdorff:convex:sets:extremal:points}.
+\end{proof}

@@ -1,0 +1,686 @@
+%!TEX root = main.tex
+\resetcounters
+\chapter{Stochastic Model Predictive Control}\label{ch:MPC:sec:SMPC}
+%
+%
+%
+%
+\mysplit In all previous chapters we assumed that the disturbance set is known and we design the problem to admit a feasible controller for all possible disturbance realisations.
+%
+Throughout this section we assume that we try to control the system
+%
+\begin{equation}
+	x_{k+1} = A x_k + B u_k + w_k
+\end{equation}
+%
+with the probabilistic output constraint
+%
+\begin{equation}\label{eq:stochastic:constraint:first:mentioning}
+	\PP\{ Cx_k + Du_k + \omega_k\in\Y\}\geq p
+\end{equation}
+%
+where $\Y\subset\RR^{q_\Y}$ is a polytope and $0<p\leq1$.
+%
+The additive quantity~$\omega_k$ for all $k\geq0$ is a realisation of a random variable on the probability space~$(\Omega,\mathscr F,\mathbb P)$ with a known probability distribution.
+%
+By defining~$\hat x_k := Cx_k+Du_k\in\RR^{q_\Y}$ we can outline the main idea of our approach:
+%
+Let~$\hat\X$ be the feasible set for~\eqref{eq:stochastic:constraint:first:mentioning}, i.e. 
+%
+\begin{equation}
+	\hat\X = \left\{\hat x\in\RR^{q_\Y}:\PP\{\hat x+\omega\in\Y\}\geq p\right\}
+\end{equation}
+%
+notice that, due to the definition of~$\hat\X$, for every point~$\hat x\in\hat\X$ there exists a set~$\V\subseteq\Omega$ with $\PP\{\omega\in\V\}=:\PP\{\V\}\geq p$ such that $\{\hat x\}\oplus\V\subseteq\Y$.
+%
+In general we can not characterise the set~$\V\subseteq\Omega$ further, iit could be non-convex, not simply connected, or even disconnected. However, if~$\Omega$ is polyhedral and~$\V$ polytopic, we can easily compute~$\hat\X=\Y\ominus\V$.
+%
+The problem we consider is to chose a polytopic~$\V\subseteq\Omega$ with~$\PP\{\V\}\geq p$ such that~$\hat\X$ is as large as possible, i.e. we want to maximise the volume of a polytope where the decision variable is a polytope itself.
+%
+\\[1em]
+%
+\mysplit The first problem we consider can be summarised as:
+%
+\begin{subequations}\label{seq:abstract:polytope:optimisation:1}
+\begin{equation}
+	\max_{\V\subseteq\Omega}\; \text{vol}(\hat\X)
+\end{equation}
+%
+subject to
+%
+\begin{equation}
+	\hat\X=\Y\ominus\V
+\end{equation}
+%
+\begin{equation}
+	\PP\{\V\}\geq p
+\end{equation}
+\end{subequations}
+%
+Since the space of $q_\Y$ dimensional polytopes has no countable basis~$\mathscr B_i\subset\RR^{q_\Y}$ such that $\mathcal P=\bigoplus_{i} t_i\mathscr B_i$ holds for every polytope~$\mathcal P$, there is no straightforward way of reducing the optimisation to a conventional optimisation program.
+%
+In order to be able to use a numerical solver we have to restrict the search space in some way, in this work we chose to restrict the combinatorial structure of the decision variable~$\V$.
+%
+I.e. we choose~$\V_0$ with its combinatorial structure~$L(\V_0)$ and we enforce~$\V\cong\V_0$, that is~$L(\V_0)=L(\V)$.
+%
+In the following we present three methods to optimise over polytopes such that the combinatorial structure is preserved.
+%
+For now we assume that the probability distribution is uniform, i.e.~$\PP\{V\}=\frac{\text{vol}(\V)}{\text{vol}(\Omega)}$, we later present a method of generalising to general probability distributions.
+%
+In the sequel we denote~$\Omega = \{v\in\RR^{q_\Y}:\Gamma v\leq \bfa{1}\}$ and $\V_0 = \conv\{v_i\}_{i\leq M}$.
+%
+\\[1em]
+%
+\mysplit The first way to optimise over polytopes which have a particular combinatorial structure is by using the \emph{projective transformation}, as introduced in Section~\ref{ch:concepts:sec:polytopes}.
+%
+Recall that the projective transformation~$\V$ of a polytope~$\V_0$ is given by the intersection of its homogenisation~$\text{homog}(\V_0)\subseteq\RR^{q_\Y+1}$ with an admissible hyperplane~$H=\{(\hat x,t)\in\RR^{q_\Y+1}: a\hat x+\tilde a t=1\}\subseteq\RR^{q_\Y+1}$, where admissible means that vertices of~$\V_0$ map to vertices of~$\V$.
+%
+Assume that~$\V_0$ is in vertex description, i.e.~$\V_0=\conv\{\hat v_i\}_{i\leq M}$ then the homogenisation~$\text{homog}(\V_0)$ is given by
+%
+\begin{equation}
+	\text{homog}(\V_0) = \text{cone}\left\{\begin{pmatrix}\hat v_i\\ 1\end{pmatrix}\right\} = \{(\hat x,t)\in\RR^{q_\Y+1}:\exists\lambda_i\geq0\wedge x=\sum_{i=1}^M \lambda_i \hat v_i\wedge t=\sum_{i=1}^M\lambda_i\}
+\end{equation}
+%
+Intersecting the homogenisation in vertex description with an arbitrary hyperplane is now trivial as each ray spanning the homogenisation has to lie on the plane, i.e.
+%
+\begin{equation}
+	1 = a\hat v_it + \tilde a t = t(a\hat v_i + \tilde a) \Leftrightarrow t = \frac{1}{a\hat v_i + \tilde a}
+\end{equation}
+%
+So that the vertex~$\hat v_i$ maps to the vertex~$\bar v_i$ with
+%
+\begin{equation}
+	\bar v_i = \begin{pmatrix}\hat v_i \\ 1\end{pmatrix}\frac{1}{a\hat v_i + \tilde a}.
+\end{equation}
+%
+However the homogenisation is only defined for positive $t>0$ or equivalently~$a\hat v_i + \tilde a>0$.
+%
+Denoting the embedding
+%
+\begin{equation}
+	\V^\prime = \conv\left\{\begin{pmatrix}\hat v_i \\ 1\end{pmatrix}\frac{1}{a\hat v_i + \tilde a}\right\}
+\end{equation}
+%
+then the $q_\Y$ dimensional polytope in~$\RR^{q_\Y+1}$ is mapped down onto~$\RR^{q_\Y}$ with the map~$\gamma$:
+%
+\begin{equation}
+	\gamma : \RR^{q_\Y+1} \rightarrow \RR^{q_\Y},\; \begin{pmatrix}\hat x\\ t\end{pmatrix} \mapsto B\hat x + z t + z^\prime.
+\end{equation}
+%
+For the entire projective transformation to be isomorphic we require
+%
+\begin{equation}
+	\det\begin{pmatrix}a & \tilde a \\ B & z\end{pmatrix} \neq0
+\end{equation}
+%
+The full projective transform~$\V$ is then given by
+%
+\begin{equation}
+	\V = \conv\{\frac{1}{a\hat v_i+\tilde a}(B\hat v_i+z)\}_{i\leq M},
+\end{equation}
+%
+see e.g.~\cite{Ziegler:1995}.
+%
+For our purposes it is important that the map~$\gamma$ is isometric, i.e. the relative volume of~$\V^\prime$ is identical with the volume of~$\V$.
+%
+To achieve this it is not enough to enforce only invertibility of 
+%
+$$
+\begin{pmatrix}a & \tilde a \\ B & z\end{pmatrix}
+$$
+%
+but we require it to be unitary, i.e.~$\abs{\det(\cdot)}=1$.
+%
+
+%
+For this notice that
+%
+\begin{equation}
+	H = \{(\hat x,t):a\hat x+\tilde at=1\}=\{(\hat x,t):\frac{1}{\norm{\begin{pmatrix}a^T& \tilde a\end{pmatrix}}_2}(a\hat x+\tilde at)=\norm{\begin{pmatrix}a^T& \tilde a\end{pmatrix}}_2\}
+\end{equation}
+%
+which does induce the same condition on the vertices~$a\hat v_i + \tilde a>0$ and we can use an isometry with
+%
+\begin{equation}
+	\abs{\det\begin{pmatrix}\frac{a}{\norm{\cdot}_2} & \frac{\tilde a}{\norm{\cdot}_2}\\
+	B & z
+	\end{pmatrix}}=1.
+\end{equation}
+%
+To avoid introducing additional degrees of freedom we use the QR-decomposition of~$(a,\tilde a)^T$ (see~\cite{Golub:1996}):
+%
+\begin{equation}
+	QR = \begin{pmatrix} a^T\\\tilde a\end{pmatrix}
+\end{equation}
+%
+with this we have~$\det(Q)=1$ and the first column of $Q$ is a normalised version of~$(a,\tilde a)^T$.
+%
+Notice that the columns of a matrix form a basis of its range, in the case of a unitary matrix they form a orthonormal basis with the same orientation as~$\RR^{q_\Y+1}$.
+%
+Denoting $Q = (Q_1,Q_2)$ such that $RQ_1^T=(a,\tilde a)$, then $Q^T$ does effectively rotate the normal vector of~$H$ onto the first axis of $\RR^{q_\Y+1}$ while the remaining $q_\Y$ directions are an orthonormal system inside~$H$, that is~$(B,z)=Q_2^T$.
+%
+Hence the first method we propose to optimise~\eqref{seq:abstract:polytope:optimisation:1} is to use the projective transformation:
+%
+For a given~$\V_0=\conv\{\hat v_i\}_{i\leq M}$ and a plane~$H = \{(\hat x,t):a\hat x+\tilde at=1\}$ we have 
+%
+$$
+	\V = \conv\left\{Q_2^T\begin{pmatrix}\hat v_i \\ 1\end{pmatrix}\frac{1}{a\hat v_i + \tilde a}\right\}.
+$$
+%
+Therefore the decision variable of the abstract optimisation~\eqref{seq:abstract:polytope:optimisation:1} is the $q_\Y+1$ dimensional vector~$(a^T,\tilde a)$.
+%
+\\[1em]
+%
+Now recall that the volume of a polytope can be computed by decomposing the polytope into disjoint full-dimensional simplices for which the volume is given by a determinant, i.e. for the simplex~$S=\conv\{s_i\}_{i\leq q_\Y+1}$ the volume is given by
+%
+\begin{equation}
+\text{vol}(S) = \frac{1}{q_\Y!}\abs{\det(s_1-s_{q_\Y+1},\dots,s_{q_\Y}-s_{q_\Y+1})}.
+\end{equation}
+%
+furthermore, if a simplex decomposition for~$\V_0$ is known and $\V\cong\V_0$ then the same simplex decomposition can be used for~$\V$, so that the volume of~$\V$ can be explicitly calculated by summation over the volume of the simplicial decomposition.
+%
+For this let $\conv\{\hat v_j\} = \V_0 = \bigcup_{i\leq z_S}S_i$ with $S_i = \conv\{\hat v_{j_i}\}i\leq q_\Y$ for given subsequences $j_i\in\{1,\dots,M\}$.
+%
+The volume of $\V_0$ is then given by
+%
+\begin{equation}
+	\text{vol}(\V_0) = \sum_{j=1}^{z_S}  \frac{1}{q_\Y!}\abs{\det(\hat v_{j_1}-\hat v_{j_{q_\Y+1}},\dots,\hat v_{j_{q_\Y}}-\hat v_{j_{q_\Y+1}})}.
+\end{equation}
+%
+Constraining the combinatorial structure of the considered polytope to that of~$\V_0$ has the additional advantage that the sign of the determinant of any simplex in the decomposition~$\V_0 = \bigcup_{i\leq z_S}S_i$ is fixed.
+%
+This is because it cannot change without crossing zero in which case the simplex would not be full dimensional and therefore the associated polytope can not be combinatorially equivalent to~$\V_0$.
+%
+It is often useful to allow a subsequent isometric affine map to \emph{rotate} and \emph{shift} the polytope~$\V=\conv\{\frac{1}{a\hat v_i + \tilde a}Q_2^T\begin{pmatrix}\hat v_i \\ 1\end{pmatrix}\}=:\conv\{v_i\}$, i.e. $\nu(\V)=\conv\{Rv_i+c\}$ with $c\in\RR^{q_\Y}$ and $\abs{\det(R)}=1$.
+%
+We can now rewrite~\eqref{seq:abstract:polytope:optimisation:1} as
+%
+\begin{subequations}
+\begin{equation}
+	\max_{a,\tilde a}\; \text{vol}(\hat\X)
+\end{equation}
+%
+subject to
+%
+\begin{equation}
+	\hat v_i^T a + \tilde a>0
+\end{equation}
+%
+\begin{equation}
+	\Gamma Rv_i\leq \bfa{1}-\Gamma c
+\end{equation}
+%
+\begin{equation}
+	\sum_{j=1}^{z_S}  \frac{1}{q_\Y!}\abs{\det( v_{j_1}- v_{j_{q_\Y+1}},\dots, v_{j_{q_\Y}}- v_{j_{q_\Y+1}})}\geq p\;\text{vol}(\Omega)
+\end{equation}
+%
+\begin{equation}
+	\hat\X = \Y\ominus\conv\{Rv_i+c\}
+\end{equation}
+\end{subequations}
+%
+\begin{example}{Optimising the volume of a polytope using a projective transformation}\label{example:projective:transformation:optimisation}
+%
+Consider the set~$\Omega = \{v\in\RR^2:-2\leq v_{1,2}\leq 2\}$, $\Y = \{y\in\RR^2:-5\leq y_{1,2}\leq 4\}$ and 
+%
+$$
+\V_0 = \conv\left\{\begin{pmatrix}\pm2\\0\end{pmatrix},\begin{pmatrix}0\\\pm2\end{pmatrix},\begin{pmatrix}\pm\frac{7}{5}\\\pm\frac{7}{5}\end{pmatrix}\right\}.
+$$
+%
+Given the problem of maximising the volume of~$\Y\ominus\V$ for $\V\subseteq\Omega$ with $\text{vol}(\V)\geq\frac{1}{2} \text{vol}(\Omega)=8$.
+%
+The projective transformation of~$\V$ of~$\V_0$ with~$\text{vol}(\V_0)=9\frac{3}{5}$ is therefore given by~$\V=\conv\left\{v_i\right\}_{i\leq 6}$ and we introduce additional degrees of freedom in order to rotate and translate the set~$\V=\conv_{i\leq6}\{Rv_i\}\oplus\{c\}$ where
+%
+\[
+R=\begin{pmatrix}\cos(\alpha)&-\sin(\alpha)\\\sin(\alpha)&\cos(\alpha)\end{pmatrix},\;c=\begin{pmatrix}c_1\\ c_2\end{pmatrix}.
+\]
+%
+The optimisation problem is now given as
+%
+\[\begin{aligned}\max_{\substack{a_1,a_2,\tilde a,\\\alpha,c_1,c_2}}\quad\text{vol}(\Y\ominus\V)\\
+\pm2 a_1+\tilde a\geq\epsilon\\
+\pm2 a_2+\tilde a\geq\epsilon\\
+\pm1.4(a_1+a_2)+\tilde a\geq \epsilon\\
+\cos(\alpha)v_{i,1}-\sin(\alpha)v_{i,2}+c_1\leq 4\\
+-\cos(\alpha)v_{i,1}+\sin(\alpha)v_{i,2}-c_1\leq 5\\
+\sin(\alpha)v_{i,1}+\cos(\alpha)v_{i,2}+c_2\leq 4\\
+-\sin(\alpha)v_{i,1}-\cos(\alpha)v_{i,2}-c_2\leq 5\\
+\text{vol}(\V)\geq 8
+\end{aligned}
+%
+\]
+%
+where $v_i=\frac{1}{a\hat v_i + \tilde a}Q_2^T\begin{pmatrix}\hat v_i \\ 1\end{pmatrix}$ as above.
+%
+The optimisation can be solved using a non-linear solver, we illustrate the solution for the initial value~$a_1=0,a_2=0,\tilde a=1,\alpha=0,c_1=0,c_2=0$ in Figure~\ref{fig:example:projective:transformation}.
+%
+\end{example}
+%
+The approach of using the projective transformation to optimise polytopes of a given combinatorial structure seems simple and elegant and it introduces a minimal number of decision variables.
+%
+However, in practice we find that its effectiveness is limited by sensitivity to initial conditions and the complexity of the polytopes involved.
+%
+\\[1em]
+%
+\mysplit The second method we propose to optimise over polytopes of a fixed combinatorial structure relies more on brute force than the projective transformation.
+%
+For this suppose we have the vertex and halfspace representation available for the polytope~$\V_0=\conv\{\hat v_i\}_{i\leq M}=\{v:\hat a_i v\leq \hat b_i,i\in\{1,\dots,m\}\}$.
+%
+For each vertex~$\hat v_i$ we have the index set~$\A_i$ such that $\hat a_j\hat v_i=\hat b_j$ for $j\in\A_i$ and $\hat a_j\hat v_i<\hat b_j$ for $j\not\in\A_i$.
+%
+Every set~$\V=\conv\{v_i\}=\{v:a_i v\leq b_i, i\in\{1,\dots,m\}\}$ such that the vertices satisfy~$a_jv_i=b_j$ for $j\in\A_i$ and $a_jv_i<b_j$ for~$j\not\in\A_i$ naturally is combinatorially equivalent to~$\V_0$, since $L(\V)=L(\V_0)$.
+%
+This motivates us to design an optimisation using the index sets~$\A_i$ to constrain the combinatorial structure of~$\V$.
+%
+The volume of~$\V$ is given by the simplex decomposition of~$\V_0$ in the same way presented for the projective transformation.
+%
+We can therefore formulate the non-linear optimisation program
+%
+\begin{subequations}
+\begin{equation}
+	\max_{\substack{a_1,b_1\\ \vdots\\ a_m,b_m\\v_1\\ \vdots\\v_M}} \text{vol}(\hat\X)
+\end{equation}
+%
+subject to
+%
+\begin{equation}
+	a_jv_i=b_j,\; j\in\A_i, i\in\{1,\dots,M\}
+\end{equation}
+%
+\begin{equation}
+	a_jv_i< b_j,\; j\not\in\A_i, i\in\{1,\dots,M\}
+\end{equation}
+%
+\begin{equation}
+	\sum_{j=1}^{z_S}  \frac{1}{q_\Y!}\abs{\det( v_{j_1}- v_{j_{q_\Y+1}},\dots, v_{j_{q_\Y}}- v_{j_{q_\Y+1}})}\geq p\;\text{vol}(\Omega)
+\end{equation}
+%
+\begin{equation}
+	\hat\X = \Y\ominus\conv\{v_i\}.
+\end{equation}
+\end{subequations}
+%
+Although the number of decision variables introduced in this scheme is exorbitantly large, in particular $m(q_\Y+1)+Mq_\Y$, in numerical experiments it usually outperforms the projective transformation.
+%
+\begin{example}{Optimising the volume of a polytope using a direct method to ensure its combinatorial structure}\label{example:direct:polytope:optimisation}
+Consider the set~$\Omega = \{v\in\RR^2:-2\leq v_i\leq 2\}$, $\Y = \{y\in\RR^2:-5\leq y_i\leq 4\}$ and 
+%
+$$
+\begin{aligned}
+\V_0 &= \conv\left\{\begin{pmatrix}2\\0\end{pmatrix},\begin{pmatrix}-2\\0\end{pmatrix},\begin{pmatrix}0\\2\end{pmatrix},\begin{pmatrix}0\\-2\end{pmatrix},\begin{pmatrix}\frac{7}{5}\\\frac{7}{5}\end{pmatrix},\begin{pmatrix}-\frac{7}{5}\\-\frac{7}{5}\end{pmatrix}\right\}\\
+ &= \left\{v:\begin{pmatrix}\frac{1}{2}&\frac{3}{14}\\ -\frac{1}{2}&-\frac{3}{14}\\ \frac{3}{14}&\frac{1}{2}\\ -\frac{3}{14}&-\frac{1}{2}\\ -\frac{1}{2}&\frac{1}{2} \\ \frac{1}{2}&-\frac{1}{2}\end{pmatrix}v\leq\begin{pmatrix}1\\1\\1\\1\\1\\1\end{pmatrix}\right\}.
+\end{aligned}
+$$
+%
+This induces the index sets
+%
+\[\begin{aligned}
+\A_1 &= \{1,5\}\\
+\A_2 &= \{2,6\}\\
+\A_3 &= \{3,6\}\\
+\A_4 &= \{4,5\}\\
+\A_5 &= \{1,3\}\\
+\A_6 &= \{2,4\}
+\end{aligned}
+\]
+%
+which define the equality and inequality constraints
+\[
+	a_jv_i=1,\; j\in\A_i, i\in\{1,\dots,6\},
+\]
+%
+\[
+	a_jv_i\leq 1-\epsilon,\; j\not\in\A_i, i\in\{1,\dots,6\}.
+\]
+%
+We can initialise this optimisation with the original hyperplanes and vertices of~$\V_0$, the solution of the optimisation is shown in Figure~\ref{fig:example:projective:transformation}.
+%
+\begin{figure}\centering
+\begin{tikzpicture}
+\node (a) at (0,0) {
+\begin{tikzpicture}[xscale=2.2,yscale=1.3]
+\draw[-latex'] (-2.5,-2.5) -- (2.5,-2.5) node[below] {$v_1$};
+\draw[-latex'] (-2.5,-2.5) -- (-2.5,2.5) node[left] {$v_2$};
+\foreach \i in {-2,-1,...,2} \draw (-2.48,\i) -- (-2.52,\i) node[left] {$\i$};
+\foreach \i in {-2,-1,...,2} \draw (\i,-2.48) -- (\i,-2.52) node[below] {$\i$};
+
+\draw[very thin,gray] (  2.0000,   0.0000) -- (  1.4000,   1.4000) -- (  0.0000,   2.0000) -- (  2.0000,   0.0000) -- cycle;
+\draw[very thin,gray] (  2.0000,   0.0000) -- (  0.0000,   2.0000) -- ( -2.0000,   0.0000) -- (  2.0000,   0.0000) -- cycle;
+\draw[very thin,gray] (  2.0000,   0.0000) -- ( -2.0000,   0.0000) -- ( -1.4000,  -1.4000) -- (  2.0000,   0.0000) -- cycle;
+\draw[very thin,gray] (  2.0000,   0.0000) -- ( -1.4000,  -1.4000) -- (  0.0000,  -2.0000) -- (  2.0000,   0.0000) -- cycle;
+
+\draw[blue] (  2.0000,   0.0000) -- (  1.4000,   1.4000) -- (  0.0000,   2.0000) -- ( -2.0000,   0.0000) -- ( -1.4000,  -1.4000) -- (  0.0000,  -2.0000) -- (  2.0000,   0.0000) -- cycle;
+\draw ( -2.0000,  -2.0000) -- (  2.0000,  -2.0000) -- (  2.0000,   2.0000) -- ( -2.0000,   2.0000) -- ( -2.0000,  -2.0000) -- cycle;
+
+\draw[very thin,gray] (  1.8593,  -1.2480) -- (  1.8593,   0.4389) -- (  0.7968,   1.1034) -- (  1.8593,  -1.2480) -- cycle;
+\draw[very thin,gray] (  1.8593,  -1.2480) -- (  0.7968,   1.1034) -- ( -0.7969,   1.1034) -- (  1.8593,  -1.2480) -- cycle;
+\draw[very thin,gray] (  1.8593,  -1.2480) -- ( -0.7969,   1.1034) -- ( -1.8594,   0.4389) -- (  1.8593,  -1.2480) -- cycle;
+\draw[very thin,gray] (  1.8593,  -1.2480) -- ( -1.8594,   0.4389) -- ( -1.8594,  -1.2480) -- (  1.8593,  -1.2480) -- cycle;
+
+\draw[red] (  1.8593,  -1.2480) -- (  1.8593,   0.4389) -- (  0.7968,   1.1034) -- ( -0.7969,   1.1034) -- ( -1.8594,   0.4389) -- ( -1.8594,  -1.2480) -- (  1.8593,  -1.2480) -- cycle;
+
+\draw[very thin,gray] (  1.4254,  -1.1396) -- (  1.4254,   1.4254) -- ( -1.1396,   1.4254) -- (  1.4254,  -1.1396) -- cycle;
+\draw[very thin,gray] (  1.4254,  -1.1396) -- ( -1.1396,   1.4254) -- ( -1.4254,   1.1396) -- (  1.4254,  -1.1396) -- cycle;
+\draw[very thin,gray] (  1.4254,  -1.1396) -- ( -1.4254,   1.1396) -- ( -1.4254,  -1.4254) -- (  1.4254,  -1.1396) -- cycle;
+\draw[very thin,gray] (  1.4254,  -1.1396) -- ( -1.4254,  -1.4254) -- (  1.1396,  -1.4254) -- (  1.4254,  -1.1396) -- cycle;
+
+\draw[green!60!black] (  1.4254,  -1.1396) -- (  1.4254,   1.4254) -- ( -1.1396,   1.4254) -- ( -1.4254,   1.1396) -- ( -1.4254,  -1.4254) -- (  1.1396,  -1.4254) -- (  1.4254,  -1.1396) -- cycle;
+
+\end{tikzpicture}};
+\node [below = of a] (b) {
+\begin{tikzpicture}[xscale=1.6,yscale=.8]
+\draw[-latex'] (-4,-4) -- (2.5,-4) node[below] {$\hat x_1$};
+\draw[-latex'] (-4,-4) -- (-4,3) node[left] {$\hat x_2$};
+\foreach \i in {-3,-2,...,2} \draw (-3.98,\i) -- (-4.02,\i) node[left] {$\i$};
+\foreach \i in {-3,-2,...,2} \draw (\i,-3.98) -- (\i,-4.02) node[below] {$\i$};
+
+\draw[blue] ( -3.0000,  -3.0000) -- (  2.0000,  -3.0000) -- (  2.0000,   2.0000) -- ( -3.0000,   2.0000) -- ( -3.0000,  -3.0000) -- cycle;
+
+\draw[red] ( -3.1406,  -3.7520) -- (  2.1407,  -3.7520) -- (  2.1407,   2.8966) -- ( -3.1406,   2.8966) -- ( -3.1406,  -3.7520) -- cycle;
+\draw[green!60!black] ( -3.5746,  -3.5746) -- (  2.5746,  -3.5746) -- (  2.5746,   2.5746) -- ( -3.5746,   2.5746) -- ( -3.5746,  -3.5746) -- cycle;
+\end{tikzpicture}};
+\end{tikzpicture}
+\caption[Example Polytope Optimisation]{The result of the optimisation proposed in Example~\ref{example:projective:transformation:optimisation} and~\ref{example:direct:polytope:optimisation}, in \textcolor{blue}{blue} in the top figure the initialising set~$\V_0$ and in the bottom figure its resulting~$\Y\ominus\V_0$ and in \textcolor{red}{red} the optimised set~$\V$ for the projective transformation in the top figure and its corresponding~$\Y\ominus\V$ in the figure below. The \textcolor{green!60!black}{green} sets are the results of the brute force approach considered in Example~\ref{example:direct:polytope:optimisation}.  The simplicial decompositions of~$\V,\V_0$ are shown in \textcolor{gray}{thin grey} in the above figure. The volume of~$\Y\ominus\V_0$ is~$25$, whereas the optimised value of~$\text{vol}(\Y\ominus\V)=35.1134$ for the projective transformation and~$\text{vol}(\Y\ominus\V)=37.8117$ for the direct method. Both optimisations do not activate the volume constraint on~$\V$, the volume of the optimiser~$\text{vol}(\V)=8.0381$ for the projective transformation and~$\text{vol}(\V)=8.0458$ for the direct approach.}
+\label{fig:example:projective:transformation}
+\end{figure}
+\end{example}
+%
+%
+%
+%
+\mysplit The third and last method we propose is the simplest and most restrictive one\footnote{This method was submitted for publication in~\cite{Schaich:2017}}.
+%
+We constrain the structure of both~$\Omega$ and~$\V$ to be parallelotopes.
+%
+And we use the fact that the volume of a parallelotope~$\V$ (a zonotope with $q_\Y$ zones\footnote{%
+%
+Zonotopes have some favourable properties for explicit computations, see e.g.~\cite{Ziegler:1995,Gruenbaum:1967,Hadwiger:1957}, we do not discuss them further as are have no particular relevance in this discussion.
+%
+}) is given by the modulus of the determinant of its spanning vectors, i.e.~$\Omega=\{v\in\RR^{q_\Y}:\exists t_i\in[0,1]\wedge v=s_0+\sum_{i=1}^{q_\Y}t_is_i\}=:\text{span}(s_1,\dots,s_{q_\Y})\oplus\{s_0\}$ for linearly independent vectors~$s_1,\dots,s_{q_\Y}$ then $\text{vol}(\Omega)=\abs{\det(s_1,\dots,s_{q_\Y})}$, see e.g.~\cite{Hadwiger:1957,Gover:2010}.
+%
+Furthermore, recall that~$\det(\lambda s_1,s_2,\dots,s_{q_\Y})=\lambda\det(s_1,s_2,\dots,s_{q_\Y})=\det(s_1,\lambda s_2,\dots,s_{q_\Y})=\dots$.
+%
+Assume now that~$\Omega=\text{span}(s_1,\dots,s_{q_\Y})\oplus\{s_0\}$ and the considered polytopes are of the form~$\V=\text{span}(t_1s_1,\dots,t_{q_\Y}s_{q_\Y})\oplus\{r\}$ for $t_i\in(0,1]$, naturally the volume is given by~$\text{vol}(\V)=\prod_{i=1}^{q_\Y}t_i\abs{\det(s_1,\dots,s_{q_\Y})}=\prod_{i=1}^{q_\Y}t_i\text{vol}(\Omega)$.
+%
+Clearly, the constraint~$\PP\{\V\}\geq p$ is equivalent to~$\prod_{i=1}^{q_\Y} t_i\geq p$ in this case.
+%
+The abstract optimisation program~\eqref{seq:abstract:polytope:optimisation:1} in this case can be reformulated as
+%
+\begin{subequations}
+\begin{equation}
+	\max_{t_1,\dots,t_{q_\Y},r_0}\text{vol}(\hat\X)
+\end{equation}
+%
+subject to
+%
+\begin{equation}
+	0<t_i\leq1
+\end{equation}
+%
+\begin{equation}
+	\hat\X=\Y\ominus\bigl(\text{span}(t_1s_1,\dots,t_{q_\Y}s_{q_\Y})\oplus\{r\}\bigr)
+\end{equation}
+%
+\begin{equation}\label{eq:simplification:for:parallelotopes}
+	\sum_{i=1}^{q_\Y}t_i s_i + r\in\Omega\wedge r\in\Omega
+\end{equation}
+%
+\begin{equation}
+	\prod_{i=1}^{q_\Y} t_i\geq p
+\end{equation}
+\end{subequations}
+%
+Notice, that in~\eqref{eq:simplification:for:parallelotopes} we only constrain two points of the parallelotope, this is another advantage of using a parallelotope instead of an arbitrary polytope, since the spanning vectors~$s_1,\dots,s_{q_\Y}$ have to be linearly independent to span a parallelotope it is not necessary to check every vertex of the parallelotope but rather the \emph{extremals}.
+%
+By extremal we mean the vertex that is constructed from every spanning vectors and the vertex that is made up of no spanning vector, i.e.~$r+\sum_{i=1}^{q_\Y}t_is_i$ and $r+0$.
+%
+For practical applications it is useful to be able to obtain the vertex description of the parallelotope~$\text{span}(t_1s_1,\dots,t_{q_\Y}s_{q_\Y})$, this can be done by enumerating the vertices of the box~$\{x\in\RR^{q_\Y}:0\leq x_i\leq t_i\}$.
+%
+The vertices~$b_i$ so that $\conv\{b_i\}=\{x\in\RR^{q_\Y}:0\leq x_i\leq t_i\}$ are such that $(s_1,\dots,s_{q_\Y})b_i$ is a vertex of~$\text{span}(t_1s_1,\dots,t_{q_\Y}s_{q_\Y})$.
+%
+\\[1em]
+%
+As before, we illustrate the performance of this scheme with an example.
+%
+\begin{example}{Using a parallelotope to optimise the volume of a polytope}\label{example:optimising:parallelotopes}
+Consider the set
+%
+\[
+\Omega = \text{span}\biggl\{\underbrace{\begin{pmatrix}2\\0\end{pmatrix}}_{s_1},\underbrace{\begin{pmatrix}1\\1\end{pmatrix}}_{s_2}\biggr\}\oplus\biggl\{\underbrace{\begin{pmatrix}-1\\-\frac{1}{2}\end{pmatrix}}_{s_0}\biggr\}
+\]
+%
+and therefore~$\V=\text{span}(t_1s_1,t_2s_2)\oplus\{r\}$.
+%
+Consider again~$\Y = \{y\in\RR^2:-5\leq y_i\leq 4\}$, and the optimisation problem
+%
+\[
+\begin{aligned}
+\max_{t_1,t_2,r_1,r_2}\quad& \text{vol}(\hat\X)\\
+\text{s.t.}\quad& t_1s_1+t_2s_2+r\in\Omega\\
+& r\in\Omega\\
+& t_1t_2\geq\frac{1}{2}\\
+& \epsilon\leq t_i\leq 1\\
+& \hat\X=\Y\ominus\bigl(\text{span}(t_1s_1,\dots,t_{q_\Y}s_{q_\Y})\oplus\{r\}\bigr)
+\end{aligned}
+\]
+%
+\begin{figure}\centering
+\begin{tikzpicture}
+\node (a) at (0,0) {
+	\begin{tikzpicture}[scale=3.5]
+	\draw[-latex'] (-1.1,-.6) -- (2.1,-.6) node [above] {$v_1$};
+	\draw[-latex'] (-1.1,-.6) -- (-1.1,.6) node [above left] {$v_2$};
+	\foreach \x in {-1,-0.5,...,2} \draw (\x,-.58) -- (\x,-.62) node[below] {$\x$};
+	\foreach \y in {-0.5,0,0.5} \draw (-1.08,\y) -- (-1.12,\y) node[left] {$\y$};
+
+	\draw ( -1.0000,  -0.5000) -- (  1.0000,  -0.5000) -- (  2.0000,   0.5000) -- (  0.0000,   0.5000) -- ( -1.0000,  -0.5000) -- cycle;
+	\draw[blue] ( -0.5492,  -0.3623) -- (  0.8058,  -0.3623) -- (  1.5438,   0.3758) -- (  0.1888,   0.3758) -- ( -0.5492,  -0.3623) -- cycle;
+	\draw[red] ( -0.9247,  -0.5000) -- (  0.9248,  -0.5000) -- (  0.9248,   0.0298) -- (  0.6405,   0.5000) -- ( -0.9247,  -0.5000) -- cycle;
+	\draw[green!60!black] ( -0.0118,  -0.4997) -- (  1.0003,  -0.4997) -- (  1.0003,   0.4885) -- ( -0.0113,   0.4887) -- ( -0.0118,  -0.4997) -- cycle;
+	\end{tikzpicture}
+};
+\node (b) [below = of a] {
+	\begin{tikzpicture}[xscale=1.5,yscale=.8]
+	\draw[-latex'] (-5.1,-5) -- (3.5,-5) node[below right] {$\hat x_1$};
+	\draw[-latex'] (-5.1,-5) -- (-5.1,4) node[left] {$\hat x_2$};
+	\foreach \x in {-4,-3,...,3} \draw (\x,-4.96) -- (\x,-5.04) node[below] {$\x$};
+	\foreach \y in {-4,-3,...,3} \draw (-5.06,\y) -- (-5.14,\y) node[left] {$\y$};
+	\draw ( -4.0000,  -4.5000) -- (  2.0000,  -4.5000) -- (  2.0000,   3.5000) -- ( -4.0000,   3.5000) -- ( -4.0000,  -4.5000) -- cycle;
+	\draw[blue] ( -4.4508,  -4.6377) -- (  2.4562,  -4.6377) -- (  2.4562,   3.6242) -- ( -4.4508,   3.6242) -- ( -4.4508,  -4.6377) -- cycle;
+	\draw[red] ( -4.0753,  -4.5000) -- (  3.0752,  -4.5000) -- (  3.0752,   3.5000) -- ( -4.0753,   3.5000) -- ( -4.0753,  -4.5000) -- cycle;
+	\draw[green!60!black] ( -4.9882,  -4.5003) -- (  2.9997,  -4.5003) -- (  2.9997,   3.5113) -- ( -4.9882,   3.5113) -- ( -4.9882,  -4.5003) -- cycle;
+	\end{tikzpicture}
+};
+\end{tikzpicture}
+\caption[Optimised Parallelotope]{The left figure shows the resulting parallelotope of the volume optimisation considered in Example~\ref{example:optimising:parallelotopes} in \textcolor{blue}{blue} while the right figure shows the resulting set~$\hat\X$.
+%
+As a reference the black outlined sets are~$\Omega$ and $\Y\ominus\Omega$ respectively.
+%
+For comparison we plot the solution of the considered problem with the projective transformation approach in \textcolor{red}{red} and the brute force direct method in~\textcolor{green!60!black}{green}.
+%
+The objective values are given as~$\textcolor{blue}{\text{vol}(\hat\X)=57.0655}$, $\textcolor{red}{\text{vol}(\hat\X)=57.2044}$ and $\textcolor{green!60!black}{\text{vol}(\hat\X)=63.9958}$.
+}
+\label{fig:example:parallelotope:optimisation}
+\end{figure}
+%
+We illustrate the result of in Figure~\ref{fig:example:parallelotope:optimisation}, where we also show the equivalent optimisers for the projective transformation and the direct method.
+%
+Again the direct method outperforms the other methods considerably.
+\end{example}
+%
+\mysplit So far we have discussed methods of optimising the polytopes for which the combinatorial structure or in the case of the parallelotope the spanning vectors were predetermined.
+%
+We will now outline possible uses in the context of model predictive control where some constraints are probabilistic.
+%
+Consider the general problem of designing a model predictive control scheme that guarantees feasibility for the system~$x_{k+1}=Ax_k+Bu_k+w_k$ subject to the state constraints~$x_k\in\X$, input constraints~$u_k\in\U$, process noise constraints~$w_k\in\W$ and the probabilistic output constraint~$\PP\{Cx_k+Du_k+\omega_k\in\Y\}\geq p$ for all future times.
+%
+The key problem in this statement is guaranteeing feasibility.
+%
+\\[1em]
+%
+We define the the maximal invariant set subject to probabilistic constraints~$\X^\infty_{\max}$ as the largest set satisfying
+%
+\begin{equation}
+	\X^\infty = \left\{x\in\X:\begin{aligned}x_0&=x\\
+										x_{k+1}&=(A+BK)x_k+w_k\\
+										x_k&\in\X\\
+										Kx_k&\in\U\\
+										\PP\{(C&+DK)x_k+\omega_k\in\Y\}\geq p\\
+										\forall &w_k\in\W\; k\geq 0
+	\end{aligned}\right\}
+\end{equation}
+%
+for any set~$\V\subseteq\Omega$ with $\PP\{\V\}\geq p$ we have the \emph{the maximal invariant set with guaranteed probabilistic constraints}~$X^\infty_{\max}$ given by the largest set satisfying
+%
+\begin{equation}
+	X^\infty = \left\{x\in\X:\begin{aligned}x_0&=x\\
+										x_{k+1}&=(A+BK)x_k+w_k\\
+										x_k&\in\X\\
+										Kx_k&\in\U\\
+										(C&+DK)x_k+v_k\in\Y\;\forall v_k\in\V\\
+										\forall &w_k\in\W\; k\geq 0
+	\end{aligned}\right\}.
+\end{equation}
+%
+The inclusion~$X^\infty_{\max}\subseteq\X^\infty_{\max}$ holds trivially, and hence a reasonable objective is to maximise the size (i.e. the volume of~$X^\infty_{\max}$) over~$\V$ with $\PP\{\V\}\geq 0$.
+%
+The set~$X^\infty_{\max}$ can be computed in a similar fashion to the maximal robust positive invariant way described in Section~\ref{ch:MPC:sec:qMPC:MRPI:set} using that~$\mathscr D_k(X^\infty_{\max})\subseteq\X\cap K^{-1}\U\cap(\Y\ominus\V)$, where~$\mathscr D_k(\cdot)$ is defined as in~\eqref{eq:def:Dn}.
+%
+\\[1em]
+%
+Conventional methods to deal with this problem statement involve sampling the output noise and \emph{guaranteeing feasibility with a certain confidence}.
+%
+The most popular technique to solve such probabilistically constrained optimisation problems is the \emph{scenario based approach}, see e.g.~\cite{Calafiore:2010,Campi:2011} for an overview.
+%
+There are now various publications discussing scenario based methods for solving a stochastic model predictive control formulation, we particularly refer to~\cite{Margellos:2014,Zhang:2015} as the idea presented is similar to the approach discussed above:
+%
+An auxiliary set~$\V$ is determined such that $\PP\{\PP\{\V\}\geq p\}\geq 1-\beta$ is satisfied, where $\beta>0$ denotes the confidence with which this~$\PP\{\V\}\geq p$ holds ($p$ is often written as~$1-\epsilon$ in the context of scenario methods).
+%
+Notice that the somewhat peculiar probability of probability~$\PP\{\PP\{\V\}\geq p\}$, measures the probability with which the auxiliary set~$\V$ satisfies the probabilistic condition~$\PP\{\V\}\geq p$, in the scenario approach the auxiliary set~$\V$ is given by~$N$ samples~$\{\omega_1,\dots,\omega_N\}\subset\Omega$, so that the outer probability measure characterises the probability on the multi-sample space~$\Omega^N$, therefore we denote it by~$\PP^N\{\cdot\}$ from here on to avoid confusion.
+%
+\\[1em]
+%
+We will now present a comparison of the scenario approach presented in~\cite{Zhang:2015} with the three methods described above.
+%
+The method relies on drawing a \emph{sufficient number} of samples~$N$ and computing a polytope containing the samples.
+%
+The number of samples~$N$ used depends on the probability~$p=1-\epsilon$, the dimension~$q_\Y$ and the desired confidence~$\beta$.
+%
+In particular the number of samples should be chosen in such a way that if the set~$\hat\X$ is computed for any $N$-sample set~$\tilde\Delta^N=\{\omega_1,\dots,\omega_N\}$ to be~$\hat\X=\Y\ominus\conv\{\tilde\Delta^N\}$ then the violation probability , i.e. the probability that any realisation $\omega\in\Omega$ satisfies $\PP\{\hat{\X} \oplus {\omega} \not\subseteq \Y\}$ is bounded by
+% (the probability that any other $N$-sample set~$\Delta^N\neq\tilde\Delta^N$) is bounded by
+%
+\begin{equation}\label{eq:violation:probability}
+	\PP\{\hat{\X} \oplus {\omega} \not\subseteq \Y\}\leq\sum_{i=0}^{q_\Y}\binom{N}{i}\epsilon^{i}(1-\epsilon)^{N-i}=\Phi(\underbrace{\epsilon}_{1-p},q_\Y,N).
+\end{equation}
+%
+Condition~\eqref{eq:violation:probability} can be understood as that the \emph{violation probability} is constrained by the cumulative binomial distribution~$\Phi$. 
+%
+Hence, $\PP^N\{\PP\{\hat\X\oplus\omega\subseteq\Y\}\geq p\}\geq1-\beta$ if $N$ is chosen such that
+%
+\begin{equation}\label{eq:condition:on:sample:number}
+	\sum_{i=0}^{q_\Y}\binom{N}{i}\epsilon^{i}(1-\epsilon)^{N-i}\leq\beta
+\end{equation} 
+%
+holds, see~\cite{Calafiore:2010} for details.
+%
+For~\eqref{eq:condition:on:sample:number} to hold upper bounds on the binomial cumulative distribution can be found to be~$N\geq\frac{2}{\epsilon}(q_\Y-\log(\beta))$ (see e.g.~\cite{Calafiore:2010}), this bound on the number of samples depends reciprocally on the confidence~$\beta$, i.e. regardless of the probability~$p$ the number of samples required to satisfy the probabilistic constraints will diverge as the desired confidence approaches zero.
+%
+We illustrate~$\Phi$ and the bound on~$N$ in Figure~\ref{fig:cdf:binomial}.
+%
+\input{bounds.on.N.tex}
+%
+\\[1em]
+%
+The method described in~\cite{Zhang:2015} based on~\cite{Margellos:2014} uses a $\ell_\infty$-box defined by
+%
+\begin{equation}
+	\begin{aligned}
+	\min_{\bar\tau,\underline\tau\in\RR^{q_\Y}}\quad& \sum_{i=1}^{q_\Y} (\bar\tau_i-\underline\tau_i)\\
+	\text{s.t.}\quad& \underline\tau\leq \omega_j\leq \bar\tau, j\in\{0,\dots,N\}
+	\end{aligned}
+\end{equation}
+%
+A natural extension would be to use a $m\times q_\Y$-matrix~$\Gamma$ with rank~$q_\Y$ and use 
+%
+\begin{equation}
+	\begin{aligned}
+	\min_{\bar\tau,\underline\tau\in\RR^{m}}\quad& \sum_{i=1}^{q_\Y} (\bar\tau_i-\underline\tau_i)\\
+	\text{s.t.}\quad& \underline\tau\leq \Gamma\omega_j\leq \bar\tau, j\in\{0,\dots,N\}
+	\end{aligned}
+\end{equation}
+%
+We can now present a comparison between the optimisation schemes proposed above and the sample based method described in~\cite{Zhang:2015}.
+%
+\begin{example}{A comparison between three proposed methods to optimise the volume of a polytope}\label{example:MRPI:with:guarantees}
+%
+Consider the system
+%
+\begin{equation}\label{eq:example:system:MRPI}
+	x^+ = \begin{pmatrix}0.7&-0.25\\0.25&0.7\end{pmatrix}x+\begin{pmatrix}0\\1\end{pmatrix}u+w
+\end{equation}
+%
+subject to the constraints 
+\begin{equation}\label{eq:example:rconstriaints}
+\begin{aligned}
+\X &= \{x\in\RR^2 :\norm{x}_\infty\leq15\}, \\
+\U &= \{u\in\RR :\abs{u}\leq2\}, \\
+\W &= \{w\in\RR^2 :\norm{w}_1\leq1\}.
+\end{aligned}
+\end{equation}
+%
+The output 
+%
+\begin{equation}
+	y = \begin{pmatrix}-0.08&-0.05\\
+   -0.14&   -0.04\end{pmatrix}x + \begin{pmatrix}
+0.44\\0.44\end{pmatrix}u + v
+\end{equation}
+%
+is subject to the probabilistic constraint
+%
+\begin{equation}\label{eq:example:pconstriaint}
+	\PP\{\norm{y}_\infty\leq 1\}\geq 0.3
+\end{equation}
+%
+for 
+%
+\begin{equation}\begin{aligned}
+\Omega &= \text{span}\left\{\underbrace{\begin{pmatrix} 0.07 \\ 0.08\end{pmatrix}}_{s_1},\underbrace{\begin{pmatrix}-0.07 \\ 0.08\end{pmatrix}}_{s_2}\right\}\oplus\left\{\underbrace{\begin{pmatrix}0\\-0.08\end{pmatrix}}_{s_0}\right\}\\
+&=\conv\left\{\begin{pmatrix}\pm0.07\\0\end{pmatrix},\begin{pmatrix}0\\\pm0.08\end{pmatrix}\right\}\\
+&=\left\{v\in\RR^2:\pm\frac{100}{7}v_1\pm\frac{25}{2}v_2\leq1\wedge\mp\frac{100}{7}v_1\pm\frac{25}{2}v_2\leq1\right\}
+\end{aligned}\end{equation}
+%
+In order to be able to compare all presented schemes we enforce~$\V$ to be combinatorially equivalent to~$\Omega$, i.e.~$\V\cong\Omega$.
+%
+The scenario approach requires the choice of the confidence~$\beta$ which we chose to be~$\beta=\frac{1}{1000}$, the smallest integer~$N$ satisfying~$N\geq\frac{20}{7}(2-\log(\frac{1}{1000})$ is $N=26$.
+%
+For the dimension~$q_\Y=2$ and~$\epsilon=1-p=\frac{7}{10}$ we can explicitly evaluate~$\Phi(\frac{7}{10},2,N)\leq\frac{1}{1000}$ to find that $N=10$ would be sufficient, but for consistency we use~$N=26$.
+%
+\\[1em]
+%
+To compute a feedback controller $u=Kx$ we use a LQR design with $Q=I$ and $R=1$.
+%
+We illustrate the solution of the comparison in Figure~\ref{fig:example:comparison:MRPI}.
+%
+The comparison showed that for this simple example the approach based on projective transformation marginally outperformed both the direct approach and the parallelotope approach, while all three approaches in which probabilistic constraints were imposed directly through constraints on the volume of~$\V$ outperformed the scenario-based approach.
+%
+%
+\input{sample.plot.tex}
+\end{example}
+%
+\noindent In this section we presented three possible frameworks to optimise polytopes in order to guarantee feasibility for probabilistically constrained model predictive control schemes, the random variable was assumed to be uniformly distributed in order to avoid evaluating integrals.
+%
+All three proposed methods require non-linear programming methods to solve, furthermore due to the way the volume depends on the vertices of a polytope the optimisation programs are non-convex in general.
+%
+Furthermore, using an objective that  depends on the optimisation variable implicitly requires additional computation.
+%
+This additional computation suffers, like most polytope computation, from the curse of dimensionality, i.e. due to the way the complexity of polytopes increases with dimension the suggested methods become computationally intractable for large dimensions.
+%
+However, in practical lower dimensions examples all methods perform well and show significant improvements over a scenario-based method.
+%
+In the next chapter we outline an extension to more general probability distributions.
+%
+%
+%
+%
+%

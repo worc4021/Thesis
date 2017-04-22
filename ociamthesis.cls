@@ -36,7 +36,6 @@
 % The name of your Oxford college (e.g. Christ Church, Pembroke)
 \def\college#1{\gdef\@college{#1}}
 
-
 %
 % Setup choosen crest/logo
 %

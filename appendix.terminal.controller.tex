@@ -1,9 +1,10 @@
 %!TEX root = main.tex
 
 \chapter{Computation of a terminal controller}\label{app:terminal:controller}
-In the following we describe the computation of a state feedback controller,
-which achieves closed loop Lyapunov stability in presence of disturbance,
-see e.g.~\cite{Boyd:94}.
+%
+%
+%
+In the following we describe the computation of a state feedback controller, which achieves closed loop Lyapunov stability in presence of disturbance, see e.g.~\cite{Boyd:94}.
 %
 Consider the robust problem with 
 %
@@ -31,7 +32,7 @@ we want to find a state feedback $u = Kx$ for which
 %
 holds. Using the system dynamics this condition takes the form:
 %
-\begin{equation}\label{app:eq:on:the:way:to:SDP}\Resize{\begin{split}
+\begin{equation}\label{app:eq:on:the:way:to:SDP}\Resize{\begin{aligned}
 	x^T P x ((A+BK)x + Dw)^T P ((A+BK)x + Dw) \geq x^T Q x + x^T K^T R Kx - \gamma^2 w^T w\\
 	x^T(P - (A+BK)^T P (A+BK) - Q - K^T R K)x + w^T(\gamma^2-D^T P D)w - 2 x^T(A+BK)^T P D w \geq 0\\
 	(x^T\,w^T)\left(\begin{array}{cc}
@@ -40,12 +41,11 @@ holds. Using the system dynamics this condition takes the form:
 	\end{array}\right)\left(\begin{array}{c}
 	x \\ w
 	\end{array}\right)\geq 0 .
-\end{split}}\end{equation}
+\end{aligned}}\end{equation}
 %
-Inequality~\eqref{app:eq:on:the:way:to:SDP} is a LMI and can be manipulated with the 
-S-procedure:
+Inequality~\eqref{app:eq:on:the:way:to:SDP} is a linear matrix inequality and can be manipulated with the S-procedure:
 %
-\begin{equation}\Resize{\begin{split}
+\begin{equation}\Resize{\begin{aligned}
 	\left(\begin{array}{cc}
 	P^{-1} &  \\  & I
 	\end{array}\right)
@@ -60,11 +60,11 @@ S-procedure:
 	P^{-1} - P^{-1}(A+BK)^T P (A+BK)P^{-1} - P^{-1}QP^{-1} - P^{-1}K^T R K^{-1} & -P^{-1}(A+BK)^T P D \\
 	- (P^{-1}(A+BK)^T P D)^T & \gamma^2 - D^T P D
 	\end{array}\right)\geq 0.
-\end{split}}\end{equation}
+\end{aligned}}\end{equation}
 %
 By introducing $X=P^{-1}$ and $Y = K P^{-1}$ we obtain
 %
-\begin{equation}
+\begin{equation}\Resize{
 	\left(\begin{array}{cc}
 	X & \\ & \gamma^2
 	\end{array}\right)
@@ -81,7 +81,7 @@ By introducing $X=P^{-1}$ and $Y = K P^{-1}$ we obtain
 	AX + BY & D \\
 	X & 0 \\
 	Y & 0
-	\end{array}\right) \geq 0,
+	\end{array}\right) \geq 0,}
 \end{equation}
 %
 which can be reformulated using the Schur complement
@@ -96,9 +96,9 @@ which can be reformulated using the Schur complement
 	\end{array}\right) \geq 0.
 \end{equation}
 %
-Solving the LMI~\eqref{app:eq:SDP:for:terminal:controller} with any SDP solver 
-would yield the desired feedback matrix $K$ and terminal cost weight $P$. However,
-to avoid numerical matrix inversion we impose the additional equality:
+Solving the linear matrix inequality~\eqref{app:eq:SDP:for:terminal:controller} with any semi-definite programming solver would yield the desired feedback matrix $K$ and terminal cost weight $P$. 
+%
+However, to avoid numerical matrix inversion we impose the additional equality:
 %
 \begin{equation}\label{app:eq:equality:constraint:for:SDP}\begin{split}
 	X = P^{-1}\\
@@ -109,6 +109,6 @@ to avoid numerical matrix inversion we impose the additional equality:
 	\end{array}\right) = 0.
 \end{split}\end{equation}
 %
-The equality in~\eqref{app:eq:equality:constraint:for:SDP} can be enforced my using
-$\text{trace}(P)$ as an objective for the SDP.
+The equality in~\eqref{app:eq:equality:constraint:for:SDP} can be enforced my using $\text{trace}(P)$ as an objective for the semi-definite program.
+%
 The feedback solution for the disturbance is given by $K_w = (\gamma^2-D^T P D)^{-1}D^T P (A+BK)$.

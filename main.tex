@@ -5,10 +5,20 @@
 %load any additional packages
 \usepackage{color}
 \usepackage[usenames]{xcolor} 
-\usepackage{amssymb,mathrsfs,amsthm,amsmath,lpic,cite,natbib,subfigure,setspace}
+\usepackage{amssymb,mathrsfs,amsthm,amsmath,lpic,subfigure,setspace,eufrak,varwidth}
+\usepackage[nonumberlist]{glossaries}
+\usepackage{cite}
+\usepackage[subfigure]{tocloft}
+
+% \usepackage{csquotes}% Recommended
+% \usepackage[style=numeric,natbib=true]{biblatex}
+% \addbibresource{MyLib.bib}
+
+
+\usepackage{todonotes}
 
 \usepackage{tikz}
-\usetikzlibrary{arrows,positioning,patterns,decorations.pathreplacing}
+\usetikzlibrary{arrows,positioning,patterns,decorations.pathreplacing,calc,shapes.geometric}
 
 \tikzset{
     at xy split/.style 2 args={
@@ -17,16 +27,19 @@
     a/.style={circle, draw=red},`'
     b/.style={rectangle, draw=blue}
 }
+\tikzset{myrad/.style 2 args={circle,inner sep=0pt,minimum width=(2*(sqrt(#1)*1 pt ) - \pgflinewidth,fill=#2,draw=#2,fill opacity=.5,opacity=.8}}
+\usepackage{tikz-3dplot}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.7}
 
-% \includeonly{chapter.State.dependent.disturbance}
+
+% \includeonly{conclusion}
 
 %input macros (i.e. write your own macros file called mymacros.tex 
 %and uncomment the next line)
 %\include{mymacros}
 
-
-% \includeonly{app.PDE}
-
+% \includeonly{MPC.QuadraticMPC,MPC.Parametric.Convexity,MPC.State.Input.Disturbances}
 
 \title{Robust Model Predictive Control}   %note \\[1ex] is a line break in the title
 
@@ -39,6 +52,8 @@
 
 %end the preamble and start the document
 % \usepackage{showkeys}
+
+\setcounter{tocdepth}{1}
 
 \colorlet{lcolor}{blue!40!black}
 \colorlet{ucolor}{magenta!40!black}
@@ -56,34 +71,82 @@
 \providecommand{\abs}[1]{\left|#1\right|}
 \providecommand{\span}{\text{span}}
 \providecommand{\conv}{\text{conv}}
+\providecommand{\ext}{\text{ext}}
+\providecommand{\vol}{\text{vol}}
+\providecommand{\epi}{\text{epi}}
+\providecommand{\homo}{\text{homo}}
 \providecommand{\rk}[1]{\text{rank}\left(#1\right)}
+\providecommand{\ball}{\mathcal B}
+\providecommand{\EE}{\mathbb E}
+\providecommand{\E}{\mathcal E}
+\providecommand{\exmp}{\mathscr E}
+\providecommand{\A}{\mathcal A}
+\providecommand{\C}{\mathcal C}
+\providecommand{\W}{\mathcal W}
+\providecommand{\V}{\mathcal V}
+\providecommand{\X}{\mathcal X}
+\providecommand{\T}{\mathcal T}
+\providecommand{\Y}{\mathcal Y}
+\providecommand{\Z}{\mathcal Z}
+\providecommand{\U}{\mathcal U}
+\providecommand{\D}{\mathscr D}
+\providecommand{\PP}{\mathbb P}
+\providecommand{\RR}{\mathbb R}
+\providecommand{\R}{\mathcal R}
+\providecommand{\tr}{\bigtriangleup}
+\providecommand{\KL}{\mathscr K\!\mathscr L}
+\providecommand{\bfa}[1]{\mathbf{#1}}
 
 \newcommand*{\Resize}[1]{\resizebox{\columnwidth}{!}{$#1$}}
 
+
+\newcommand{\listExampleName}{{\Huge{\textbf{List of Examples}}}}
+\newlistof{examplecount}{exp}{\listExampleName}
+
+\newcounter{mysection}
+% \newcounter{examplecount}
 \newcounter{thmcount}[chapter]
 \renewcommand{\thethmcount}{\thechapter.\arabic{thmcount}}
-\renewcommand{\theequation}{\thechapter.\arabic{equation}}
-\renewcommand{\thefigure}{\thechapter.\Roman{figure}}
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\renewcommand{\thefigure}{\thechapter.\arabic{figure}}
+\renewcommand{\theexamplecount}{\Roman{examplecount}}
+\renewcommand{\themysection}{\thesection.\arabic{mysection}}
 
+
+\newcommand{\mysplit}{\refstepcounter{mysection}{\fontshape{\itdefault}\fontseries{\bfdefault}\selectfont \themysection\/}}
+\newcommand{\resetcounters}{\setcounter{equation}{1}\setcounter{section}{1}\setcounter{mysection}{1}}
+\newcommand{\resetforsection}{ }
+
+\makeatletter
+\@addtoreset{equation}{section}
+\@addtoreset{mysection}{section}
+\def\mynobreakpar{\par\nobreak\@afterheading} 
+\def\mynobreakline{\par\nobreak\vspace{-\parskip}\@afterheading\noindent} 
+% \renewcommand{\@tocrmarg}{2em}
+\makeatother
 
 % \newcounter{subeq}[equation]
 % \renewcommand{\thesubeq}{\theequation.\roman{subeq}}
 % \newcommand{\subeqcount}[1]{\refstepcounter{subeq}\thesubeq\label{#1}}
 
-\makeatletter 
-\def\mynobreakpar{\par\nobreak\@afterheading} 
-\def\mynobreakline{\par\nobreak\vspace{-\parskip}\@afterheading\noindent} 
-\makeatother
 
-\newenvironment{thm}[1][]%
-{\refstepcounter{thmcount}\par\noindent\textbf{Lemma \thethmcount} \textsc{#1}\mynobreakpar%
-\begin{tabular}{|p{0.98\textwidth}} \it}%
-{\end{tabular}\par\noindent}
+\newtheorem{thm}[thmcount]{Lemma}
+\newtheorem{cor}[thmcount]{Corollary}
+% \newenvironment{thm}[1][]%
+% {\refstepcounter{thmcount}\par\noindent\textbf{Lemma \thethmcount} \textsc{#1}\mynobreakpar%
+% \begin{tabular}{|p{0.98\textwidth}} \it}%
+% {\end{tabular}\par\noindent}
 
-\newenvironment{korr}%
-{\refstepcounter{thmcount}\par\noindent\textbf{Corollary \thethmcount}\mynobreakpar%
-\begin{tabular}{|p{0.98\textwidth}} \it}%
-{\end{tabular}\par\noindent}
+\newenvironment{example}[1]
+{\refstepcounter{examplecount}\begin{quote}{\bf{Example \theexamplecount}}%
+\addcontentsline{exp}{examplecount}{\protect\numberline{\theexamplecount}#1}%
+\nopagebreak[4]\newline\noindent}%
+{\end{quote}\par\noindent}
+
+% \newenvironment{cor}%
+% {\refstepcounter{thmcount}\par\noindent\textbf{Corollary \thethmcount}\mynobreakpar%
+% \begin{tabular}{|p{0.98\textwidth}} \it}%
+% {\end{tabular}\par\noindent}
 
 \theoremstyle{remark}
 \newtheorem{rem}[thmcount]{Remark}
@@ -97,12 +160,14 @@
 {\refstepcounter{thmcount}\vspace{1em}\noindent\textbf{#1 \thethmcount\;}\textsc{#1}\mynobreakpar}%
 {\par\noindent}
 
+\theoremstyle{definition}
+\newtheorem{defi}[thmcount]{Definition}
 
-\newenvironment{defn}[1][]%
-{\refstepcounter{thmcount}\par\noindent\textbf{Definition \thethmcount} \textsc{#1}%
-\mynobreakpar%
-\begin{tabular}{|p{0.98\textwidth}} \it}%
-{\end{tabular}\vspace{1em}\noindent}
+% \newenvironment{defn}[1][]%
+% {\refstepcounter{thmcount}\par\noindent\textbf{Definition \thethmcount} \textsc{#1}%
+% \mynobreakpar%
+% \begin{tabular}{|p{0.98\textwidth}} \it}%
+% {\end{tabular}\vspace{1em}\noindent}
 
 
 \DeclareFontFamily{U}{mathx}{\hyphenchar\font45}
@@ -112,11 +177,21 @@
       }{}
 \DeclareSymbolFont{mathx}{U}{mathx}{m}{n}
 \DeclareFontSubstitution{U}{mathx}{m}{n}
-\DeclareMathSymbol{\temp}{\mathbin}{mathx}{'341}
-\newcommand{\bigominus}{\raisebox{10pt}{$\temp$}}
+\DeclareMathSymbol{\temporary}{\mathbin}{mathx}{'341}
+\newcommand{\bigominus}{\raisebox{10pt}{$\temporary$}}
+
+\newglossary[slg]{symbolslist}{syi}{syg}{Glossary of Notation}
+\makenoidxglossaries
+\loadglsentries{gloss}
+\input{glossary.tex}
+
+
+\renewcommand\cftexamplecountnumwidth{1.5cm}
 
 
 \begin{document}
+\bibliographystyle{plain}
+
 %this baselineskip gives sufficient line spacing for an examiner to easily
 %markup the thesis with comments
 \baselineskip=18pt plus1pt
@@ -127,32 +202,80 @@
 
 \maketitle    
 
+{
+\thispagestyle{empty}
+\null\vspace{39em}
+\begin{tabular}{ll}
+Date of Submission:& 24 January 2017\\
+& \\
+Supervisor:& Mark Cannon\\
+& \\
+Internal Examiner:& Paul Goulart\\
+& \\
+External Examiner:& Mircea Lazar\\
+& \\
+Date of Viva:& T.B.A.
+\end{tabular}
+}
+
 \begin{romanpages}          % start roman page numbering
+\begin{abstract}
+\input{abstract.tex}
+\end{abstract}
+
+
+
 \tableofcontents            % generate and include a table of contents
+\newpage
 \listoffigures              % generate and include a list of figures
+\newpage
+\listofexamplecount
+\printnoidxglossary[type=symbolslist,sort=def]
 \end{romanpages}            % end roman page numbering
 
-% \doublespace
+
+
+\doublespace
 \include{chapter.Introduction}
-\include{chapter.Concepts}
-\include{appendix.mpQP}
-\include{chapter.State.dependent.disturbance}
-\include{chapter.quadratic.min.max}
+\part{Concepts}
+\include{Concepts.RMPC}
+\include{Concepts.Polytopes}
+\part{Min-Max Programming in Model Predictive Control}
+\include{MPC.QuadraticMPC}
+\include{MPC.Parametric.Convexity}
+\include{MPC.State.Input.Disturbances}
+\renewcommand{\theequation}{\thechapter.\arabic{equation}}
+\renewcommand{\themysection}{\thechapter.\arabic{mysection}}
+\include{MPC.scaled.sets}
+\include{MPC.SMPC}
+\include{MPC.SMPC.outlook}
+\include{conclusion}
+
+% %
+% \include{chapter.Concepts}
+% \include{chapter.set.theory}
+% \include{appendix.mpQP}
+% \include{chapter.State.dependent.disturbance}
+% \include{chapter.quadratic.min.max}
 
 %now enable appendix numbering format and include any appendices
 \appendix
-\include{app.PDE}
-\include{appendix.degenerate.linear.systems}
+\renewcommand{\themysection}{\thechapter.\Roman{mysection}}
+% \include{app.PDE}
+\include{app.minkowski.pontryagin}
+% \include{appendix.degenerate.linear.systems}
+% \include{app.determining.PWA}
+\include{app.Hausdorff}
 \include{appendix.terminal.controller}
-\include{app.determining.PWA}
+\include{app.numerical.methods}
 
 
 %next line adds the Bibliography to the contents page
 \addcontentsline{toc}{chapter}{Bibliography}
 %uncomment next line to change bibliography name to references
 %\renewcommand{\bibname}{References}
-\bibliography{MyLib}        %use a bibtex bibliography file refs.bib
-\bibliographystyle{plainnat}  %use the plain bibliography style
-
+\bibliography{MyLib}         %use a bibtex bibliography file refs.bib
+  %use the plain bibliography style
+% \printbibliography
 
 \end{document}

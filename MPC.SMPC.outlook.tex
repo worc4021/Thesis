@@ -1,0 +1,308 @@
+%!TEX root = main.tex
+\resetcounters
+\chapter{An Outlook on Set-Based Methods in Stochastic Model Predictive Control}\label{ch:MPC:sec:SMPC2}
+
+\mysplit In the previous chapter we discussed three methods to optimise polytopes of a given structure such that their volume exceeds a given threshold.
+%
+For the probability space~$(\Omega,\mathscr F,\PP)$ the key is to approximate
+%
+\begin{equation}\label{eq:central:integral}
+	\PP\{\V\}=\int_{\V}f(\omega)d\omega
+\end{equation}
+%
+for a polytopic~$\V\subseteq\Omega$ and a measurable density function~$f:\Omega\rightarrow[0,\infty)$.
+%
+To simplify the problem slightly we assume that $f\in L^1(\Omega)$ and $\Omega\subset\RR^{q_\Y}$ is polytopic.
+%
+The idea is to approximate~\eqref{eq:central:integral} using a Riemann-like piecewise approximation on a grid over~$\Omega$.
+%
+For this let~$Z(\delta)$ be a homogeneous grid in~$\RR^{q_\Y}$ covering~$\Omega$ with side lengths~$\delta$, i.e.
+%
+\begin{equation}\begin{aligned}
+	Z(\delta) &= \bigcup_{\substack{Q_{\bfa{i}}(\delta)\cap\Omega\neq\emptyset\\\bfa{i}\in\mathbb Z^{q_\Y}}}Q_{\bfa{i}}(\delta)\\ 
+	Q_{\bfa{i}}(\delta) &= \text{span}\left(e_1\delta,\dots,e_{q_\Y}\delta\right)\oplus\{e_1\delta i_1+\dots+e_{q_\Y}\delta i_{q_\Y}\}
+\end{aligned}\end{equation}
+%
+where $e_i$ denotes the $i$-th Cartesian basis vector and~$\bfa{i}=(i_1,\dots,i_{q_\Y})$.
+%
+Furthermore, let~$f_{\bfa{i}}$ denote\footnote{Notice that the numerical evaluation of a $q_\Y$-dimensional integral on over a cube poses a comparably small challenge and in fact all $f_{\bfa{i}}$ can be determined simultaneously, as we will see in Example~\ref{example:non:uniform}.}
+%
+\begin{equation}
+	f_{\bfa{i}}(\delta) = \int_{Q_{\bfa{i}}(\delta)}f(\omega)d\omega,
+\end{equation}
+%
+and with this we define three sums approximating~\eqref{eq:central:integral}:
+%
+\begin{equation}\label{eq:approximations:to:integral}
+	\begin{aligned}
+	\overline P(\delta,\V) &= \sum_{\substack{Q_{\bfa{i}}(\delta)\cap\V\neq\emptyset}} f_{\bfa{i}}(\delta)\\
+	\underline P(\delta,\V) &= \sum_{Q_{\bfa{i}}(\delta)\subseteq\V} f_{\bfa{i}}(\delta)\\
+	\mathring P (\delta,\V) &= \sum_{c_{\bfa{i}}(\delta)\in\V}f_{\bfa{i}}(\delta),\quad c_{\bfa{i}}(\delta) = e_1\delta(i_1+\frac{1}{2})+\dots+e_{q_\Y}\delta (i_{q_\Y}+\frac{1}{2}).
+	\end{aligned}
+\end{equation}
+%
+For these sums we get the following trivial conditions
+%
+\begin{align}
+\underline P(\delta,\V)\leq\mathring P (\delta,\V)\leq\overline P(\delta,\V)\label{eq:trivial:sandwich}\\
+\underline P(\delta,\V)\leq\PP\{\V\}\leq\overline P(\delta,\V)\label{eq:lebesgue:sandwich}.
+\end{align}
+%
+for all~$\delta>0$.
+%
+The sums~$\underline P$ and $\overline P$ are purely for analytical purposes, namely to guarantee that 
+%
+\begin{equation}\label{eq:convergence:of:approx}
+	\mathring P(\delta,\V)\xrightarrow{\delta\rightarrow0}\PP\{\V\}
+\end{equation}
+%
+but this follows from~\eqref{eq:trivial:sandwich} and classic Lebesgue dominated convergence theorem applied to~$\underline P$ and~$\overline P$.
+%
+It is worth pointing out that there is no obvious way to determine the relation between~$\mathring P$ and~$\PP\{V\}$, however due to~\eqref{eq:convergence:of:approx} we know that we can approximate~$\PP\{\V\}$ arbitrarily closely by using~$\mathring{P}(\V)$.
+%
+\\[1em]
+%
+\mysplit In order to use finite sums to approximate the probability~\eqref{eq:central:integral} we need to be able to determine
+%
+\begin{align}
+	Q_{\bfa{i}}(\delta)\cap\V\neq\emptyset\label{eq:intersection:condition}\\
+	Q_{\bfa{i}}(\delta)\subseteq\V\label{eq:containment:condition}\\
+	c_{\bfa{i}}(\delta)\in\V\label{eq:centre:condition}
+\end{align}
+%
+at this point the computational workload of each condition has to be determined.
+%
+Assume there are~$n$ cubes~$Q_{\bfa{i}}(\delta)$ on the grid, then for each sum~$n$ conditions have to be evaluated:
+%
+Condition~\eqref{eq:intersection:condition} requires to intersect two polytopes and determine whether the intersection is empty, in order to check whether a polytope is empty we have to solve a linear program and hence~$n$ linear programs to determine which $f_{\bfa{i}}$ to sum up.
+%
+The containment of a the cube~\eqref{eq:containment:condition} is also checked with a linear program (see Corollary~\ref{cor:containment:of:polytope:in:polytope}), so again $n$ linear programs would have to be solved in order to determine~$\underline P$.
+%
+Lastly, checking whether a point is contained in a polytope in hyperplane representation is trivial and we will describe a computationally tractable method next.
+%
+\\[1em]
+%
+For this recall the Heaviside step function~$\sigma(t)$ which is defined as
+%
+\begin{equation}
+	\sigma(t) = \left\{\begin{array}{rl} 1& t\geq 0\\ 0& t<0\end{array}\right.
+\end{equation}
+%
+and let $\gamma(t)$ be its complement~$\gamma(t)=\sigma(-t)$, now assume the hyperplane description of~$\V$ is, as before, given by
+%
+\[
+	\V = \bigl\{v\in\RR^{q_\Y}:a_jv\leq b_j,j\in\{1,\dots,m\}\bigr\}.
+\]
+%
+A point $c_{\bfa{i}}\in\V$ if and only if~$a_jc_{\bfa{i}}-b_j\leq 0$ for all $j\in\{1,\dots,m\}$, or 
+%
+\begin{equation}
+	g_\bfa{i}:=\sum_{j=1}^{m}\gamma(a_j c_{\bfa{i}}-b_j)=m
+\end{equation}
+%
+or in a slightly relaxed version~$g_\bfa{i}-m+\epsilon\geq0$ for any~$\epsilon>0$.
+%
+With this we can rewrite $\mathring P(\delta,\V)$ as
+%
+\begin{equation}\label{eq:sum:using:sigma}
+	\mathring P(\delta,\V) = \sum_{\bfa{i}:g_\bfa{i}-m+\epsilon\geq0} f_\bfa{i} = \sum_{\bfa{i}}\sigma(g_\bfa{i}-m+\epsilon)f_\bfa{i}.
+\end{equation}
+%
+Using the Heaviside function this way allows us to evaluate the sum~$\mathring P$ without solving any integrals but rather summing up over grid centres~$\sigma(\sum_{j=1}^m\gamma(a_jc_\bfa{i}-b_j)-m+\epsilon)$.
+%
+In an optimisation context, using the Heaviside function to determine whether the centre~$c_\bfa{i}\in\V$ would make a condition such as~$\mathring P(\delta,\V)\geq p$ discontinuous in~$a_j,b_j$ and we will discuss a possible method to avoid such difficulties.
+%
+\\[1em]
+%
+\mysplit There are different ways of approximating the Heaviside function~$\sigma(t)$ with differentiable functions, e.g. $\frac{1}{2}+\frac{\arctan(\alpha t)}{\pi}\xrightarrow{\alpha\rightarrow\infty}\sigma(t)$ point-wise for all~$t\in\RR\setminus\{0\}$ and is continuously differentiable.
+%
+Although the arctangent is a viable candidate we will not use it here, but instead we use the Sigmoid function
+%
+\begin{equation}
+	S(t) = \frac{1}{1+e^{-t}},
+\end{equation}
+%
+this is due to its derivative property~$\frac{d}{dt}S(t) = S(t)(1-S(t))$ which can save computation costs for large numbers of grid cubes.
+%
+Just like the arctangent the Sigmoid function~$S(\alpha t)\xrightarrow{\alpha\rightarrow\infty}\sigma(t)$ point-wise for all $t\in\RR\setminus\{0\}$ and $S(0)=\frac{1}{2}$.
+%
+It is important to realise that for any~$\alpha>0$ the offset $\epsilon>0$ shifts the function to the left, i.e. such that $S(\alpha(t+\epsilon))>\frac{1}{2}$ for $t>0$.
+%
+We have to derive some conditions on~$\alpha$ and $\epsilon$ for us to be able to use
+%
+\begin{equation}\begin{aligned}
+	\mathring P(\delta,\V) &= \sum_{\bfa{i}}S(\alpha(g_\bfa{i}-m+\epsilon))f_\bfa{i}\\
+	g_\bfa{i} &= \sum_{j=1}^m S(-\alpha(a_jc_\bfa{i}-b_j+\epsilon)).
+\end{aligned}\end{equation}
+%
+For this we define the length~$\Delta(\alpha,\rho)$ as
+%
+\begin{equation}
+	\Delta(\alpha,\rho) = (S(\alpha \cdot))^{-1}(1-\rho)-(S(\alpha \cdot))^{-1}(\rho)
+\end{equation}
+%
+that is the length of the interval the Sigmoid function takes to climb from~$S(\alpha t_1)=\rho$ to~$S(\alpha t_2)=1-\rho$, see Figure~\ref{fig:sigmoid:function}.
+%
+Using simple arithmetic we find that $\Delta(\alpha,\rho)=\frac{2}{\alpha}(\log(1-\rho)-\log(\rho))$.
+%
+In order to choose~$\epsilon$ and~$\alpha$ so as to suppress ambiguities between~$c_\bfa{i}$ and its neighbours~$c_\bfa{j}$, a sensible choice would be to choose~$\alpha$ such that $\Delta(\alpha,\rho)<\delta$, i.e. smaller than the minimal distance between two centre points~$c_\bfa{i}$ and~$c_\bfa{j}$.
+%
+A sensible choice for~$\epsilon$ is given by~$\epsilon=\frac{\Delta(\alpha,\rho)}{2}$ which produces~$S(\alpha(0+\epsilon))=1-\rho$.
+%
+With this we get
+%
+\begin{equation}\begin{aligned}
+	\mathring P(\delta,\V) &= \sum_{\bfa{i}:g_\bfa{i}\geq(1-\rho)m}f_\bfa{i}\\
+	g_\bfa{i} &=\sum_{j=1}^m S(\alpha(b_j-a_jc_\bfa{i}-\epsilon))
+\end{aligned}\end{equation}
+%
+and we can see that the value~$f_\bfa{i}$ contributes to~$\mathring P$ if $g_\bfa{i}\geq(1-\rho)m$, where the $c_\bfa{i}$ with a corresponding quantity~$g_\bfa{i}$ approaching the value~$(1-\rho)m$ indicates that~$c_\bfa{i}$ is close to $m$ hyperplanes, i.e. it is close to a vertex of~$\V$.
+%
+For this sum the choice of~$\alpha$ and~$\epsilon$ is less important and we can use the same values as before:
+%
+\begin{equation}\label{eq:upper:and:lower:bound:as:if:we:needed:it}
+	\frac{1}{1-\rho}\sum_{\bfa{i}}S(\alpha(g_\bfa{i}-(1-\rho)m+\epsilon))\geq \mathring P(\delta,\V) \geq \sum_{\bfa{i}}S(\alpha(g_\bfa{i}-(1-\rho)m+\epsilon)).
+\end{equation}
+%
+The inequality is necessary in these bounds because $S(\alpha(t+\epsilon))<1$, however, since~$\alpha$ and $\rho$ ensure that the Sigmoid function is steep, in practical computations we can ignore the gap introduced by using Sigmoid functions.
+
+\begin{figure}\centering
+\begin{tikzpicture}[yscale=3]
+\draw[-latex'] (-3,0) -- (3.2,0) node[below] {$t$};
+\foreach \x in {-2,-1,...,2} \draw (\x,.005) -- (\x,-.005) node[below] {$\x$};
+\draw[-latex'] (0,0) -- (0,1.1) node[right] {$S$};
+\foreach \y in {0.5,1} \draw (.02,\y) -- (-.02,\y) node[left] {$\y$};
+
+\draw[red,thick] (-3,0) -- (0,0);
+\draw[red,thick] (0,1) -- (3,1);
+
+\draw (0,0) plot[domain=-3:3,samples=100] ({\x},{1/(1+exp(-\x))});
+\draw (0,0) plot[domain=-3:3,samples=100] ({\x},{1/(1+exp(-2*\x))});
+\draw (0,0) plot[domain=-3:3,samples=100] ({\x},{1/(1+exp(-3*\x))});
+\draw[thin] (0.732408,-.2) -- (0.732408,.9);
+\draw[latex'-latex'] (-0.732408,.1) -- (0.732408,.1);
+\draw[thin] (-0.732408,-.2) -- (-0.732408,.1);
+\draw [decorate,decoration={brace,amplitude=10pt},xshift=0pt,yshift=0pt] (0.732408,-.2) -- (-0.732408,-.2) node [midway,yshift=-.5cm] {$\Delta(3,\frac{9}{10})$};
+\end{tikzpicture}
+\caption[The Sigmoid function]{The Sigmoid function~$S(\alpha t)$ for $\alpha=1,2,3$ approximating the Heaviside function~$\sigma(t)$ in \textcolor{red}{red}.}
+\label{fig:sigmoid:function}
+\end{figure}
+%
+\noindent As we require the halfspace description of the set~$\V$ to evaluate~\eqref{eq:upper:and:lower:bound:as:if:we:needed:it} we only consider the direct method presented in Section~\ref{ch:MPC:sec:SMPC}.
+%
+We will illustrate the procedure in the following example.
+%
+%
+%
+%
+\begin{example}{Using a direct method to optimise the volume of a polytope while constraining the non-uniform probability measure of the optimiser}\label{example:non:uniform}
+Consider the problem of maximising~$\vol(\hat\X)$ where $\hat\X=\Y\ominus\V$ is a the Pontryagin difference between~$\Y=\{y\in\RR^2:-5\leq y_i\leq 4\}$ and the polytope~$\V$ which we enforce to be combinatorially equivalent to~$\V_0$ with
+%
+$$
+\begin{aligned}
+\V_0 &= \conv\left\{\begin{pmatrix}2\\0\end{pmatrix},\begin{pmatrix}-2\\0\end{pmatrix},\begin{pmatrix}0\\2\end{pmatrix},\begin{pmatrix}0\\-2\end{pmatrix},\begin{pmatrix}\frac{7}{5}\\\frac{7}{5}\end{pmatrix},\begin{pmatrix}-\frac{7}{5}\\-\frac{7}{5}\end{pmatrix}\right\}\\
+ &= \left\{v:\begin{pmatrix}\frac{1}{2}&\frac{3}{14}\\ -\frac{1}{2}&-\frac{3}{14}\\ \frac{3}{14}&\frac{1}{2}\\ -\frac{3}{14}&-\frac{1}{2}\\ -\frac{1}{2}&\frac{1}{2} \\ \frac{1}{2}&-\frac{1}{2}\end{pmatrix}v\leq\begin{pmatrix}1\\1\\1\\1\\1\\1\end{pmatrix}\right\}.
+\end{aligned}
+$$
+%
+which we previously used in Example~\ref{example:direct:polytope:optimisation}.
+%
+The density function we consider is supported on the box~$\Omega = \{\omega\in\RR^2:-2\leq\omega_i\leq2\}$ and is given by
+%
+\[
+	f(\omega) = \frac{1}{c}e^{-\omega_1^2-2\omega_2^2}
+\]
+%
+where~$c$ denotes the constant~$c=\frac{\pi  \text{erf}(2) \text{erf}\left(2 \sqrt{2}\right)}{\sqrt{2}}$ with $\text{erf}(z) = \frac{2}{\pi}\int_0^z e^{-x^2}dx$, see Figure~\ref{fig:example:non:uniform:distribution}.
+%
+As the side length~$\delta$ we choose~$\delta=0.05$, i.e. there are $6400$ cubes~$Q_\bfa{i}$.
+%
+First we have to compute the values~$f_\bfa{i}$ for each~$Q_\bfa{i}$, notice that for a given cube~$Q_\bfa{i}$ we have
+%
+\[
+\begin{aligned}
+\int_{Q_\bfa{i}}f(\omega)d\omega&=\int_{\delta i_1}^{\delta(i_1+1)}\int_{\delta i_2}^{\delta(i_2+1)}f(\omega_1,\omega_2)d\omega_2d\omega_1\\
+&=\int_0^\delta\int_0^\delta f(\omega_1+\delta i_1,\omega_2+\delta i_2)d\omega_2d\omega_1,
+\end{aligned}
+\]
+%
+this apparently trivial identity allows us to compute the values~$f_\bfa{i}$ efficiently.
+%
+Define the vector valued function
+%
+\[
+F_2(\omega_1) = \int_0^\delta\begin{pmatrix}f(\omega_1-2,\omega_2-2)\\
+f(\omega_1-2,\omega_2-1.95)\\
+\vdots\\
+f(\omega_1+1.95,\omega_2+1.9)\\
+f(\omega_1+1.95,\omega_2+1.95)\end{pmatrix}d\omega_2
+\]
+%
+now the values of~$f_\bfa{i}$ follow by integrating~$F_2$:
+%
+\[
+	\begin{pmatrix}
+	f_{(-40,-40)}\\
+	f_{(-40,-39)}\\
+	\vdots\\
+	f_{(39,39)}
+	\end{pmatrix} = \int_0^\delta F_2(\omega_1)d\omega_1.
+\]
+%
+This method can easily be generalised for any dimension and is faster than evaluating the integral on every individual cube on the grid.
+%
+We choose~$\rho=\frac{1}{10}$ and we therefore get~$\alpha>40(\log(9))\approx87.889$ and we choose~$\alpha=1000$, this leads to $\epsilon=\frac{\Delta}{2}=\frac{\log(9)}{1000}\approx0.002$.
+%
+With this we can use the direct method described in Section~\ref{ch:MPC:sec:SMPC} to maximise the volume of~$\hat\X$, the remaining procedure of the optimisation is identical with the previously described volume constrained optimisation in Section~\ref{ch:MPC:sec:SMPC}.
+%
+We illustrate the solution of the maximisation of $\text{vol}(\hat\X)$ subject to~$\V\cong\V_0$ and $\PP\{\V\}\geq0.3$ in Figure~\ref{fig:example:non:uniform:result}.
+%
+\\[1em]
+%
+In order to compare the proposed method with a scenario-based alternative, similar to Example~\ref{example:MRPI:with:guarantees} we use~$N=26$ samples to ensure the probabilistic constraint satisfaction with a confidence of~$\beta=\frac{1}{1000}$ (the number of necessary samples is independent of the probability distribution).
+%
+Here the combinatorial structure we use~$L(\V_0)$ is not a cube, i.e. there is no unique method to determine 'the best set~$\tilde\V$' such that all~$\omega_j\in\tilde\V$ while having~$\tilde\V\cong\V_0$.
+%
+For fairness of the comparison we would have to minimise the probability contained within, i.e.~$\min_{\tilde\V\cong\V_0}\PP\{\tilde\V\}$, however this would then rely on the proposed method to determine the probability.
+%
+So instead we use the convex hull of the~$26$ samples and omit the optimisation.
+%
+For the~$N=26$ samples shown in Figure~\ref{fig:example:non:uniform:distribution} the convex hull~$\tilde\V=\conv_{i=1}^{26}\{\omega_i\}$ has the approximate probability measure~$\mathring{P}(0.05,\tilde\V)=0.8061$.
+
+\begin{figure}\centering
+\begin{tikzpicture}[scale=3.4]
+\draw[-latex'] (-1.5,-.8) -- (2.1,-.8) node[below] {$v_1$};
+\foreach \x in {-1,-0.5,0,0.5,1,1.5} \draw (\x,-.79) -- (\x,-.81) node[below] {$\x$};
+\draw[-latex'] (-1.5,-.8) -- (-1.5,.9) node[left] {$v_2$};
+\foreach \x in {-0.5,0,0.5} \draw (-1.49,\x) -- (-1.51,\x) node[left] {$\x$};
+\draw[very thin, gray] (-1.5,-.8) grid[step=.05] (2,.8);
+\draw (  0.2344,  -0.3363) -- (  0.1520,   0.2536) -- (  0.0869,   0.2831) -- ( -0.2376,   0.3641) -- ( -0.1557,  -0.2328) -- ( -0.0927,  -0.2598) -- (  0.2344,  -0.3363) -- cycle;
+\foreach \x/\y in { -0.2250/  0.2750,  -0.2250/  0.3250,  -0.1750/ -0.0750,  -0.1750/ -0.0250,  -0.1750/  0.0250,  -0.1750/  0.0750,  -0.1750/  0.1250,  -0.1750/  0.1750,  -0.1750/  0.2250,  -0.1750/  0.2750,  -0.1750/  0.3250,  -0.1250/ -0.2250,  -0.1250/ -0.1750,  -0.1250/ -0.1250,  -0.1250/ -0.0750,  -0.1250/ -0.0250,  -0.1250/  0.0250,  -0.1250/  0.0750,  -0.1250/  0.1250,  -0.1250/  0.1750,  -0.1250/  0.2250,  -0.1250/  0.2750,  -0.1250/  0.3250,  -0.0750/ -0.2250,  -0.0750/ -0.1750,  -0.0750/ -0.1250,  -0.0750/ -0.0750,  -0.0750/ -0.0250,  -0.0750/  0.0250,  -0.0750/  0.0750,  -0.0750/  0.1250,  -0.0750/  0.1750,  -0.0750/  0.2250,  -0.0750/  0.2750,  -0.0750/  0.3250,  -0.0250/ -0.2750,  -0.0250/ -0.2250,  -0.0250/ -0.1750,  -0.0250/ -0.1250,  -0.0250/ -0.0750,  -0.0250/ -0.0250,  -0.0250/  0.0250,  -0.0250/  0.0750,  -0.0250/  0.1250,  -0.0250/  0.1750,  -0.0250/  0.2250,  -0.0250/  0.2750,   0.0250/ -0.2750,   0.0250/ -0.2250,   0.0250/ -0.1750,   0.0250/ -0.1250,   0.0250/ -0.0750,   0.0250/ -0.0250,   0.0250/  0.0250,   0.0250/  0.0750,   0.0250/  0.1250,   0.0250/  0.1750,   0.0250/  0.2250,   0.0250/  0.2750,   0.0750/ -0.2750,   0.0750/ -0.2250,   0.0750/ -0.1750,   0.0750/ -0.1250,   0.0750/ -0.0750,   0.0750/ -0.0250,   0.0750/  0.0250,   0.0750/  0.0750,   0.0750/  0.1250,   0.0750/  0.1750,   0.0750/  0.2250,   0.0750/  0.2750,   0.1250/ -0.2750,   0.1250/ -0.2250,   0.1250/ -0.1750,   0.1250/ -0.1250,   0.1250/ -0.0750,   0.1250/ -0.0250,   0.1250/  0.0250,   0.1250/  0.0750,   0.1250/  0.1250,   0.1250/  0.1750,   0.1250/  0.2250,   0.1750/ -0.3250,   0.1750/ -0.2750,   0.1750/ -0.2250,   0.1750/ -0.1750,   0.1750/ -0.1250,   0.1750/ -0.0750,   0.1750/ -0.0250,   0.1750/  0.0250,   0.1750/  0.0750,   0.2250/ -0.3250,   0.2250/ -0.2750} \fill[blue,opacity=.5] (\x-.025,\y-.025) rectangle (\x+.025,\y+.025);
+
+\foreach \x/\y in { 0.80664/ 0.46653, -0.36815/-0.29486,  0.97678/-0.15217,  0.13819/ 0.57941,  0.02332/-0.47758, -0.19311/ 0.57889, -0.49765/ 0.57058, -0.11181/-0.48423, -0.63123/ 0.45473,  0.23500/ 0.13538, -1.04817/ 0.59720, -0.09274/ 0.20803,  0.94927/-0.58193,  0.30304/-0.66466, -1.35971/ 0.64501,  0.05414/ 0.21556, -0.71076/ 0.17700, -0.55756/ 0.24191, -0.61073/ 0.18745,  1.92499/ 0.41608, -0.33167/-0.11753, -1.07282/ 0.05467,  0.74794/ 0.57842, -0.44940/ 0.18379,  0.21665/ 0.02804, -0.49885/-0.36203} \fill[red] (\x,\y) circle (.05ex);
+
+\draw[red] (  1.9250,   0.4161) -- (  0.7479,   0.5784) -- ( -1.3597,   0.6450) -- ( -1.0728,   0.0547) -- ( -0.4988,  -0.3620) -- (  0.3030,  -0.6647) -- (  0.9493,  -0.5819) -- (  1.9250,   0.4161) -- cycle;
+\end{tikzpicture}
+\caption[Comparison between measure optimised set with fixed combinatorial structure and scenario-based set]{The solution~$\V$ to the measure optimisation considered in Example~\ref{example:non:uniform} outlined in black, highlighted in \textcolor{blue}{blue} the contributing cubes~$Q_\bfa{i}$.
+%
+For the comparison~$N=26$ samples~$\{\omega_1,\dots,\omega_{26}\}$ shown in \textcolor{red}{red} and their convex hull~$\tilde\V=\conv\{\omega_1,\dots,\omega_{26}\}$ outlined in \textcolor{red}{red}.
+%
+The approximate probability measure attained for this set~$\mathring{P}(0.05,\tilde\V)=0.8061$, in comparison to~$\mathring{P}(0.05,\V)=0.3111$.}
+\label{fig:example:non:uniform:result}
+\end{figure}
+%
+\begin{figure}\centering
+\begin{tikzpicture}[scale=1.4]
+    \begin{axis}[view={-60}{20}]
+      % \addplot3[surf,mesh/ordering=y varies] file {myValues.txt};
+      \addplot3[surf,domain=-2:2,samples=80]{exp(-x^2-2*y^2)/2.2};
+    \end{axis}
+  \end{tikzpicture}
+\caption[Non-uniform probability density function]{The density function~$f(\omega)$ for Example~\ref{example:non:uniform} where the mesh indicates the underlying grid.}
+\label{fig:example:non:uniform:distribution}
+\end{figure}
+\end{example}
+%
+%
+%
+%

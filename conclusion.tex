@@ -1,0 +1,141 @@
+%!TEX root = main.tex
+
+\chapter{Conclusion}
+%
+%
+%
+%
+\section{A brief summary}
+%
+
+In this thesis we presented methods which allow us to apply a min-max robust model predictive control formulation to constrained linear systems subject to additive uncertainty.
+%
+The first class of uncertainty was subject to fixed linear constraints, i.e. the uncertainty was an element of a polytopic set, the methods used for this case are well known and have been around for a while.
+%
+We presented these methods in a slightly different way to the existing literature which allowed us to use them as a starting ground to develop generalisations.
+%
+For linearly constrained quadratic min-max formulations we furthermore presented two proofs that the suggested method does in fact yield a stable closed-loop performance.
+%
+The first statement was on a well known~$H_\infty$-bound which gives us some insight on the design parameter~$\gamma$ and followed directly from the min-max formulation and the terminal conditions.
+%
+The second statement is a statement on input-to-state stability of the closed-loop system with respect to the 'disturbance input'.
+%
+This result is based on previous publications on input-to-state stability of robust model predictive control problems, yet does extend the existing literature by considering an objective term depending on the uncertainty which was not covered in existing statements.
+%
+\\[1em]
+%
+The main contributions presented in this work involve methods of computing, manipulating and optimising variable polytopic sets in several contexts within robust model predictive control.
+%
+Hence the second class of uncertainty we dealt with was subject to linear constraints which depended on the state and or the input of the system.
+%
+To cope with such set-valued maps of uncertainty we introduced the property of parametric convexity and discussed its relevant properties, although the abstract property of parametric convexity has been introduced in the literature previously the framework we present is new.
+%
+We showed that by constraining the uncertainty to parametrically convex piecewise polyhedral set-valued maps we can formulate convex polytopic state and input constraints at each stage such that a min-max program guarantees constraint satisfaction of the closed loop system.
+%
+Furthermore, using similar methods we analysed the behaviour of maximal robust positive invariant sets when a fixed set of uncertainties is scaled up.
+%
+We showed that the maximal robust positive invariant set exists up to a threshold and is polytopic, however once the threshold is passed the set vanishes abruptly.
+%
+The methods we develop to obtain these sets exploited some basic properties of polyhedra.
+%
+\\[1em]
+%
+By exploiting similar properties we were able to transfer robust model predictive control concepts to a stochastic case.
+%
+Therefore third class of uncertain systems we considered was subject to probabilistic constraints on an auxiliary output variable.
+%
+The aim was to replace the probabilistic constraint by a robust one which would guarantee that the probabilistic constraint would be satisfied.
+%
+To keep the conservatism, introduced by fixing one particular set, as small as possible we proposed three methods of optimising over polytopes of a given combinatorial structure.
+%
+All three methods led to non-linear non-convex optimisation programs and therefore their result does not necessarily minimise the conservatism in an absolute sense.
+%
+We first considered only uniformly distributed uncertainty for which probability measure directly translates to a normalised volume, for this we discussed a possible way of using the scheme to determine a maximal invariant set with guaranteed probabilistic constraints.
+%
+A numerical comparison showed significant improvements over sample based methods which fail to give hard guarantees.
+%
+The last chapter extended the method slightly by providing a method to approximate probability measures, however due to their nature of relying on the vertex representation of a polytope the projective transformation approach as well as the parallelotope approach do not translate as easily as the direct method.
+%
+%
+%
+%
+%
+%
+\section{Contributions in this thesis}
+%
+%
+Many of the topics discussed in this work are well established and understood and have been presented previously presented elsewhere, therefore we summarise the key contributions which are more than slight extensions to the existing literature.
+%
+The first major contribution we made was the analysis of parametrically convex set-valued maps and in particular piecewise polyhedral ones.
+%
+Although there are numerous analytical methods on set-valued maps it seems that a computational approach has not been considered before, similarly there are a few computational and analytical statements on fixed polytopes and polyhedra, yet there seems to have been a gap between the two.
+%
+To the author's best knowledge there are no previous results on computational methods for parametrised polytopes, i.e. polyhedral set-valued maps.
+%
+Using parametrically convex piecewise polyhedral set-valued maps, the range of systems for which a min-max type robust model predictive control problem can be solved explicitly has been expanded significantly. 
+%
+In Examples~\ref{example:multiplicative:uncertainty} and~\ref{example:most:complex:pontryagin:difference:ever} we suggest its use to handle multiplicative uncertainty and linearisation errors respectively, similar methods could be developed to approximate other system classes.
+%
+\\[1em]
+%
+The second major contribution is the optimisation over polytopes suggested in Chapter~\ref{ch:MPC:sec:SMPC}, using fixed combinatorial structures entire polytopes can be used as decision variables.
+%
+Despite the fact that the involved optimisation programs are non-convex and non-linear in general we were able to produce significant improvements over existing methods in numerical examples.
+%
+Using an approximation like the one presented in Chapter~\ref{ch:MPC:sec:SMPC2} the methods can be used for general but known probability distributions.
+%
+Both these innovations lead to formulations that are linearly constrained quadratic min-max programs and can be solved using the well established methods described in Chapter~\ref{ch:MPC:sec:quadratic:MPC}, with mild extensions.
+%
+\\[1em]
+%
+Various other, more minor innovations were presented in this thesis which are worth pointing out:
+%
+\begin{itemize}
+\item By using ellipsoids to derive the finite determinability of the maximal robust positive invariant set we were able to derive (scaling-dependent) upper bounds on the number of iterations necessary, however rather loose bounds.
+%
+\item Although this is a rather negative result, the link between the line search and the simplex algorithm, which implies that we will most likely struggle to find a general sub-binomial upper bound on the number of active set changes for min-max programs with a given number of inequality constraints, was not previously discussed in the literature.
+%
+\item The input-to-state stability for robust model predictive control problems was previously shown, however the formulations dealt with in the literature did not include a $-\gamma^2 w^Tw$ term.
+%
+This makes the lower bound depending only on the initial state, slightly more difficult, we used the assumed convexity to argue that it is quadratically lower bounded.
+%
+\item In the discussion of the scaled uncertainty sets, we use a combination of the absolute Hausdorff distance (rather than a relative Minkowski functional type distance) in conjunction with ellipsoidal bounds on the involved polytopes which yields an alternative method of determining the critical scaling factor~$\alpha^\ast$.
+%
+\item As a direct consequence of the ellipsoidal treatment of the scaled disturbance sets we are able to derive a scaling dependent upper bound on the number of iterations required to obtain the maximal robust positive invariant set, implying that as $\alpha$ approaches~$\alpha^\ast$ the number of iterations required increases.
+\end{itemize}
+%
+There are several statements we presented here which were new but are too trivial to be pointed out.
+%
+%
+%
+%
+%
+\section{Directions for Further Work}
+%
+%
+%
+The framework we presented here for state- and input-dependent disturbances is fairly mature, however a phenomenon has yet to be addressed:
+%
+For the presented work to apply the system dynamics have to be 'dominantly linear', i.e. linear analysis tools have to be applicable.
+%
+Although this might be obvious to guarantee when the piecewise polyhedral set-valued map approximates non-linearities close to a linearisation point, it is far less obvious in the general case.
+%
+Similar to the analysis presented in Chapter~\ref{ch:MPC:sec:scaled:sets} Example~\ref{example:non:contracting:example:of:MRPI} implies that a linearly scaled parametrically convex piecewise polyhedral set-valued map~$\W^\alpha(x)=\alpha\W(x)$ induces non-trivial behaviour for increasing values of~$\alpha\geq0$.
+%
+Unlike in the fixed disturbance case presented in Chapter~\ref{ch:MPC:sec:scaled:sets}, increasing a scaling factor can lead to existing but not finitely determined maximal robust positive invariant sets.
+%
+Furthermore, a method to determine whether the auxiliary set sequence~$\R_k$ is of 'case 1,2 or 3' has to be determined, in order to allow a-priori statements on the finite determinability of the maximal robust positive invariant set.
+%
+\\[1em]
+%
+Another possible direction for further research is for the polytope optimisation methods we proposed in Chapter~\ref{ch:MPC:sec:SMPC}.
+%
+Can any of the proposed methods be made convex by any means? 
+%
+The main non-convexity all proposed methods share was the use of the determinant.
+%
+The determinant (which depends non-linearly on the vertices of the simplexes) and the trace of the same matrix are related, however the trace depends linearly on the vertices, so can bounds on this property be used to convexify any of the optimisation problems?
+%
+Furthermore, since all three methods constrain the combinatorial structure of the resulting polytope to a fixed predetermined one, it is worth investigating in more detail how the methods are related to each other.
+%
+\par Naturally, using robust min-max methods on stochastic model predictive control problems has to be tried, it could well be that the objective of maximising some feasible set is not the best way to obtain maximal performance while guaranteeing probabilistic constraint satisfaction, if so what is.

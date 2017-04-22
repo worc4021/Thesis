@@ -25,7 +25,7 @@ In this section we discuss \emph{parametric convexity}, an attribute of sets val
 (so called point-to-set maps, see e.g.~\cite{Hogan:1973}) we exploit later on to prove 
 convexity of a generalised Pontryagin difference.
 %
-\begin{defn}[Parametric Convexity]\label{def:parametric:convexity}
+\begin{defi}[Parametric Convexity]\label{def:parametric:convexity}
 	Let $X\subseteq\mathbb R^d, Y\subseteq\mathbb R^n$, let $\mathcal P(Y)$ denote the power set of $Y$, 
 	and $\mathcal W:X\rightarrow \mathcal P(Y)$, $X\ni p\mapsto \mathcal W(p)\subset Y$ be a 
 	continuous point-to-set map. The map $\mathcal W$ is called \emph{parametrically convex} if it satisfies
@@ -33,7 +33,7 @@ convexity of a generalised Pontryagin difference.
 	\mathcal W(\lambda p_1 + (1-\lambda)p_2)\subseteq\lambda \mathcal W(p_1) \oplus (1-\lambda) \mathcal W(p_2)
 	\end{equation}
 	for all $p_1,p_2\in X$ and $\lambda\in[0,1]$.
-\end{defn}
+\end{defi}
 %
 For sets to be parametrically convex the dimensions~$d$ and~$n$ do not need to be the same, see e.g.
 Figure~\ref{fig:parametrically:convex:set} for a piecewise affinely scaled square where~$d=1$ and $n=2$.
@@ -54,7 +54,7 @@ $p\in X$, we will however only treat maps~$\mathcal W$ for which $\mathcal W(p)$
 In order to compute maximal positive invariant sets for the considered system we need to generalise
 the Pontryagin set difference (see e.g.~\cite{blanchini:2007}) to accommodate parametrically convex sets.
 %
-\begin{defn}[Parametric Pontryagin Difference]\label{def:parametric:pontryagin:difference}
+\begin{defi}[Parametric Pontryagin Difference]\label{def:parametric:pontryagin:difference}
 	Let $S\subseteq X$ and let $\mathcal W:X\to\mathcal P(X)$ be a continuous point-to-set map such that
 	$\mathcal W(p)$ is convex for all $p\in X$, then the \emph{parametric Pontryagin difference} 
 	$S\ominus \mathcal W(S)$ is 
@@ -62,7 +62,7 @@ the Pontryagin set difference (see e.g.~\cite{blanchini:2007}) to accommodate pa
 		S\ominus \mathcal W(S) = \left\{x\in X: \{x\} \oplus \mathcal W(x)\subseteq S\right\},
 	\end{equation}
 	where $\mathcal W(S)$ denotes the image of $S$ under the map $\mathcal W$. 
-\end{defn}
+\end{defi}
 %
 At first it may seem sensible to generalise the Pontryagin difference even further and define
 %
@@ -294,13 +294,13 @@ of the graph by convexity of $\mathcal W(p_i)$.
 \caption[Example p-convex set]{Illustration of the concepts for a scalar parametrically convex map in one-dimension.}
 \end{figure}
 %
-\begin{korr}
+\begin{cor}
 %
 Let $\mathcal W(p):=\{x\in\mathbb R^n: r(p,x)\leq0\}$ define a set-valued map with a continuous function 
 $r: \mathbb R^d \times\mathbb R^n \rightarrow \mathbb R,(p,x)\mapsto r(p,x)$, then $\mathcal W$ is parametrically
 convex iff the function $r$ is concave in $p\in\mathbb R^d$ and convex in $x\in\mathbb R^n$.
 %
-\end{korr}
+\end{cor}
 %
 \begin{proof}
 The convexity in $x\in\mathbb R^n$ is required to satisfy the requirement that $\mathcal W(p)$ is convex
@@ -318,10 +318,10 @@ This implies that $r(\cdot,x)$ can not be non-concave in any non-trivial set $\O
 be parametrically convex.
 \end{proof}
 %
-\begin{korr}\label{thm:polytopic:set:not:p:convex}
+\begin{cor}\label{thm:polytopic:set:not:p:convex}
 The polytopic parametric set valued map $\mathcal W(p):=\{x: a_i x + b_i p\leq c_i \forall i\leq m\}$ is not parametrically convex for 
 any non-trivial matrix $B$.
-\end{korr}
+\end{cor}
 %
 \begin{proof}
 The graph $\mathscr G(\mathcal W)$ is given by
@@ -335,7 +335,7 @@ and hence is a convex set and violates Theorem~\ref{thm:p:convexity:graph}.
 %
 We now can prove the following central corollary.
 %
-\begin{korr}\label{thm:p:convexity:PWA:set:constant:num:verts}
+\begin{cor}\label{thm:p:convexity:PWA:set:constant:num:verts}
 The piecewise affine polytopic parametric set valued map 
 %
 \begin{equation}\label{eq:definition:PWA:polytopic:set:general}
@@ -343,7 +343,7 @@ The piecewise affine polytopic parametric set valued map
 \end{equation}
 %
 is parametrically convex iff the number of vertices $v_i(p)$ and rays $u_i(p)$ is constant.
-\end{korr}
+\end{cor}
 %
 \begin{proof}
 For clarity this proof is divided in 3 parts:
@@ -505,6 +505,9 @@ $p\in[-1,\infty),\epsilon=10^{-1}$.}
 See figure~\ref{fig:degenerate:PWA:set:and:comparison} for an illustration.
 \end{quote}
 %
+The number of vertices and rays can be large for complex sets~$\mathcal W(p)$, therefore it can be 
+useful to analyse the irreducibility of the given halfspace description. This alternative is presented in 
+appendix~\ref{app:irreducibility:PWA:sets}.
 %
 %
 %
@@ -610,11 +613,11 @@ computation of $\mathcal X^\infty$.
 We assume system dependent state constraints $\mathscr X\subseteq\mathbb R^n$ are given,
 we furthermore assume that $\mathscr X$ is polyhedral and contained in a band.
 %
-\begin{defn}[Band Property]
+\begin{defi}[Band Property]
 We say that a set $X\subseteq\mathbb R^d$ possesses the band property if there exists a 
 matrix~$\Gamma\in\mathbb R^{p\times d}$ such that $X\subseteq B = \{x:\Gamma x\leq {\bf{1}}\wedge
 -\Gamma x\leq{\bf{1}}\}.$
-\end{defn}
+\end{defi}
 %
 That is, we assume that $\mathscr X= \{x:\Lambda_i x \leq \lambda_i \forall\, i\leq m\}\subseteq\{x:\Gamma x\leq{\bf{1}}\wedge
 -\Gamma x\leq{\bf{1}}\}=:\mathscr B$.
@@ -782,7 +785,7 @@ Therefore we conclude that $X_n$ is contained in a compact set, hence is itself 
 The case that~$N<n$ is possible for matrices $\Gamma$ with $\text{rank}(\Gamma)>1$.
 \end{proof}
 %
-We can use Lemma~\ref{thm:band:implies:compactness} to prove the following statement:
+In the following we prepare to prove the statement:
 %
 \begin{thm}[\footnote{
 	The earliest proof of finite determinability of the proposed algorithm was published 
@@ -794,110 +797,235 @@ We can use Lemma~\ref{thm:band:implies:compactness} to prove the following state
 	}]
 \label{thm:finite:terminability:MRPI:algorithm}
 Let the assumptions for Lemma~\ref{thm:band:implies:compactness} hold, let furthermore
-$x^+=\Psi x$ be asymptotically stable and let $\mathcal V(x)$ be bounded for all $x\in\mathscr X$, 
-then iteration~\eqref{eq:general:MRPI:iteration} with $X_0=\mathscr X$ terminates in a finite 
-number of number of steps.
+$x^+=\Psi x$ be asymptotically stable, $\mathcal V(x)$ be bounded for all $x\in\mathscr X$ and let the Maximal Robust 
+Positive Invariant Set contain an open ball, then iteration~\eqref{eq:general:MRPI:iteration} with~$X_0=\mathscr X$ 
+terminates in a finite number of number of steps.
+\end{thm}
+\\[1em]
+First we define the decay rate of a linear system.
+%
+\begin{defi}[Decay Rate]
+For the linear discrete time system~$x[k+1] = \Psi[k] x[k]$ the \emph{decay rate} is given as the smallest value~$\lambda$ 
+such that~$\lim_{k\rightarrow\infty}\lambda^{-k}\norm{x[k]}=0$
+%
+\footnote{Usually the decay rate is defined for continuous time systems $\dot x = A(t)x$ as the largest~$\alpha$ 
+such that~$\lim_{t\rightarrow\infty}e^{\alpha t}\norm{x(t)}=0$ for all initial values $x_0$, see e.g.~\cite{Luenberger:1979}.
+%
+The reason to define $\lambda$ as the decay rate rather than $\lambda^{-1}$ is straight forward: 
+%
+The norm along a trajectory decays no slower than $\lambda^k\norm{x_0}$ which analogue to the continuous 
+time~$e^{-\alpha t}\norm{x_0}$.}.
+\end{defi}
+%
+Using a Lyapunov function~$V(x)>0$ for the system we can derive an upper bound on $\lambda$:
+%
+If $V[k+1]-V[k]\leq-\delta V[k]$ holds for all trajectories $x[k]$ (with $V[k] = V(x[k])$), then clearly the 
+decay rate is bounded from above by $1-\delta$ since $V[k]\leq(1-\delta)^k V[0]$.
+%
+Assuming that the system is asymptotically stable we have that $V[k+1]>0$ and $V[k+1]-V[k]<0$, therefore we have~$0<1-\delta<1$
+for all admissible choices of $V(x)$.
+%
+Since we are interested in linear systems only, we consider quadratic Lyapunov functions $V(x) = x^TPx$ with a positive
+definite $P>0$, therefore we have that $\underline\sigma(P)^2\norm{x}_2^2\leq V(x)\leq \bar\sigma(P)^2\norm{x}_2^2$, 
+where $\underline\sigma(P),\bar\sigma(P)$ denote the smallest and the largest singular values of $P$ respectively.
+%
+Together with $V(x+y)\leq V(x)+V(y)$ and $V(cx)=c^2 V(x)$ this means that~$\sqrt{V(x)}$ is a norm itself.
+%
+With this we can prove the statement:
+%
+\begin{thm}
+Let $\Psi$ be non-singular and asymptotically stable and let $\rho(\Psi)$ denote its spectral radius, i.e. 
+there exists at least one eigenvalue $\gamma$ and an eigenvector $v$ such that $\Psi v = \gamma v$ 
+with $\abs{\gamma}=\rho(\Psi)$, then the bound $\rho(\Psi)^2\leq1-\delta$ is tight and is attained 
+for $P=\Psi^T\Psi$.
 \end{thm}
 %
 \begin{proof}
+Using the test vector $\tilde\xi=\frac{v}{\norm{v}_P}$ we obtain $\gamma^\ast\tilde\xi^H P\tilde \xi\gamma
+\leq(1-\rho)\tilde\xi^H P\tilde\xi$ but $\gamma^\ast\gamma = \abs{\gamma}^2 = \rho(\Psi)^2$.
+%
+The symmetric matrix $P = \Psi^T\Psi$ is positive definite for any invertible $\Psi$ and hence $\xi^T P\xi$ 
+defines the square of a norm and using the same test vector we obtain $1-\delta=\rho(\Psi)^2$.
+%
+\end{proof}
+%
+The value of $1-\delta$ i.e. $\rho(\Psi)^2$ is also referred to as \emph{stability degree}, see e.g.~\cite{Boyd:94}.
+%
+In the sequel we abbreviate the spectral radius of $\Psi$ by $\rho$.
+%
+Notice that we can not prove that $\lambda=\rho^2$ since the norm in the definition of $\lambda$ is 
+undefined and might be non-quadratic.
+
+We use this result to bound the rate of convergence of $P$-ellipsoids $\mathcal E_P(r) = \{x:x^TPx\leq r^2\}$, i.e. 
+the level set $V(x)\leq r^2$.
+%
+With the previous results $V(\Psi x)\leq \rho^2 V(x)$, which works analogously on the inverse 
+$\rho^{-2}V(x)\leq V(\Psi^{-1} x)$, we have 
+%
+\begin{equation}\begin{split}
+	\Psi\mathcal E_P(r) &= \{y=\Psi x:x^TPx\leq r^2\}\\
+	&=\{x: \underbrace{(\Psi^{-1}x)^TP(\Psi^{-1}x)}_{\geq\rho^{-2} x^TPx}\leq r^2\}\\
+	&\subseteq\{x: x^TPx\leq \rho^2 r^2\} = \mathcal E_P(\rho r)
+\end{split}
+\end{equation}
+%
+Recursively, we have 
+%
+\begin{equation}\label{eq:containment:Psik:subset:rhok}
+	\Psi^k\mathcal E_P(r)\subseteq \mathcal E_P(\rho^k r)
+\end{equation}
+%
+for the inverse $\Psi^{-1}$ we have $\Psi^{-1}\mathcal E_P(r)\supseteq\mathcal E_P(\rho^{-1}r)$ and 
+$\Psi^{-k}\mathcal E_P(r)\supseteq\mathcal E_P(\rho^{-k}r)$.
+
+To prove Lemma~\ref{thm:finite:terminability:MRPI:algorithm}, we first derive containment conditions of 
+sets that are defined as level sets of norm:
+%
+Let the set $\mathscr F(r) := \{x:\norm{x}\leq r\}$ be the norm-ball of radius $r$, then the following statement holds 
+for any norm~$\norm{\cdot}$.
+% 
+\begin{thm}\label{thm:inclusions:norm:balls:sum:difference}
+The following two inclusions hold:
+\begin{enumerate}
+\item 
+%
+The norm ball of radius $r_1+r_2$ is contained in $\mathscr F(r_1)\oplus \mathscr F(r_2)$, i.e. 
+%
+\begin{equation}
+	\mathscr F(r_1 + r_2)\subseteq \mathscr F(r_1)\oplus \mathscr F(r_2).
+\end{equation}
+%
+\item
+%
+The ball of radius $r_1-r_2$ is contained in $\mathscr F(r_1)\ominus \mathcal F(r_2)$, i.e.
+%
+\begin{equation}
+	\mathscr F(r_1-r_2)\subseteq \mathscr F(r_1)\ominus \mathscr F(r_2).
+\end{equation}
+\end{enumerate}
+\end{thm}
+%
+\begin{proof}
+%
+Both statements follow from the triangle inequality.
+%
+For the first statement observe that $\norm{x+y}\leq r_1+r_2$ implies that $\norm{x}+\norm{y}\leq r_1+r_2$ which is equivalent to $\norm{x}\leq r_1\wedge\norm{y}\leq r_2$ which is the definition of $\mathscr F(r_1)\oplus \mathcal F(r_2)$.
+%
+The second statement follows since the Pontryagin difference is defined using the Minkowski sum:
+%
+If $\norm{z}\leq r_1 -r_2$ then $\norm{z+y}\leq\norm{z}+\norm{y}\leq r_1-r_2+r_2$.
+\end{proof}
+%
+\begin{proof}[Proof of Lemma~\ref{thm:finite:terminability:MRPI:algorithm}]
 Using~\eqref{eq:general:MRPI:iteration} we can easily see that if for some $k>0$
-the set iterate $X_k$ is empty that implies that $X_k=\mathcal X^\infty = \emptyset$,
+the set iterate $X_k$ is empty, we have $X_k=\mathcal X^\infty = \emptyset$,
 in this trivial case we can easily see that the algorithm terminates after $k$ iterations.
+%
+In this case the assumption that there exists an open ball in the MRPI set is violated.
 %
 For the remainder of this proof we assume that all set iterates are non-empty.
 
-Let $\rho$ denote the spectral radius of $\Psi$, since $\Psi$ is asymptotically
-stable we have $\rho<1$.
+We define the non-compact set iterates $\mathscr D_k = \Psi^{-1}\mathscr D_{k-1}\ominus \Psi^{-1}\mathcal V(\Psi^{-1}
+\mathscr D_{k-1})$ starting from $\mathscr D_0 = X_0$, that is $\Psi\mathscr D_k\oplus \mathcal V(\mathscr D_k)
+\subseteq\mathscr D_{k-1}$.
 %
-Let $r_1$ be the radius of the largest ball contained in $X_0$ i.e. $\mathcal E(r_1)\subseteq X_0$ 
-and let $r_2$ be the radius of smallest ball containing $V(x)$ for all $x\in X_0$.
+So that $x\in\mathscr D_k$ is equivalent to $\Psi^k x + v_0 + \dots + \Psi^{k-1}v_{k-1}\in X_0$ for all $v_1\in\mathcal V(x), 
+v_2\in\mathcal V(\Psi x + v_1),\dots$, so all points $\mathscr D_k$ contains all points that will inevitably end up 
+in $X_0$ after $k$ iterations.
 %
-Recall that $X_k = \bigcap_{l\leq k} D_l$, where $D_k$ is defined by
+The set $X_k$ contains all points that are in $\mathscr D_k$ and are feasible at any given iteration, 
+i.e. $X_k=X_0\bigcap_{l=1}^k\mathscr D_k=\bigcap_{l=0}^k\mathscr D_k$.
+%
+We now show that $\mathscr D_k$ grows exponentially, for this let~$r_1$ denote the radius of the largest $P$-ball 
+contained in $X_0$ and $r_2$ the radius of the smallest $P$-ball containing $\mathcal V(x)$ for all $x\in X_0$, i.e.
+$\mathcal E_P(r_1)\subseteq\mathscr D_0 = X_0$ and $\mathcal V(x)\subseteq\mathcal E_P(r_2)$
+%
+\begin{equation}\begin{split}
+	\mathscr D_1 &= \Psi^{-1}\underbrace{\mathscr D_0}_{\supseteq\mathcal E_P(r_1)}
+	\ominus\Psi^{-1}\underbrace{\mathcal V(\Psi^{-1}\mathscr D_0)}_{\subseteq \mathcal E_P(r_2)}\\
+	&\supseteq\Psi^{-1}(\mathcal E_P(r_1)\ominus\mathcal E_P(r_2))\\
+	&\supseteq\Psi^{-1}\mathcal E_P(r_1-r_2)\\
+	&\supseteq\mathcal E_P(\rho^{-1}(r_1-r_2))
+\end{split}\end{equation}
+%
+For $\mathscr D_2$ we have 
+%
+\begin{equation}\begin{split}
+	\mathscr D_2&=\Psi^{-1}\mathscr D_1\ominus \Psi^{-1}\mathcal V(\mathscr D_1)\\
+	&\supseteq\Psi^{-1}\left(\mathcal E_P(\rho^{-1}(r_1-r_2))\ominus \mathcal E_P(r_2)\right)\\
+	&\supseteq\mathcal E_P(\rho^{-2} r_1 - r_2(\rho^{-1}+\rho^{-2})).
+\end{split}\end{equation}
+%
+Recursively we obtain 
 %
 \begin{equation}
-	D_l = \underbrace{\Psi^{-l} X_0}_{\mathcal S_1} \ominus 
-	\underbrace{\left(\bigoplus_{1\leq i\leq l-1} \Psi^{i}\mathcal V(X_{l-1})\right)}_{\mathcal S_2}
+	\mathscr D_k\supseteq\mathcal E_P\left(\rho^{-k}r_1-r_2\sum_{l=1}^{k}\rho^{-l}\right) = \mathcal E_P\left(
+	\rho^{-k}\left(r_1 - r_2\frac{\rho^{k}-1}{\rho-1}\right)\right)
 \end{equation}
 %
-We can easily lower bound $\mathcal S_1$ by using $r_1$: $\mathcal S_1 = \Psi^{-l} X_0 
-\supseteq \Psi^{-l}\mathcal E(r_1) \supseteq \mathcal E(\rho^{-l} r_1)$.
+We therefore have that the sets~$\mathscr D_k$ grow exponentially.
 %
-Recall that $X_l\subseteq X_{l-1}$ and therefore $X_l\subseteq X_0$ for all $l\geq0$.
+By Lemma~\ref{thm:band:implies:compactness} we have that there exists a~$N\leq n$ such that~$X_N$ is compact,
+let~$r_3$ denote the smallest $P$-ball containing~$X_N$, i.e.~$X_N\subseteq\mathcal E_P(r_3)$, 
+since~$X_{N+1} = \bigcap_{l=0}^{N+1}\mathscr D_l = X_N\cap\mathscr D_{N+1}$ we have that $X_{k}\subseteq
+\mathcal E_P(r_3)$ for all $k\geq N$.
 %
-We use this fact to obtain the containment $\mathcal S_2 = \bigoplus_{1\leq i\leq l-1} 
-\Psi^{i}\mathcal V(X_{l-1})\subseteq \bigoplus_{1\leq i\leq l-1} \Psi^{i}\mathcal V(X_0)\subseteq
-\bigoplus_{1\leq i\leq l-1} \Psi^{i}\mathcal E(r_2)\subseteq\bigoplus_{1\leq i\leq l-1} \mathcal E(\rho^{i} r_2)\subseteq
-\mathcal E(\sum_{1\leq i\leq l-1}\rho^i r_2)\subseteq \mathcal E(\frac{1}{1-\rho} r_2)$.
+When $\rho^{-k}\left(r_1 - r_2\frac{\rho^{k}-1}{\rho-1}\right)>r_3$ the set $\mathscr D_k$ has outgrown 
+$X_N$ and the intersection $X_k\cap\mathscr D_{k+1} = X_k$. 
 %
-In summary we can state that~$D_l$ consists of the exponentially expanding set~$\mathcal S_1$
-subtracted by the set~$\mathcal S_2$ which is bounded, therefore~$D_l$ itself expands exponentially,
-that is $D_l\supseteq\mathcal E(\rho^{-l} r_1 - \frac{1}{1-\rho} r_2)$.
-%
-Due to Lemma~\ref{thm:band:implies:compactness} we know that for $N\leq n$ the set iterate~$X_N$ is
-bounded, let $r_3$ denote the smallest ball that contains $X_N$.
-%
-We can conclude that for $l$ such that $X_N\subseteq\mathcal E(r_3)\subseteq\mathcal 
-E(\rho^{-l} r_1 - \frac{1}{1-\rho} r_2)\subseteq D_l$ holds the set $D_l$ covers
-$X_N$, i.e. intersections with $D_l$ will not change $X_l$.
-%
-We can therefore give an upper bound on the number of iterations necessary for the algorithm
-to terminate, it is given by the smallest integer $M$ such that
-\begin{equation}\label{bnd:first:lower:bound:on:iteration:count}
-	M\geq \frac{1}{\log(\frac{1}{\rho})}\left(\log\left(r_3+\frac{1}{1-\rho}r_2\right)-\log r_1 \right)
-\end{equation}
-is satisfied.
+Therefore the algorithm terminates.
 \end{proof}
 %
-Notice that the constants used in~\eqref{bnd:first:lower:bound:on:iteration:count} are not
-quite convenient to compute, we can however compute bounds on $r_1,\, r_2$ and $r_3$ using 
-singular values.
-%
-For this let $\bar\sigma(\Gamma)$ and $\underline\sigma(\Gamma)$ denote the maximal and the minimal
-singular value of~$\Gamma$ respectively.
-%
-We know that~$\bar\sigma(\Gamma)\norm{x}\geq\norm{\Gamma x}$ and therefore $\bar\sigma(\Gamma)\norm{x}
-\leq \sqrt{n}\Rightarrow \norm{\Gamma x}\leq\norm{\bf{1}}=\sqrt{n}$, that $r_1=\frac{\bar\sigma(\Gamma)}{\sqrt{n}}$
-follows form standard result for singular values, see e.g.~\cite{Golub:1996}.
-%
-We use a similar argument to obtain a bound on $r_3$ before deriving a bound on $r_2$:
-%
-It is easy to see that the radius of the largest ball containing $X_N$ is given by the maximal
-norm of its vertices, i.e. $r_3=\max_{i}\norm{x_i}$ where $x_i$ satisfies $\Omega_{o,\mathscr{A}_i} x_i={\bf{1}}$
-and $\Omega_{o,\bar{\mathscr A}_i}x_i<{\bf{1}}$.
-%
-From this we can deduce that
-%
-\begin{equation}\begin{split}
-	\sqrt{n}=\norm{\bf{1}}=\norm{\Omega_{o,\mathscr{A}_i}x_i}\geq\underline\sigma(\Omega_{o,\mathscr{A}_i})\norm{x_i}
-	=\underline\sigma(\Gamma_{\mathscr{A}_i}\cdot \text{diag}(I,\Psi,\dots,\Psi^{n-1}))\norm{x_i}\\
-	\geq\underline\sigma(\Gamma_{\mathscr{A}_i})\underline\sigma( \text{diag}(I,\Psi,\dots,\Psi^{n-1}))\norm{x_i}
-	\geq\underline\sigma(\Gamma_{\mathscr{A}_i})\underline\sigma(\Psi)^{n-1}\norm{x_i}\\
-	\geq\underline\sigma(\Gamma)\underline\sigma(\Psi)^{n-1}\norm{x_i},
-\end{split}\end{equation}
-%
-which implies that we can get the upper bound $r_3\leq\frac{\sqrt{n}}{\underline\sigma(\Gamma)
-\underline\sigma(\Psi)^{n-1}}$.
-%
-In order to obtain an estimate on $r_2$ we follow a similar argumentation:
-%
-\begin{equation}\begin{split}
-	\bar\sigma(H_{k^\ast})\norm{x}+\norm{h_{k^\ast}}=\max_k\{\bar\sigma(H_k)\norm{x}+\norm{h_k}\}\geq
-	\norm{\max_k\{H_k x + h_k\}_{\mathscr{A}_i}}\\ 
-	=\norm{G_{\mathscr{A}_i}v_i} \geq\underline\sigma(G_{\mathscr A_i})\norm{v_i}
-	\geq\underline\sigma(G)\norm{v_i}.
-\end{split}\end{equation}
-%
-Notice that with only the assumptions made in Lemma~\ref{thm:finite:terminability:MRPI:algorithm}
-we have no way to bound~$\norm{x}$ in order to obtain an upper bound on~$r_2$,
-however, if we assume that~$X_N$ is not empty we can use the bound on~$X_N$, i.e.~$r_3$.
-%
-This is reasonable since we are interested in the asymptotic behaviour of the set rather than
-exact bounds on intermediate iterates, hence $r_2\leq\frac{\bar\sigma(H_{k^\ast})r_3+\norm{h_k}}
-{\underline\sigma(G)}$ can be used as an estimate for the asymptotic behaviour of $\mathcal V(x)$
-in the iteration.
-%
-All bounds and estimates on $r_1,\,r_2$ and $r_3$ can be calculated in advance to get an estimate
-on how many iterations the described algorithm could require.
+% Notice that the constants used in~\eqref{bnd:first:lower:bound:on:iteration:count} are not
+% quite convenient to compute, we can however compute bounds on $r_1,\, r_2$ and $r_3$ using 
+% singular values.
+% %
+% For this let $\bar\sigma(\Gamma)$ and $\underline\sigma(\Gamma)$ denote the maximal and the minimal
+% singular value of~$\Gamma$ respectively.
+% %
+% We know that~$\bar\sigma(\Gamma)\norm{x}\geq\norm{\Gamma x}$ and therefore $\bar\sigma(\Gamma)\norm{x}
+% \leq \sqrt{n}\Rightarrow \norm{\Gamma x}\leq\norm{\bf{1}}=\sqrt{n}$, that $r_1=\frac{\bar\sigma(\Gamma)}{\sqrt{n}}$
+% follows form standard result for singular values, see e.g.~\cite{Golub:1996}.
+% %
+% We use a similar argument to obtain a bound on $r_3$ before deriving a bound on $r_2$:
+% %
+% It is easy to see that the radius of the largest ball containing $X_N$ is given by the maximal
+% norm of its vertices, i.e. $r_3=\max_{i}\norm{x_i}$ where $x_i$ satisfies $\Omega_{o,\mathscr{A}_i} x_i={\bf{1}}$
+% and $\Omega_{o,\bar{\mathscr A}_i}x_i<{\bf{1}}$.
+% %
+% From this we can deduce that
+% %
+% \begin{equation}\begin{split}
+% 	\sqrt{n}=\norm{\bf{1}}=\norm{\Omega_{o,\mathscr{A}_i}x_i}\geq\underline\sigma(\Omega_{o,\mathscr{A}_i})\norm{x_i}
+% 	=\underline\sigma(\Gamma_{\mathscr{A}_i}\cdot \text{diag}(I,\Psi,\dots,\Psi^{n-1}))\norm{x_i}\\
+% 	\geq\underline\sigma(\Gamma_{\mathscr{A}_i})\underline\sigma( \text{diag}(I,\Psi,\dots,\Psi^{n-1}))\norm{x_i}
+% 	\geq\underline\sigma(\Gamma_{\mathscr{A}_i})\underline\sigma(\Psi)^{n-1}\norm{x_i}\\
+% 	\geq\underline\sigma(\Gamma)\underline\sigma(\Psi)^{n-1}\norm{x_i},
+% \end{split}\end{equation}
+% %
+% which implies that we can get the upper bound $r_3\leq\frac{\sqrt{n}}{\underline\sigma(\Gamma)
+% \underline\sigma(\Psi)^{n-1}}$.
+% %
+% In order to obtain an estimate on $r_2$ we follow a similar argumentation:
+% %
+% \begin{equation}\begin{split}
+% 	\bar\sigma(H_{k^\ast})\norm{x}+\norm{h_{k^\ast}}=\max_k\{\bar\sigma(H_k)\norm{x}+\norm{h_k}\}\geq
+% 	\norm{\max_k\{H_k x + h_k\}_{\mathscr{A}_i}}\\ 
+% 	=\norm{G_{\mathscr{A}_i}v_i} \geq\underline\sigma(G_{\mathscr A_i})\norm{v_i}
+% 	\geq\underline\sigma(G)\norm{v_i}.
+% \end{split}\end{equation}
+% %
+% Notice that with only the assumptions made in Lemma~\ref{thm:finite:terminability:MRPI:algorithm}
+% we have no way to bound~$\norm{x}$ in order to obtain an upper bound on~$r_2$,
+% however, if we assume that~$X_N$ is not empty we can use the bound on~$X_N$, i.e.~$r_3$.
+% %
+% This is reasonable since we are interested in the asymptotic behaviour of the set rather than
+% exact bounds on intermediate iterates, hence $r_2\leq\frac{\bar\sigma(H_{k^\ast})r_3+\norm{h_k}}
+% {\underline\sigma(G)}$ can be used as an estimate for the asymptotic behaviour of $\mathcal V(x)$
+% in the iteration.
+% %
+% All bounds and estimates on $r_1,\,r_2$ and $r_3$ can be calculated in advance to get an estimate
+% on how many iterations the described algorithm could require.
 %
 %
 %
@@ -1060,6 +1188,7 @@ to a uniform one for the disturbance set will become clear in the proceeding dis
 
 The necessity of uniform scaling of the disturbance constraints is due to the method we use to avoid
 solving multi-parametric linear programs in every step of the proposed iteration.
+%
 A representation of the MRPI set of a system parametrised with respect to a scaling parameter allows us
 to study the system's sensitivity to \emph{stronger/weaker} disturbances; similarly analysing the sensitivity to scaling of input 
 constraints can be useful to choose particular actuators.
@@ -1087,7 +1216,7 @@ we determine the first iterate by enforcing all individual constraints onto all 
 %
 Hence $Z_1=Z_0\cap D_0$ where $D_0$ is defined by
 %
-\begin{equation}\small
+\begin{equation}
 \begin{split}
 	D_0 =& \{\mathcal F_i(\Psi x+v) + \mathcal G_i\theta \leq 1 \ \forall\, v\in\mathcal V(\theta), \ i\in\mathcal I_0\}\\
 	=&\Biggl\{\mathcal F_i\Psi x + \begin{array}[t]{rl}\displaystyle\max_v& F_i v \\ \text{s.t.}& Gv \leq 

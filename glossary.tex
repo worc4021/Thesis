@@ -1,0 +1,202 @@
+%!TEX root = main.tex
+%
+%
+%
+%
+%
+%
+\newglossaryentry{emptyset}
+  {
+    name={\ensuremath{\emptyset}},
+    description={The empty set},
+    type=symbolslist
+  }
+%
+\newglossaryentry{Rd}
+{
+	name={\ensuremath{\RR^d}},
+	description={The $d$-dimensional space of real numbers},
+	type=symbolslist
+}
+%
+\newglossaryentry{Rdast}
+{
+	name={\ensuremath{(\RR^d)^\ast}},
+	description={The dual vector space of~$\RR^d$},
+	type=symbolslist
+}
+%
+\newglossaryentry{definiteness}
+{
+	name={\ensuremath{Q\succ0}},
+	description={The symmetric matrix~$Q$ is positive definite, $Q\succeq0$ denotes semi-definite},
+	type=symbolslist
+}
+%
+\newglossaryentry{abs}
+  {
+    name={\ensuremath{\abs{x}}},
+    description={The absolute value of a scalar number~$x\in\RR$},
+    type=symbolslist
+  }
+%
+\newglossaryentry{sign}
+  {
+    name={\ensuremath{\text{sign}(x)}},
+    description={The sign of a scalar number~$x\in\RR$},
+    type=symbolslist
+  }
+%
+\newglossaryentry{ceil}
+  {
+    name={\ensuremath{\lceil x\rceil}},
+    description={The round up operator~$\lceil x\rceil=\text{sign}(x)\{\min_{y\in\mathbb N}y\;\text{s.t.}\text{sign}(x)x\leq y\}$},
+    type=symbolslist
+  }
+%
+\newglossaryentry{norm}
+{
+	name={\ensuremath{\norm{x}}},
+	description={The norm of a vector~$x$},
+	type=symbolslist
+}
+%
+\newglossaryentry{Pnorm}
+{
+	name={\ensuremath{\norm{x}_p}},
+	description={The $p$-norm of $x$ for $p\in[1,\infty)$, for $p=P\succ0$ we have $\norm{x}_P=\sqrt{x^TPx}$},
+	type=symbolslist
+}
+%
+\newglossaryentry{Eball}
+{
+	name={\ensuremath{\ball_2(r)}},
+	description={The $2$-norm ball of radius $r$, i.e. $\{x:\norm{x}_2\leq r\}$},
+	type=symbolslist
+}
+%
+\newglossaryentry{Pball}
+{
+	name={\ensuremath{\ball_P(r)}},
+	description={The $P$-norm ball of radius $r$, i.e. $\{x:\norm{x}_P\leq r\}$},
+	type=symbolslist
+}
+%
+\newglossaryentry{minkowskisum}
+{
+	name={\ensuremath{\X\oplus\Y}},
+	description={The Minkowski sum of~$\X$ and $\Y$},
+	type=symbolslist
+}
+%
+\newglossaryentry{pontryagindiff}
+{
+	name={\ensuremath{\X\ominus\Y}},
+	description={The Pontryagin Difference between~$\X$ and~$\Y$},
+	type=symbolslist
+}
+%
+\newglossaryentry{MRPI}
+{
+	name={\ensuremath{\X^{\infty}_{\max}}},
+	description={The Maximal Robust Positive Invariant (MRPI) Set},
+	type=symbolslist
+}
+%
+\newglossaryentry{minRPI}
+{
+	name={\ensuremath{\X^{\infty}_{\min}}},
+	description={The Minimal Robust Positive Invariant (mRPI) Set},
+	type=symbolslist
+}
+%
+\newglossaryentry{and}
+{
+	name={\ensuremath{\wedge}},
+	description={Logic AND},
+	type=symbolslist
+}
+%
+\newglossaryentry{or}
+{
+	name={\ensuremath{\vee}},
+	description={Logic OR},
+	type=symbolslist
+}
+%
+\newglossaryentry{convhull}
+{
+	name={\ensuremath{\conv\{v_i\}}},
+	description={The convex hull of~$v_i$, i.e. $\{x:\exists\lambda_i\in[0,1]\wedge \sum_i\lambda_i=1\wedge \sum_i\lambda_i v_i=x\}$},
+	type=symbolslist
+}
+%
+\newglossaryentry{cone}
+{
+	name={\ensuremath{\text{cone}\{r_i\}}},
+	description={The cone spanned by the rays~$r_i$, i.e. $\{x:\exists\lambda_i\geq0 \sum_i\lambda_i r_i=x\}$},
+	type=symbolslist
+}
+%
+\newglossaryentry{fcononset}
+{
+	name={\ensuremath{f\vert_\X}},
+	description={The function $f$ constrained to the set~$\X$, i.e. $f\vert_\X(x)=\{f(x) \text{ if } x\in\X, 0\text{ if }x\not\in\X\}$},
+	type=symbolslist
+}
+%
+\newglossaryentry{fimage}
+{
+	name={\ensuremath{f(\X)}},
+	description={The image of the set~$\X$ under~$f$, i.e.~$\bigcup_{x\in\X}\{f(x)\}$},
+	type=symbolslist
+}
+%
+\newglossaryentry{fpreimage}
+{
+	name={\ensuremath{f^{-1}(\X)}},
+	description={The pre-image of $\X$ under~$f$, i.e.~$\bigcup_{f(y)\in\X}\{y\}$},
+	type=symbolslist
+}
+%
+\newglossaryentry{cont}
+{
+	name={\ensuremath{C^n(\mathbb R^d)}},
+	description={The set of n times continuously differentiable functions $f:\RR^d\rightarrow\RR$},
+	type=symbolslist
+}
+%
+\newglossaryentry{Kfun}
+{
+	name={\ensuremath{\mathscr K}},
+	description={The set of comparison functions, $\{f:f\in C^0(\RR)\wedge f(0)=0\wedge (0\leq x_1\leq x_2\Leftrightarrow f(x_1)\leq f(x_2))\}$},
+	type=symbolslist
+}
+%
+\newglossaryentry{KinfFun}
+{
+	name={\ensuremath{\mathscr K^\infty}},
+	description={The set of unbounded comparison functions, $\{f:f\in\mathscr K\wedge (x\rightarrow\infty\Rightarrow f(x)\rightarrow\infty)\}$},
+	type=symbolslist
+}
+%
+\newglossaryentry{KLfun}
+{
+	name={\ensuremath{\mathscr K\!\mathscr L}},
+	description={The set of comparison functions with decaying direction, $\{f:f(\cdot,t)\in\mathscr K\wedge (0\leq t_1\leq t_2\Rightarrow f(\cdot,t_1)\geq f(\cdot,t_2))\wedge (t\rightarrow\infty\Rightarrow f(t)\rightarrow0)\}$},
+	type=symbolslist
+}
+%
+\newglossaryentry{realstate}
+{
+	name={\ensuremath{\mathfrak{x}_k}},
+	description={The realised system state at time step $k\geq0$},
+	type=symbolslist
+}
+%
+\newglossaryentry{realdist}
+{
+	name={\ensuremath{\mathfrak{w}_k}},
+	description={The realised uncertainty at time step $k\geq0$},
+	type=symbolslist
+}

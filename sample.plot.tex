@@ -1,0 +1,53 @@
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=40]
+\draw[-latex'] (-.08,-.08) -- (.08,-.08) node[right] {$v_1$};
+\foreach \x in {-0.04,0,0.04} \draw (\x,-.0795) -- (\x,-.0805) node[below] {{$\x$}};
+\draw[-latex'] (-.08,-.08) -- (-.08,.08) node[above] {$v_2$};
+\foreach \x in {-0.06,-0.04,-0.02,0,0.02,0.04,0.06} \draw (-.0795,\x) -- (-.0805,\x) node[left] {{$\x$}};
+
+\foreach \x/\y in {-0.05505/ 0.00323,  0.03744/-0.02161, -0.01879/-0.01397, -0.00052/ 0.07379, -0.05691/ 0.01026,  0.03303/ 0.03540,  0.04609/-0.00463, -0.03458/ 0.02700, -0.01171/ 0.06014,  0.04340/-0.02468, -0.00594/ 0.06265, -0.00553/ 0.03492,  0.02456/ 0.01083,  0.03390/-0.01387,  0.04719/-0.02097,  0.01615/-0.05415, -0.05084/-0.00635,  0.02644/ 0.00095,  0.06410/-0.00123,  0.00400/-0.01438, -0.00208/ 0.04486, -0.02120/-0.02587, -0.01405/ 0.00735, -0.00317/ 0.03712, -0.02826/-0.00354,  0.03447/-0.01458}
+ \node[circle,fill=black,scale=.1] at (\x,\y) {};
+
+\draw ( -0.0009,   0.0742) -- ( -0.0611,   0.0054) -- (  0.0046,  -0.0697) -- (  0.0648,  -0.0009) -- ( -0.0009,   0.0742) -- cycle;
+
+\draw[very thin, gray] (  0.0000,   0.0800) -- ( -0.0700,   0.0000) -- (  0.0000,  -0.0800) -- (  0.0700,   0.0000) -- (  0.0000,   0.0800) -- cycle;
+
+\draw[blue] ( -0.0000,   0.0438) -- ( -0.0383,  -0.0000) -- ( -0.0000,  -0.0438) -- (  0.0383,  -0.0000) -- ( -0.0000,   0.0438) -- cycle;
+
+\draw[red] ( -0.0503,   0.0167) -- ( -0.0503,  -0.0117) -- (  0.0503,  -0.0218) -- (  0.0503,   0.0167) -- ( -0.0503,   0.0167) -- cycle;
+
+\draw[green!60!black] (  0.0000,  -0.0240) -- (  0.0700,  -0.0000) -- ( -0.0000,   0.0240) -- ( -0.0700,   0.0000) -- (  0.0000,  -0.0240) -- cycle;
+
+
+\end{tikzpicture}
+%
+\begin{tikzpicture}[xscale=.8,yscale=.6]
+\draw[-latex'] (-5,-6) -- (5,-6) node[right] {$x_1$};
+\foreach \x in {-4,-3,...,4} \draw (\x,-5.98) -- (\x,-6.02) node[below] {$\x$};
+\draw[-latex'] (-5,-6) -- (-5,6) node[above] {$x_2$};
+\foreach \y in {-5,-4,...,5} \draw (-4.98,\y) -- (-5.02,\y) node[left] {$\y$};
+
+
+\draw (  2.3667,  -4.8908) -- (  3.0156,  -4.9918) -- (  3.1050,  -4.8170) -- (  4.3777,  -0.6791) -- (  4.2012,   0.9160) -- (  0.4626,   3.6299) -- ( -2.3161,   4.8830) -- ( -2.9592,   4.9831) -- ( -3.0985,   4.7106) -- ( -4.3466,   0.6529) -- ( -4.1729,  -0.9171) -- ( -0.4462,  -3.6224) -- (  2.3667,  -4.8908) -- cycle;
+
+
+\draw[blue] (  0.5246,   3.6952) -- ( -2.0004,   4.8338) -- ( -3.2616,   5.0301) -- ( -4.5541,   0.8278) -- ( -4.3619,  -0.9096) -- ( -0.5246,  -3.6952) -- (  2.0004,  -4.8338) -- (  3.2616,  -5.0301) -- (  4.5541,  -0.8278) -- (  4.3619,   0.9096) -- (  0.5246,   3.6952) -- cycle;
+
+\draw[red] ( -1.1220,  -3.3770) -- (  2.1658,  -4.8596) -- (  3.4422,  -5.0582) -- (  4.7044,  -0.9545) -- (  4.4987,   0.9042) -- (  1.0442,   3.4120) -- ( -2.1661,   4.8596) -- ( -3.4835,   5.0647) -- ( -4.7388,   0.9835) -- ( -4.5301,  -0.9030) -- ( -1.1220,  -3.3770) -- cycle;
+
+
+\draw[green!60!black] ( -1.3025,  -3.2150) -- (  2.4388,  -4.9020) -- (  3.4240,  -5.0554) -- (  4.6893,  -0.9417) -- (  4.4850,   0.9048) -- (  1.3025,   3.2150) -- ( -2.4388,   4.9020) -- ( -3.4240,   5.0554) -- ( -4.6893,   0.9417) -- ( -4.4850,  -0.9048) -- ( -1.3025,  -3.2150) -- cycle;
+
+
+
+\end{tikzpicture}
+\caption[Comparison with scenario approach]{A comparison of the scenario approach suggested in~\cite{Zhang:2015} against the methods presented above. 
+%
+In the above figure we see the respective sets~$\V$ given by the four suggested methods: In black the box bounding~$N=26$ samples, in \textcolor{blue}{blue} the solution of the parallelotope approach, in \textcolor{red}{red} the solution of the projective transformation optimisation and in \textcolor{green!60!black}{green} the solution to the direct method, in \textcolor{gray}{grey} we outline~$\Omega$.
+%
+In the respective colours the bottom figure shows the maximal guaranteed probabilistically positive invariant sets~$X^\infty_{\max}$ for the four methods.
+%
+The objective values are as follows~$\text{vol}(X^\infty_{\max})=55.1380$, \textcolor{blue}{$\text{vol}(X^\infty_{\max})=59.2334$}, \textcolor{red}{$\text{vol}(X^\infty_{\max})=62.0096$} and \textcolor{green!60!black}{$\text{vol}(X^\infty_{\max})=60.8700$}.}
+\label{fig:example:comparison:MRPI}
+\end{figure}

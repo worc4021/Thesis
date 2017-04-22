@@ -1,0 +1,572 @@
+%!TEX root = main.tex
+\resetcounters
+\chapter{Uniformly Scaled Disturbance Sets}\label{ch:MPC:sec:scaled:sets}
+%
+%
+%
+%
+%
+\mysplit In this Chapter we discuss the robust positive invariant sets of the uncertain linear system
+%
+\begin{equation}\label{eq:considered:system:scaled:disturbances}
+	x^+ = Ax + w
+\end{equation}
+%
+where~$x\in\X = \{x\in\RR^d:\Xi_i x\leq \xi_i, i\leq M_\X\}$ and $w\in\W^\alpha = \{w\in\RR^d:G_iw\leq \alpha,\,i\leq M_\W\}$, that is the set $\W^\alpha$ is a uniformly scaled\footnote{%
+%
+The material presented in this chapter is based on work published in~\cite{Schaich:2015} and subsequent developments discussed in~\cite{Schulze-Darup:2016}, however the derivation here differs from the one in~\cite{Schulze-Darup:2016} and allows alternative statements.
+%
+} version of the set~$\W$, in the sense that~$\W^\alpha=\alpha\W$.
+%
+The study of the maximal robust positive invariant set for scaled disturbance sets is as old as its algorithmic determination and was proposed in~\cite{Kolmanovsky:1995} as \emph{noise level} (i.e. magnitude of the disturbance).
+%
+\\[1em]
+%
+Many of the concepts presented in Section~\ref{ch:MPC:sec:quadratic:MPC} carry over to this case.
+%
+The definition of a robust positive invariant set $\X^{\alpha,\infty}$ has to be parameter dependent:
+%
+\begin{equation}
+	\X^{\alpha,\infty} = \{x\in\X:Ax+w\in\X^{\alpha,\infty}\;\forall w\in\W^\alpha\}
+\end{equation}
+%
+For every fixed~$\alpha$ such that $\X^{\alpha,\infty}$ exists the methods discussed in Section~\ref{ch:MPC:sec:qMPC:MRPI:set} apply.
+%
+It is intuitively clear that there exists a scaling factor~$\alpha^\ast$ such that $\X^{\alpha,\infty}=\emptyset$ for $\alpha>\alpha^\ast$ and $\X^{\alpha,\infty}\neq\emptyset$, i.e. there exists a scaling~$\alpha^\ast$ such that the disturbance becomes \emph{too strong} for the system~\eqref{eq:considered:system:scaled:disturbances} to absorb\footnote{This was first mentioned in~\cite{Kolmanovsky:1998} without a method to determine~$\alpha^\ast$.}.
+%
+Since then we have been able to characterise both, the behaviour for $0\leq\alpha\leq\alpha^\ast$ as well as a method to approximate~$\alpha^\ast$ to any given precision, the results were published in~\cite{Schaich:2015,Schulze-Darup:2016}.
+%
+\\[1em]
+%
+We will first discuss the scenario where $\alpha\leq\alpha^\ast$, i.e. where the robust positive invariant set is not empty, for this we will assume that the critical scaling parameter~$\alpha^\ast$ is apriori known.
+%
+We will later briefly discuss a method to determine the critical value~$\alpha^\ast$.
+%
+\\[1em]
+%
+\mysplit We are interested in characterising the maximal robust positive invariant set~$\X^{\alpha,\infty}_{\max}$ for $\alpha\leq\alpha^\ast$.
+%
+Similar to the method discussed in Section~\ref{ch:MPC:sec:qMPC:MRPI:set}, we propose an iterative algorithm to determine~$\X^{\alpha,\infty}_{\max}$, however we will propose an algorithm that determines all~$\X^{\alpha,\infty}_{\max}$ for $0\leq\alpha\leq\alpha^\ast$.
+%
+This set iteration is embedded in~$\RR^{d+1}$, we set~$Z_0 = \X\times[0,\alpha^\ast]$, as before we have
+%
+\begin{equation}\label{eq:definition:Dk:sequence:scaled:disturbances}
+	Z_{k+1} = Z_k\cap D_{k+1} = \left(\X\times[0,\alpha^\ast]\right)\cap \bigcap_{n\leq k+1}D_{n}
+\end{equation}
+%
+where $D_k$ is slightly different to the sets~$\E_k$ in~\eqref{eq:definition:Ek:sequence:for:set:iteration} and~\eqref{eq:definition:Rk:dual:of:Ek}.
+%
+Similar to~$\E_k$ in the state-dependent case (see Lemma~\ref{thm:making:sense:of:Rk}), $D_k$ does not have a closed form representation as~\eqref{eq:definition:Ek:sequence:for:set:iteration}, however its elements~$(x,\alpha)$ satisfy the same $k$-step invariance condition.
+%
+That is, $(x,\alpha)\in D_k$ is equivalent to $x_k = A^k x+ \sum_{n=0}^{k-1}A^n w_n\in\X$ for all $w_n\in\W^\alpha$ or equivalently $(Ax+w,\alpha)\in D_{k-1}$ for all $w\in\W^\alpha$.
+%
+Explicitly we have
+%
+\begin{equation}
+	D_1 = \left\{(x,\alpha):\begin{aligned}0\leq\alpha\leq\alpha^\ast\wedge\\
+	\Xi_i (Ax+w)\leq\xi_i,\\
+	\forall w\in\W^\alpha,i\in\{1,\dots,M_\X\}\end{aligned}\right\}= \left\{(x,\alpha):\begin{aligned}0\leq\alpha\leq\alpha^\ast\wedge\\
+	\Xi_iAx+\underbrace{\max_{w\in\W^\alpha}\Xi_iw}_{(\dagger)}\leq\xi_i\\ i\in\{1,\dots,M_\X\}\end{aligned} \right\}
+\end{equation}
+%
+The term~$(\dagger)$ can be found using
+%
+\begin{equation}
+	\begin{aligned}
+	\max_{w\in\W^\alpha}\Xi_iw &= \max_{w\in\alpha\W} \Xi_iw = \max_{w\in\W}\alpha\Xi_iw = \alpha\underbrace{\max_{w\in\W}\Xi_i w}_{\gamma_{i,1}} =\alpha \gamma_{k,1}
+	\end{aligned}
+\end{equation}
+%
+where~$\gamma_{i,k}$ is the solution of a conventional linear program.
+%
+Therefore $D_1$ becomes
+%
+\begin{equation}
+	D_1 = \{(x,\alpha):0\leq\alpha\leq\alpha^\ast\wedge\Xi_iA x + \gamma_{i,1}\alpha\leq\xi_i,i\in\{1,\dots,M_\X\}\}
+\end{equation}
+%
+Analogously the set~$D_k$ is given by
+%
+\begin{equation}
+	D_k = \{(x,\alpha):0\leq\alpha\leq\alpha^\ast\wedge\Xi_iA^k x + \left(\sum_{n=1}^k\gamma_{i,n}\right)\alpha\leq\xi_i,i\in\{1,\dots,M_\X\}\}
+\end{equation}
+%
+with
+%
+\begin{equation}
+	\gamma_{i,n} = \max_{w\in\W}\Xi_iA^{n-1}w.
+\end{equation}
+%
+We can show that the sequence~\eqref{eq:definition:Dk:sequence:scaled:disturbances} terminates after a finite number of iterations under similar conditions to Lemma~\ref{thm:mrpi:main:theorem}:
+%
+\begin{thm}\label{thm:scaled:distrubances:mrpi}
+Let $x^+=Ax+w$ be asymptotically stable with the spectral radius~$\rho<1$, and let $\X$ be band observable under $A$, i.e.~$\X\subseteq\{x:\pm\Gamma x\leq \bfa{1}\}$ and the pair $(A,\Gamma)$ is observable.
+%
+Let~$P\succ0$ such that $A^TPA\preceq\rho^2P$, let~$r_1,r_2$ denote the radii of $\ball_P(r_1)\subseteq\X$ and $\W^1\subseteq\ball_P(r_2)$, then there exists a positive integer~$M$ such that
+\[
+	\mathcal Z^{\infty}_{\max} = \bigcap_{k\leq M} D_k.
+\]
+\end{thm}
+%
+\begin{proof}
+The statement follows along the same lines as the analogue for the fixed disturbance set case.
+%
+For each fixed~$\alpha$ Lemma~\ref{thm:mrpi:main:theorem} holds with~$\W^\alpha\subseteq\ball_P(\alpha r_2)$ so that there exists an integer valued function~$M(\alpha)$ for all~$0\leq\alpha\leq\alpha^\ast$ such that $\mathcal Z^{\infty}_{\max}\vert_{\alpha=\hat\alpha} = \X^{\hat\alpha,\infty}_{\max} =  \bigcap_{k\leq M(\hat\alpha)} D_k\vert_{\alpha=\hat\alpha}$.
+%
+Recall the bounds we derived in the sequel of the proof of Lemma~\ref{thm:mrpi:main:theorem} in~\eqref{eq:bound:on:iteration:count} for the number of iterations required~$M(\alpha)$:
+%
+Defining $r_3$ to be the radius of the smallest P-ball containing either the state constraints contains either $\X\subseteq\ball_P(r_3)$ itself or the first compact iterate~$X_k\subseteq\ball_P(r_3)$, for simplicity assume that $\X\subseteq\ball_P(r_3)$.
+%
+An upper bound~$\bar M(\alpha)$ on~$M(\alpha)$ can be obtained finding the smallest positive integer satisfying
+%
+\begin{equation}
+	r_3\leq\rho^{-k}\left(r_1-\frac{\alpha r_2}{1-\rho}\right),
+\end{equation}
+%
+which implies that the upper bound~$\bar M(\alpha)\geq M(\alpha)$ is continuous in~$\alpha$ and in particular the upper bound is monotonous in~$\alpha$ for $\alpha<\frac{(1-\rho)r_1}{r_2}$.
+%
+At~$\alpha=\frac{(1-\rho)r_1}{r_2}$ the bound~$\bar M(\alpha)$ has a singularity, see Figure~\ref{fig:logarithmic:dependence:of:bound:on:alpha}.
+%
+We can therefore bound the number of iterations by choosing~$\bar M$ to be equal to the smallest integer satisfying
+%
+\[
+	k\geq \frac{\log((1-\rho)r_3)-\log((1-\rho)r_1-\alpha^\ast r_2)}{\log(\rho)}.
+\]
+%
+Hence we have an upper bound for all~$0\leq\alpha\leq\alpha^\ast$, and
+%
+$$
+	\mathcal Z^{\infty}_{\max} = \bigcap_{k\leq M} D_k
+$$
+%
+with $\bar M\leq\left\lceil\frac{\log((1-\rho)r_3)-\log((1-\rho)r_1-\alpha^\ast r_2)}{\log(\rho)}\right\rceil$.
+\end{proof}
+%
+%
+\begin{figure}\centering
+\begin{tikzpicture}[xscale=5,yscale=.3]
+\draw[very thin,gray] (0,0) grid[xstep=0.5,ystep=3] (2,24);
+\draw[red] (9/5,24) -- (9/5,0) node[near end,sloped,above] {$\alpha = \frac{(1-\rho)r_1}{r_2}$};
+\draw[-latex'] (0,0) -- (2.06,0) node[below] {$\alpha$};
+\draw[-latex'] (0,0) -- (0,24.6) node[left] {$\bar M(\alpha)$};
+\draw (0,0) plot[domain=0:1.79,samples=500,smooth] ({\x},{(ln(.6-\x/3)-ln(1.5))/ln(.7)});
+\draw (1.789,16.9) -- (1.8,24);
+\end{tikzpicture}
+\caption[Dependence of upper bound on iteration count for MRPI set on~$\alpha$]{The upper bound on the maximal number of iterations~$M(\alpha)$ over $\alpha$ for a particular choice of~$r_1$,~$r_2$ and~$\rho$.}
+\label{fig:logarithmic:dependence:of:bound:on:alpha}
+\end{figure}
+%
+\noindent And we can hence compute the parameterised maximal robust positive invariant set~$\mathcal Z^{\infty}_{\max}$, which is polytopic and given by~\eqref{eq:definition:Dk:sequence:scaled:disturbances}.
+%
+\\[1em]
+%
+It is worth pointing out that $\frac{(1-\rho)r_1}{r_2}\geq\alpha^\ast$ since all involved $P$-balls are approximations on the respective polytopic sets, this is seen easily by contradiction.
+%
+If $\frac{(1-\rho)r_1}{r_2}\leq\alpha<\alpha^\ast$ then a maximal robust positive invariant set~$\X^{\alpha,\infty}_{\max}\neq\emptyset$ exists, due to the way~$\alpha^\ast$ is defined.
+%
+However, for such~$\alpha$ Lemma~\ref{thm:mrpi:main:theorem} applies, hence~$\frac{(1-\rho)r_1}{r_2}\geq\alpha^\ast$.
+%
+\begin{example}{The scaled maximal robust positive invariant set or a two dimensional system}\label{example:MRPI:scaled:dist:set}
+Consider the system\footnote{The dynamics of this example were presented in~\cite{Mayne:2005} and the critical scaling~$\alpha^\ast$ was approximated in~\cite{Schulze-Darup:2016} for the constraints presented here.}
+%
+\begin{equation}
+	x^+ = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}x + \begin{pmatrix}\frac{1}{2}\\1\end{pmatrix}u +w
+\end{equation}
+%
+in closed-loop with a conventional Riccati controller designed with $Q=I$ and $R=\frac{1}{100}$.
+%
+The constraints on the state are given by~$\X = \{x:-50\leq x_2\leq 2\}$, the input constraints are $\U=\{u:\norm{u}_\infty\leq 1\}$ and the nominal disturbance constraints $\W^1 = \{w:10\norm{w}_\infty\leq1\}$.
+%
+It has been shown in~\cite{Schulze-Darup:2016} that the critical scaling value $3.362391\leq\alpha^\ast\leq3.362728$, so that we introduce the constraints~$0\leq\alpha\leq3.362391$.
+%
+Computing the parametrised maximal robust positive invariant set~$\Z^\infty_{\max}$ using iteration~\eqref{eq:definition:Dk:sequence:scaled:disturbances} leads to the set shown in Figure~\ref{fig:example:scaled:MRPI:set}.
+%
+In Figure~\ref{fig:example:scaled:MRPIsets:for:various:alpha} we illustrate the conventional maximal robust positive invariant set for the undisturbed case $\alpha=0$, the nominal case $\alpha=1$, a value of $\alpha$ for which the structure of the maximal robust positive invariant set changes ($\alpha=1.685$) and the maximal considered value of $\alpha=3.362391$, all these sets were computed in a non-parametrised way.
+%
+\begin{figure}\centering
+\tdplotsetmaincoords{65}{10}
+\begin{tikzpicture}[tdplot_main_coords]
+\draw[-latex'] (-4,2,0) -- (-4,2,4) node[above] {$\alpha$};
+\draw[-latex'] (-4,2,0) -- (4,2,0) node[right] {$x_1$};
+\draw[-latex'] (-4,2,0) -- (-4,-3,0) node[below] {$x_2$};
+\foreach \alpha in {0,1,...,3} \draw (-3.98,2,\alpha) -- (-4.02,2,\alpha) node[left] {$\alpha$};
+\foreach \x in {-3,-2,...,3} \draw (\x,2,.02) -- (\x,2,-.02) node[below] {$\x$};
+\foreach \y in {1,0,...,-2} \draw (-3.98,\y,0) -- (-4.02,\y,0) node[left] {$\y$};
+
+	\draw ( -3.2716,   2.0000,   0.0000) -- ( -2.5000,   2.0000,   1.6849) -- ( -2.5000,   2.0000,   0.0000) -- ( -3.2716,   2.0000,   0.0000) -- cycle;
+
+	\draw ( -0.5026,  -0.5037,   3.3624) -- (  1.4880,  -1.4957,   3.3624) -- (  3.5165,  -2.5066,   0.0000) -- ( -2.5562,   0.5198,   0.0000) -- ( -0.5365,  -0.4867,   3.3478) -- ( -0.5026,  -0.5037,   3.3624) -- cycle;
+
+	\draw (  2.5562,  -0.5198,   0.0000) -- ( -2.5000,   2.0000,   0.0000) -- ( -2.5000,   2.0000,   1.6849) -- ( -1.4880,   1.4957,   3.3624) -- (  0.5026,   0.5037,   3.3624) -- (  0.5365,   0.4867,   3.3478) -- (  2.5562,  -0.5198,   0.0000) -- cycle;
+
+	\draw ( -0.8404,   0.1557,   3.3624) -- ( -0.5026,  -0.5037,   3.3624) -- (  1.4880,  -1.4957,   3.3624) -- (  0.8404,  -0.1557,   3.3624) -- (  0.5026,   0.5037,   3.3624) -- ( -1.4880,   1.4957,   3.3624) -- ( -0.8404,   0.1557,   3.3624) -- cycle;
+
+	\draw (  3.5165,  -2.5066,   0.0000) -- ( -2.5562,   0.5198,   0.0000) -- ( -3.2716,   2.0000,   0.0000) -- ( -2.5000,   2.0000,   0.0000) -- (  2.5562,  -0.5198,   0.0000) -- (  3.5165,  -2.5066,   0.0000) -- cycle;
+
+	\draw (  1.4880,  -1.4957,   3.3624) -- (  3.5165,  -2.5066,   0.0000) -- (  2.5562,  -0.5198,   0.0000) -- (  0.5365,   0.4867,   3.3478) -- (  0.8404,  -0.1557,   3.3624) -- (  1.4880,  -1.4957,   3.3624) -- cycle;
+
+	\draw ( -0.8404,   0.1557,   3.3624) -- ( -0.5365,  -0.4867,   3.3478) -- ( -2.5562,   0.5198,   0.0000) -- ( -3.2716,   2.0000,   0.0000) -- ( -2.5000,   2.0000,   1.6849) -- ( -1.4880,   1.4957,   3.3624) -- ( -0.8404,   0.1557,   3.3624) -- cycle;
+
+	\draw (  0.5026,   0.5037,   3.3624) -- (  0.8404,  -0.1557,   3.3624) -- (  0.5365,   0.4867,   3.3478) -- (  0.5026,   0.5037,   3.3624) -- cycle;
+
+	\draw ( -0.8404,   0.1557,   3.3624) -- ( -0.5026,  -0.5037,   3.3624) -- ( -0.5365,  -0.4867,   3.3478) -- ( -0.8404,   0.1557,   3.3624) -- cycle;
+
+\end{tikzpicture}
+\caption[Parametrised MRPI set for scaled disturbance sets.]{The parametrised maximal robust positive invariant set~$\Z_{\max}^\infty$ for the Example~\ref{example:MRPI:scaled:dist:set}}
+\label{fig:example:scaled:MRPI:set}
+\end{figure}
+
+\begin{figure}\centering
+\begin{tikzpicture}
+	\draw[-latex'] (-3.5,-3) -- (4.2,-3) node[below] {$x_1$};
+	\draw[-latex'] (-3.5,-3) -- (-3.5,2.7) node[left] {$x_2$};
+	\foreach \x in {-3,-2,...,3} \draw (\x,-2.98) -- (\x,-3.02) node[below] {$\x$};
+	\foreach \y in {-2,-1,...,2} \draw (-3.48,\y) -- (-3.52,\y) node[left] {$\y$};
+	\draw[step=.5,gray,very thin] ( -3.5,  -3) grid (  4,   2.5);
+	\draw[blue] ( -2.5000,   2.0000) -- ( -3.2716,   2.0000) -- ( -2.5562,   0.5198) -- (  3.5165,  -2.5066) -- (  2.5562,  -0.5198) -- ( -2.5000,   2.0000) -- cycle;
+	\draw[red] ( -1.4880,   1.4957) -- ( -0.8404,   0.1557) -- ( -0.5026,  -0.5037) -- (  1.4880,  -1.4957) -- (  0.8404,  -0.1557) -- (  0.5026,   0.5037) -- ( -1.4880,   1.4957) -- cycle;
+	\draw[green!80!black] ( -2.5000,   2.0000) -- ( -2.8137,   2.0000) -- ( -1.9529,   0.2191) -- (  2.9132,  -2.2059) -- (  1.9529,  -0.2191) -- ( -2.5000,   2.0000) -- cycle;
+	\draw ( -2.4999,   2.0000) -- ( -1.5397,   0.0132) -- (  2.4999,  -2.0000) -- (  1.5397,  -0.0132) -- ( -2.4999,   2.0000) -- cycle;
+\end{tikzpicture}
+\caption[Various MRPI sets for scaled disturbance sets.]{The maximal positive invariant set in~\textcolor{blue}{blue} for Example~\ref{example:MRPI:scaled:dist:set}, the maximal robust positive invariant for $\alpha=3.362391$ in \textcolor{red}{red}, for the nominal disturbance (i.e. $\alpha=1$) in \textcolor{green!80!black}{green} and in black the maximal robust positive invariant set for the value of $\alpha=1.685$ at which the combinatorial structure of the set changes.}
+\label{fig:example:scaled:MRPIsets:for:various:alpha}
+\end{figure}
+\end{example}
+%
+%
+%
+%
+%
+%
+%
+%
+\noindent The case of computing the parametrised maximal robust positive invariant set~$\Z^\infty_{\max}$ poses almost no greater challenge than the determination of the conventional computation described in Section~\ref{ch:MPC:sec:qMPC:MRPI:set}, as long as a bound on $\alpha^\ast$ is given.
+%
+We will now briefly outline how the value of $\alpha^\ast$ can be approximated.
+%
+\\[1em]
+%
+\mysplit In order to approximate the value of~$\alpha^\ast$ we have to derive a condition that $\alpha^\ast$ satisfies.
+%
+The value of $\alpha^\ast$ was defined by the existence of a non-empty maximal robust positive invariant set for values~$\alpha\leq\alpha^\ast$ and the sudden vanishing of the set for $\alpha>\alpha^\ast$ in the sense that it collapses to the empty set.
+%
+Notice that, by definition, if the maximal robust positive invariant set is empty for a given value of~$\alpha$, then all robust positive invariant sets are empty for that value of~$\alpha$.
+%
+So far we discussed mainly the maximal robust positive invariant set~$\X^\infty_{\max}$, which is motivated by its application in model predictive control and our goal to be as minimally conservative as possible, i.e. allowing the maximal feasible set.
+%
+In this analysis it is necessary to study the behaviour of the opposite extreme, the minimal robust positive invariant set~$\X_{\min}^\infty$, i.e. the smallest set satisfying the invariance condition~\eqref{eq:quadratic:setup:invariance:condition}, where smallest is understood in the sense of containment~$\X^\infty_{\min}\subseteq\X^\infty$ for all other robust positive invariant sets~$\X^\infty$.
+%
+The minimal robust positive invariant set~$\X^\infty_{\min}$ can be characterised using similar arguments as the maximal counterpart~$\X^\infty_{\max}$.
+%
+For this notice that all robust positive invariant sets have to have the form
+%
+\begin{equation}\label{eq:trivial:useless:characterisation:of:RPI:set}
+		\X^\infty = \mathcal Y\oplus\W\oplus A\W\oplus A^2\W\oplus\dots = \Y\oplus\bigoplus_{k\geq0}A^k\W
+\end{equation}
+%
+for some set~$\Y\subseteq\RR^d$, notice that the invariance condition makes identity~\eqref{eq:trivial:useless:characterisation:of:RPI:set} necessarily true.
+%
+Every state in~$x\in\X^\infty$ has to have all its possible successors $x_k = A^kx+ \sum_{n<k}A^nw_n$ as elements in the robust positive invariant set~$x_k\in\X^\infty$ for all $k\geq0$ and $w_n\in\W$.
+%
+It is therefore self-evident that the minimal robust positive invariant set is such that $\mathcal Y$ is minimal, i.e. trivial~$\mathcal Y = \{0\}$, characterising the set~$\Y$ further is usually not possible.
+%
+So that the characterisation of the minimal robust positive invariant set is
+%
+\begin{equation}\label{eq:definition:minimal:RPI:set}
+	\X^\infty_{\min} = \bigoplus_{k\geq0}A^k\W
+\end{equation}
+%
+and is therefore in general not finitely determined, thereby making~$\Y$ infinitely determined even in the case corresponding to the maximal robust positive invariant set.
+%
+Clearly the sequence~$A^k\W$ is convergent with $\lim_{k\rightarrow\infty}A^k\W=\{0\}$ for every asymptotically stable~$A$ with $d(A^k\W,\{0\})\rightarrow0$ for $k\rightarrow\infty$\footnote{Here the distance function is assumed to be the Hausdorff distance which is a metric on the set of compact sets, see Appendix~\ref{appendix:hausdorff:distance:stuff} for relevant properties.}, hence
+%
+\begin{multline}
+	d\left(\bigoplus_{k\leq n}A^k\W,\X^\infty_{\min}\right) = d\left(\bigoplus_{k\leq n}A^k\W \oplus\{0\},\bigoplus_{k\leq n}A^k\W\oplus \bigoplus_{k>n}A^k\W \right)\\
+	 \leq \underbrace{d\left(\bigoplus_{k\leq n}A^k\W,\bigoplus_{k\leq n}A^k\W \right)}_{=0} + d\left(\{0\},\bigoplus_{k> n}A^k\W\right)\leq \sum_{k>n}d\left(\{0\},A^k\W\right).
+\end{multline}
+%
+Let $P\succ0$ such that $A^TPA\preceq\rho^2 A$ for the spectral radius~$\rho$ of $A$, and let $\ball_P(r)$ denote the $P$ norm ball of radius $r$ and let $\bar r$ denote the maximal value of $\bar r = \max_{x\in\ball_P(r)} d(0,x)$.
+%
+Notice that~$d(0,x) = \norm{x}_2$ and hence due to the homogeneity of the Euclidean norm we have that $\bar r = r \max_{x\in\ball_P(1)}d(0,x)$.
+%
+Furthermore notice that $0\in X\subseteq Y$ implies $d(\{0\},X)\leq d(\{0\},Y)$ and hence
+%
+\begin{multline}
+	\sum_{k>n}d\left(\{0\},A^k\W\right)\leq \sum_{k>n}d\left(\{0\},A^k\ball_P(r)\right)\leq \sum_{k>n}d\left(\{0\},\ball_P(r\rho^{k})\right) \\
+	= \sum_{k>n}\rho^{k}\bar r= \bar r\left(\frac{\rho^{n+1}}{1-\rho}\right)
+\end{multline}
+%
+This implies that $d\left(\bigoplus_{k\leq n}A^k\W,\X^\infty_{\min}\right)\leq\rho^{n+1}\frac{\bar r}{1-\rho}$ converges exponentially, in particular this can be used to approximate the minimal robust positive invariant set~$\X^\infty_{\min}$ using only a finite number of computations.
+%
+\\[1em]
+%
+In addition to convergence of~\eqref{eq:definition:minimal:RPI:set} we also have that
+%
+\begin{equation}
+	\mathcal R^{\alpha}_k := \bigoplus_{k\geq n}A^n\W^\alpha = \alpha \bigoplus_{k\geq n}A^n\W =:\alpha \mathcal R_k.
+\end{equation}
+%
+This follows as a direct consequence of the linearity of the Minkowski addition and the convergence of the sequence.
+%
+Hence, if we wanted to give an analogue to~$\X^{\alpha,\infty}_{\max}$ as defined in~\eqref{eq:definition:Dk:sequence:scaled:disturbances} it would be
+%
+\begin{equation}
+	\X^{\alpha,\infty}_{\min} = \{(x,\alpha):x\in\alpha\X^\infty_{\min}\}
+\end{equation}
+%
+where $\X^\infty_{\min}$ is calculated for the nominal disturbance set~$\W$.
+%
+Notice that the minimal robust positive invariant set does not consider any state constraints, to accommodate the constraints we define it accordingly:
+%
+\textit{The minimal robust positive invariant set is defined by~\eqref{eq:definition:minimal:RPI:set} if $\lim_{k\rightarrow\infty}\mathcal R_k\subseteq\X$ satisfies the state constraints, otherwise it is empty.}
+%
+Recall that with the maximal robust positive invariant set all other robust positive invariant sets vanish for $\alpha>\alpha^\ast$, in the sense that they all collapse to the empty set.
+%
+It is now clear how the critical scaling factor~$\alpha^\ast$ is characterised,
+%
+\begin{equation}\label{eq:alpha:ast:ideal:scenario}
+	\alpha^\ast = \left\{\begin{aligned}\max&\quad \alpha\\
+	\text{s.t.}&\quad \alpha\X^{\infty}_{\min}\subseteq\X
+\end{aligned}\right.
+\end{equation}
+%
+Since~$\mathcal R_k\subseteq\mathcal R_{k+1}$ and if $\X_{\min}^\infty\neq\emptyset$ then~$\mathcal R_k\subseteq\X^\infty_{\min}$, we clearly have
+%
+\begin{equation}
+	\bar\alpha_k = \left\{\begin{aligned}\max&\quad\alpha\\ \text{s.t.}&\quad \alpha\mathcal R_k\subseteq\X\end{aligned}\right\}\geq\left\{\begin{aligned}\max&\quad\alpha\\\text{s.t.}&\quad\alpha\X^\infty_{\min}\subseteq\X\end{aligned}\right\}=\alpha^\ast
+\end{equation}
+%
+for all $k\geq0$.
+%
+One possible way to obtain an upper bound on $\alpha^\ast$ would be to use our previous analysis, we know that $d(\mathcal R_k,\X^\infty_{\min})\leq \rho^{k+1}\frac{\bar r}{1-\rho}$, this means that $\X^\infty_{\min}\subseteq\mathcal R_k\oplus\ball_2(\rho^{k+1}\frac{\bar r}{1-\rho})$, see~\eqref{eq:Hausdorff:bound:using:balls}.
+%
+Therefore
+%
+\begin{equation}\label{eq:possible:way:to:compute:alpha:ast}
+	\bar\alpha_k\geq\left\{\begin{aligned}\max&\quad\alpha\\\text{s.t.}&\quad\alpha\X^\infty_{\min}\subseteq\X\end{aligned}\right\}\geq \left\{\begin{aligned}\max&\quad\alpha\\\text{s.t.}&\quad \alpha\mathcal R_k\oplus\ball_2\left(\alpha\rho^{k+1}\frac{\bar r}{1-\rho}\right)\subseteq\X\end{aligned}\right\}=\alpha^\prime_k
+\end{equation}
+%
+Due to its definition we immediately have that~$\alpha_k^\prime$ is a lower bound on~$\alpha^\ast$ and $\bar\alpha_k-\alpha^\prime_k\leq\alpha^\prime_k(\rho^{k+1}\frac{\bar r}{1-\rho})$ or equivalently
+%
+\begin{equation}\label{eq:Hausdorff:bound:on:alpha:ast}
+	\frac{\bar\alpha_k}{\alpha^\prime_k}\leq1+\rho^{k+1}\left(\frac{\bar r}{1-\rho}\right),
+\end{equation}
+%
+however, there is a major problem with this approach.
+%
+Whereas~$\bar\alpha_k$ can be determined by solving a single linear program the Minkowski addition with a Euclidean ball makes the determination of~$\alpha^\prime_k$ more computationally complex and impossible to solve efficiently for higher dimensional systems.
+%
+\\[1em]
+%
+\mysplit In order to avoid solving complex optimisation programs without apriori knowledge whether the result will be sufficiently accurate we propose the use of relative distance measuring, i.e. we assume that there exists an $\epsilon>0$ such that 
+%
+\begin{equation}\label{eq:bound:on:minimal:rpi:set}
+	\mathcal R_k\subseteq \mathcal X^\infty_{\min} \subseteq (1+\epsilon)\mathcal R_k
+\end{equation}
+%
+for all $k\geq 0$. 
+%
+If~\eqref{eq:bound:on:minimal:rpi:set} holds, a lower bound on~$\alpha^\ast$ is provided by
+%
+\begin{equation}\label{eq:def:underline:alpha}
+	\underline\alpha_k = \left\{\begin{aligned}\max&\quad\alpha\\
+	\text{s.t.}&\quad \alpha(1+\epsilon)\mathcal R_k\subseteq\X
+	\end{aligned}\right\} = \left\{\begin{aligned}\max&\quad\frac{\tilde\alpha}{1+\epsilon}\\
+	\text{s.t.}&\quad \tilde\alpha\mathcal R_k\subseteq\X
+	\end{aligned}\right\} = \frac{\bar\alpha_k}{1+\epsilon}
+\end{equation}
+%
+and therefore $\frac{\bar\alpha_k}{1+\epsilon}\leq\alpha^\ast\leq\bar\alpha_k$.
+%
+Notice that $(1+\epsilon)\mathcal R_k=\mathcal R_k\oplus\epsilon\mathcal R_k$ so that the main difference between this relative approach and the the Hausdorff distance is that instead of Euclidean balls, scaled versions of the set itself are added.
+%
+For this scenario we can make the following statement:
+%
+\begin{thm}\label{thm:scaling:alpha:ast}
+Let~$A$ be asymptotically stable, let $\eta\in(0,1)$ such that $A^N\W\subseteq\eta\W$ for some $N\in\mathbb N$, then 
+%
+\begin{equation}
+	\X^\infty_{\min}\subseteq\frac{1}{1-\eta}\mathcal R_N
+\end{equation}
+%
+holds.
+\end{thm}
+%
+\noindent This is a simplified and abbreviated version of the main statement presented in~\cite{Schulze-Darup:2016}, the proof of Lemma~\ref{thm:scaling:alpha:ast} yields little additional insight so we omit it here and refer to~\cite{Schulze-Darup:2016}.
+%
+We therefore have
+%
+\begin{equation}
+	\mathcal R_N\subseteq \mathcal X^\infty_{\min} \subseteq \Bigl(1+\underbrace{\frac{\eta}{1-\eta}}_{\epsilon}\Bigr)\mathcal R_N
+\end{equation}
+%
+for the choice of $N$ according to Lemma~\ref{thm:scaling:alpha:ast}.
+%
+Notice that the bounds in Lemma~\ref{thm:scaling:alpha:ast} are similar to the ones we presented above for the Hausdorff approach, $A^N\W\subseteq\eta\W$ depends on the dynamics of~$A$ and the shape of~$\W$ in a similar way as $P$ and $r$.
+%
+With our previous analysis we could use~$\W\subseteq\ball_P(r)$ and hence~$A^N\ball_P(r)\subseteq\ball_P(\eta r)$ so that if $A^N\ball_P(r)\subseteq\ball_P(\rho^{N} r)\subseteq\ball_P(\eta r)$ we can estimate that $N\geq\frac{\log\eta}{\log\rho}$ will be sufficient for Lemma~\ref{thm:scaling:alpha:ast} to hold.
+%
+%
+%
+%
+\begin{example}{Computing the critical scaling factor~$\alpha^\ast$ for a one dimensional system}\label{example:computing:alpha:star}
+Consider the system~$x^+ = \frac{1}{2}x+w$ where~$x\in\X=[-4,4]$ and $w\in[-1,1]$, in this case we can explicitly determine the minimal robust positive invariant set~$\X^\infty_{\min}$.
+%
+Recall that 
+%
+\begin{equation*}\begin{aligned}
+	\mathcal R_k &= \bigoplus_{n=0}^k \left(\frac{1}{2}\right)^n[-1,1]\\ 
+	&= [-1,1] \oplus [-\frac{1}{2},\frac{1}{2}] \oplus \dots\oplus -[\frac{1}{2^k},\frac{1}{2^k}]\\
+	&= [-\sum_{n=0}^k\frac{1}{2^k},\sum_{n=0}^k\frac{1}{2^k}]\\
+	&= [-(2-\frac{1}{2^k}),2-\frac{1}{2^k}]
+\end{aligned}\end{equation*}
+%
+and therefore $\mathcal X^\infty_{\min}$ exists and is given by the limit
+%
+$$
+\mathcal X^\infty_{\min}=\lim_{k\rightarrow\infty}\mathcal R_k=\lim_{k\rightarrow\infty}[-(2-\frac{1}{2^k}),2-\frac{1}{2^k}] = [-2,2]
+$$
+%
+and hence $\alpha^\ast=2$ given by the largest scaling factor for~$\X^\infty_{\min}$.
+%
+In Example~\ref{example:MRPI:set} we determined that the maximal robust positive invariant set~$\X^\infty_{\max}=[-4,4]$ for this system.
+%
+In order to apply Lemma~\ref{thm:scaling:alpha:ast} we choose the accuracy~$\epsilon=\frac{1}{1000}$ and therefore we have 
+%
+\[
+	\eta = \frac{\epsilon}{1+\epsilon} = \frac{1}{1001}
+\]
+%
+so that the condition~$A^N\W\subseteq\eta\W$ becomes $\frac{1}{2^N}\leq\frac{1}{1001}$ and equivalently~$2^N\geq1001$ i.e. $N=10$ is sufficient.
+%
+With $N=10$ we have 
+%
+\[
+\mathcal R_{10} = \left[-\Bigl(2-\frac{1}{1024}\Bigr),2-\frac{1}{1024}\right] = \left[-\frac{2047}{1024},\frac{2047}{1024}\right]
+\]
+%
+And the only calculation required now is to compute~$\bar\alpha_{10}$:
+%
+\[
+	\bar\alpha_{10} = \left\{\begin{aligned}\max&\quad\alpha\\
+	\text{s.t.}	&\quad \frac{2047}{1024}\alpha\leq 4
+	\end{aligned}\right\}=\frac{4096}{2047} \approx 2.00098
+\]
+%
+and with that we obtain the lower bound~$\underline\alpha_{10}$
+%
+\[
+\underline\alpha_{10} = \frac{\bar\alpha_{10}}{1+\epsilon} = \frac{1000}{1001}\frac{4096}{2047} = \frac{4096000}{2049047}\approx1.99898
+\]
+%
+Notice that in this case we can evaluate~$\alpha_k^\prime$, for this we use that $P=1>0$ yields $\frac{1}{2}\cdot1\cdot\frac{1}{2}\leq\frac{1}{2^2}\cdot1$ with equality, so that $\ball_P(r)=[-r,r]$ and therefore~$\bar r = \max_x\in\ball_P(r)=r$, so that here we have $r=\bar r=1$.
+%
+We therefore need to solve
+%
+\[
+\begin{aligned}
+\mathcal R_k\oplus\ball_P\left(\frac{\bar r\rho^{k+1}}{1-\rho}\right) &= \left[-2+\frac{1}{2^k},2-\frac{1}{2^k}\right] \oplus\left[-\frac{1}{2^k},\frac{1}{2^k}\right]\\
+&=\left[-2,2\right]
+\end{aligned}
+\]
+%
+This means that 
+%
+\[
+\alpha^\prime_k = \left\{\begin{aligned}
+\max&\quad \alpha\\
+\text{s.t.}&\quad 2\alpha\leq4
+\end{aligned}\right\} = 2 = \alpha^\ast,
+\]
+%
+independently of $k\geq1$.
+\end{example}
+%
+%
+%
+%
+%
+\begin{example}{A negative example of how not to compute a scaled maximal robust positive invariant set}\label{example:alpha:star:unkown}
+Consider the system~$x^+=\frac{1}{2}x+w$ where $x\in\X=[-4,4]$ and $w\in\W=[-1,1]$, assume we ignore that there exists a critical~$\alpha^\ast$ and we want to compute the parametrised maximal robust positive invariant set~$\X^\infty_{\max}$ using~\eqref{eq:definition:Dk:sequence:scaled:disturbances}.
+%
+Therefore we have
+%
+\[
+	D_k = \{(x,\alpha):\pm(\frac{1}{2^k}x+\alpha\sum_{n=1}^k\gamma_n )\leq 4\}
+\]
+%
+with
+%
+\[
+	\gamma_k = \max_{-1\leq w\leq1}\frac{1}{2^{n-1}}w = \frac{1}{2^n-1}
+\]
+%
+and therefore
+%
+\[
+	D_k = \{(x,\alpha) = \pm(2^{-k}x + (2-2^{-k})\alpha)\leq4\}
+\]
+%
+We illustrate the behaviour of the set iteration~\eqref{eq:definition:Dk:sequence:scaled:disturbances} when $\alpha^\ast$ is not bounded in Figure~\ref{fig:example:unknown:alpha:ast:steeper:hyperplanes}, the hyperplanes bounding $\alpha$ in $D_k$ become steeper with growing~$k$ but can never become orthogonal to $\X$ unless $A$ is nilpotent, i.e. $A^N=0$ for some $N\in\mathbb N$.
+%
+Additionally we illustrate the effect this has on the maximal value of $\alpha\in D_k$, $\alpha_k = 2\left(\frac{2^{k}}{2^k-1}\right)$ in Figure~\ref{fig:example:unknown:alpha:k}, where we see the monotonic decrease of~$\alpha_k$ towards~$\alpha^\ast$.
+%
+Naturally the sequence of $\alpha_k\searrow\alpha^\ast$ for $k\rightarrow\infty$ but the sequence does not attain its limit for any finite~$k$ such that $\alpha_k\not\in D_{k+1}$ and hence $D_k\not\subseteq D_{k+1}$ for any finite~$k$.
+%
+\begin{figure}
+\centering
+\begin{tikzpicture}[yscale=.5]
+\draw[step=1,gray,very thin] (0,  -.5) grid (  6,   8);
+\draw[-latex'] (0,0) -- (6.2,0) node[below] {$\alpha$};
+\draw[-latex'] (0,0) -- (0,8.2) node[left] {$x$};
+\foreach \x in {0,1,...,7} \draw (.02,\x) -- (-.02,\x) node[left] {$\x$};
+\foreach \alpha in {1,2,...,5} \draw (\alpha,.02) -- (\alpha,-.02) node[below] {$\alpha$};
+\draw (0,0) -- (0,4) -- (6,4) -- (6,0) -- cycle;
+\fill[blue,opacity=.2] (0,0) -- (0,4) -- (6,4) -- (6,0) -- cycle;
+\draw (0,0) -- (0,8) -- (4,0) -- cycle;
+\fill[red,opacity=.2] (0,0) -- (0,8) -- (4,0) -- cycle;
+\draw (0,0) -- (0,8) -- (4/3,8) -- (8/3,0) -- cycle;
+\fill[green,opacity=.2] (0,0) -- (0,8) -- (4/3,8) -- (8/3,0) -- cycle;
+\draw (0,0) -- (0,8) -- (12/7,8) -- (16/7,0) -- cycle;
+\fill[yellow,opacity=.2] (0,0) -- (0,8) -- (12/7,8) -- (16/7,0) -- cycle;
+\end{tikzpicture}
+\caption[Parametrised mRPI set]{The positive quadrant for the first three set iterates~$D_k$ for Example~\ref{example:alpha:star:unkown}, clearly the hyperplanes defining $D_k$ $x\leq 2^{k+2}+(1-2^{k+1})\alpha$ are getting steeper with each~$k$ but can not become vertical for any finite $k$.}
+\label{fig:example:unknown:alpha:ast:steeper:hyperplanes}
+\end{figure}
+%
+%
+\begin{figure}
+\centering
+\begin{tikzpicture}[xscale=5]
+\draw[-latex'] (1.8,0) -- (3.2,0) node[below] {$\alpha$};
+\draw (2,.1) -- (2,-.1) node[below] {$2$};
+\draw (3,.1) -- (3,-.1) node[below] {$3$};
+
+\draw[thin,blue] (2.666667,.05) -- (2.666667,-.05);
+\draw[thin,blue] (2.285714,.05) -- (2.285714,-.05);
+\draw[thin,blue] (2.133333,.05) -- (2.133333,-.05);
+\draw[thin,blue] (2.064516,.05) -- (2.064516,-.05);
+\draw[thin,blue] (2.031746,.05) -- (2.031746,-.05);
+\draw[thin,blue] (2.015748,.05) -- (2.015748,-.05);
+\draw[thin,blue] (2.007843,.05) -- (2.007843,-.05);
+\draw[thin,blue] (2.003914,.05) -- (2.003914,-.05);
+\draw[thin,blue] (2.001955,.05) -- (2.001955,-.05);
+\draw[thin,blue] (2.000977,.05) -- (2.000977,-.05);
+\draw[thin,blue] (2.000488,.05) -- (2.000488,-.05);
+\draw[thin,blue] (2.000244,.05) -- (2.000244,-.05);
+\draw[thin,blue] (2.000122,.05) -- (2.000122,-.05);
+\draw[thin,blue] (2.000061,.05) -- (2.000061,-.05);
+\draw[thin,blue] (2.000031,.05) -- (2.000031,-.05);
+\draw[thin,blue] (2.000015,.05) -- (2.000015,-.05);
+\draw[thin,blue] (2.000008,.05) -- (2.000008,-.05);
+\draw[thin,blue] (2.000004,.05) -- (2.000004,-.05);
+\draw[thin,blue] (2.000002,.05) -- (2.000002,-.05);
+
+\end{tikzpicture}
+\caption[The meaning of $\alpha^\ast$]{The maximal value of $\alpha$ in $D_k$, given by $\alpha_k=\frac{2^{k+1}}{2^k-1} = 2(\frac{2^{k}}{2^k-1})$ for $k\in\{1,\dots,20\}$.
+%
+Clearly, $\alpha_k\geq\alpha_{k+1}$ with $\lim_{k\rightarrow\infty}\alpha_k=2$ and therefore $D_k\not\subseteq D_{k+1}$, so that the sequence~\eqref{eq:definition:Dk:sequence:scaled:disturbances} never terminates for any finite~$k$.}
+\label{fig:example:unknown:alpha:k}
+\end{figure}
+%
+\end{example}
